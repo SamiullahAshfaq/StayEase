@@ -32,6 +32,7 @@ public class CreateListingDTO {
     private BigDecimal price;
 
     @Size(max = 10)
+    @Builder.Default
     private String currency = "USD";
 
     @NotNull(message = "Number of guests is required")

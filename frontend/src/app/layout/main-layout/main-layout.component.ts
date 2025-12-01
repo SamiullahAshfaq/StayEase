@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-main-layout',
   templateUrl: './main-layout.component.html',
-  styleUrls: ['./main-layout.component.scss'],
-  standalone: true
+  standalone: true,
+  imports: [RouterOutlet]
 })
 export class MainLayoutComponent {}

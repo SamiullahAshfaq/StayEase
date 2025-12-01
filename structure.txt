@@ -293,7 +293,6 @@ stayease/
             │   │   ├── auth.service.ts
             │   │   ├── auth.guard.ts
             │   │   ├── auth-callback.component.ts
-            │   │   └── auth.interceptor.ts
             │   ├── guards/
             │   │   ├── role.guard.ts
             │   │   └── landlord.guard.ts

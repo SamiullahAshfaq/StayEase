@@ -1,0 +1,49 @@
+:host ::ng-deep {
+  .p-password {
+    width: 100%;
+  }
+  .p-password-input {
+    width: 100%;
+  }
+  .p-selectbutton {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    .p-button {
+      border-width: 2px;
+      border-color: #e5e7eb;
+      background: white;
+      color: #4b5563;
+      transition: all 0.3s;
+      padding: 1rem;
+      font-weight: 600;
+      &:hover {
+        border-color: #1a2332;
+        background: #f9fafb;
+      }
+      &.p-highlight {
+        background: linear-gradient(135deg, #1a2332 0%, #2a3647 100%);
+        border-color: #1a2332;
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(26, 35, 50, 0.2);
+        &:hover {
+          background: linear-gradient(135deg, #0f1821 0%, #1a2332 100%);
+        }
+      }
+    }
+  }
+  .p-checkbox .p-checkbox-box {
+    border-width: 2px;
+    transition: all 0.3s;
+  }
+  .p-checkbox .p-checkbox-box.p-highlight {
+    background: #1a2332;
+    border-color: #1a2332;
+  }
+  .p-password-panel {
+    margin-top: 0.5rem;
+  }
+  .p-message {
+    border-radius: 0.5rem;
+  }
+}

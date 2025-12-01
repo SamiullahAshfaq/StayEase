@@ -1,32 +1,56 @@
-<div class="home-page">
-  <section class="hero-section">
-    <div class="container">
-      <h1>Welcome to StayEase</h1>
-      <p class="hero-subtitle">Find your perfect stay anywhere in the world</p>
-      <button pButton label="Start Exploring" icon="pi pi-search" routerLink="/listings"></button>
-    </div>
-  </section>
+<div class="relative h-[500px] md:h-[600px] lg:h-[700px] flex items-center justify-center text-white text-center overflow-hidden">
+  <!-- Background Image -->
+  <div class="absolute inset-0 z-0">
+    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop" 
+         alt="Modern living room" 
+         class="w-full h-full object-cover object-center">
+    <div class="absolute inset-0 bg-black/50"></div>
+  </div>
 
-  <section class="features-section">
-    <div class="container">
-      <h2>Why Choose StayEase?</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <i class="pi pi-home"></i>
-          <h3>Verified Properties</h3>
-          <p>All listings are verified for quality and safety</p>
-        </div>
-        <div class="feature-card">
-          <i class="pi pi-shield"></i>
-          <h3>Secure Payments</h3>
-          <p>Safe and secure payment processing</p>
-        </div>
-        <div class="feature-card">
-          <i class="pi pi-star"></i>
-          <h3>Top Rated Hosts</h3>
-          <p>Trusted hosts with excellent reviews</p>
-        </div>
+  <!-- Hero Content -->
+  <div class="relative z-10 p-8">
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight leading-tight">
+      Find Your Next <span class="text-primary-light">Perfect Stay</span>
+    </h1>
+    <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-gray-200">
+      Discover unique homes and experiences, all curated by StayEase. Your adventure starts here.
+    </p>
+    <div class="w-full max-w-2xl mx-auto">
+      <div class="bg-white rounded-full shadow-2xl p-2 flex items-center">
+        <input type="text" placeholder="Search for cities, places, or activities" class="flex-grow bg-transparent border-none text-gray-700 placeholder-gray-500 focus:ring-0 px-4 py-2">
+        <button pButton type="button" icon="pi pi-search" class="p-button-rounded p-button-danger" routerLink="/listings"></button>
       </div>
     </div>
-  </section>
+  </div>
+</div>
+
+<!-- Featured Categories -->
+<div class="bg-white py-16 sm:py-24">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Explore by Category</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <!-- Category Card -->
+      <div class="group relative rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl" *ngFor="let category of categories">
+        <img [src]="category.image" [alt]="category.name" class="w-full h-64 object-cover">
+        <div class="absolute inset-0 bg-black/40 flex items-end p-6">
+          <h3 class="text-2xl font-semibold text-white">{{ category.name }}</h3>
+        </div>
+        <a [routerLink]="'/listings'" [queryParams]="{ category: category.query }" class="absolute inset-0"></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- "Become a Host" Section -->
+<div class="bg-gray-800 text-white">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col md:flex-row items-center justify-between">
+    <div class="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+      <h2 class="text-4xl font-bold mb-4">Become a Host</h2>
+      <p class="text-lg text-gray-300 mb-6">Join our community of hosts and start earning by sharing your space.</p>
+      <button pButton label="Learn More" class="p-button-lg p-button-danger" routerLink="/become-a-host"></button>
+    </div>
+    <div class="md:w-1/2 flex justify-center">
+      <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=2070&auto=format=fit=crop" alt="Happy host" class="rounded-lg shadow-xl w-full max-w-md">
+    </div>
+  </div>
 </div>
