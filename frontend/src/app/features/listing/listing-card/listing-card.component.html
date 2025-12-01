@@ -1,0 +1,44 @@
+<div class="listing-card" (click)="viewDetails()">
+	<div class="listing-image-container">
+		<img 
+			[src]="listing.images[0]?.url || 'assets/placeholder.jpg'" 
+			[alt]="listing.title"
+			class="listing-image"
+		/>
+		<div class="listing-category-badge">
+			<p-tag [value]="listing.category" severity="info"></p-tag>
+		</div>
+	</div>
+  
+	<div class="listing-content">
+		<div class="listing-header">
+			<h3 class="listing-title">{{ listing.title }}</h3>
+			<div class="listing-location">
+				<i class="pi pi-map-marker"></i>
+				<span>{{ listing.location }}</span>
+			</div>
+		</div>
+    
+		<div class="listing-details">
+			<div class="detail-item">
+				<i class="pi pi-users"></i>
+				<span>{{ listing.guests }} guests</span>
+			</div>
+			<div class="detail-item">
+				<i class="pi pi-home"></i>
+				<span>{{ listing.bedrooms }} beds</span>
+			</div>
+			<div class="detail-item">
+				<i class="pi pi-shield"></i>
+				<span>{{ listing.bathrooms }} baths</span>
+			</div>
+		</div>
+    
+		<div class="listing-footer">
+			<div class="listing-price">
+				<span class="price-amount">${{ listing.price }}</span>
+				<span class="price-period">/ night</span>
+			</div>
+		</div>
+	</div>
+</div>

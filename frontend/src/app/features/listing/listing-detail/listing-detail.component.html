@@ -1,0 +1,101 @@
+<div class="detail-page" *ngIf="!loading && listing; else loadingTemplate">
+	<!-- Gallery Section -->
+	<div class="gallery-section">
+		<div class="image-grid">
+			<div class="main-image" (click)="showGalleria = true">
+				<img [src]="listing.images[0]" [alt]="listing.title">
+				<div class="view-all-overlay">
+					<i class="pi pi-images"></i>
+					<span>View all {{ listing.images.length }} photos</span>
+				</div>
+			</div>
+			<div class="thumbnail-grid">
+				<div class="thumbnail" *ngFor="let img of listing.images.slice(1,5)" (click)="showGalleria = true">
+					<img [src]="img" [alt]="listing.title">
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Fullscreen Galleria -->
+	<p-galleria
+		[value]="listing.images"
+		[(visible)]="showGalleria"
+		[numVisible]="5"
+		[circular]="true"
+		[fullScreen]="true"
+		[showItemNavigators]="true"
+		[showThumbnails]="true">
+		<ng-template pTemplate="item" let-item>
+			<img [src]="item" class="galleria-image">
+		</ng-template>
+		<ng-template pTemplate="thumbnail" let-item>
+			<img [src]="item" class="galleria-thumbnail">
+		</ng-template>
+	</p-galleria>
+	<!-- Detail Info -->
+	<div class="container">
+		<div class="detail-grid">
+			<div class="detail-content">
+				<div class="detail-header">
+					<h1>{{ listing.title }}</h1>
+					<div class="location">
+						<i class="pi pi-map-marker"></i>
+						<span>{{ listing.city }}, {{ listing.state }}, {{ listing.country }}</span>
+					</div>
+				</div>
+				<div class="property-stats">
+					<div class="stat"><i class="pi pi-users"></i> {{ listing.guests }} guests</div>
+					<div class="stat"><i class="pi pi-home"></i> {{ listing.bedrooms }} bedrooms</div>
+					<div class="stat"><i class="pi pi-inbox"></i> {{ listing.beds }} beds</div>
+					<div class="stat"><i class="pi pi-shield"></i> {{ listing.bathrooms }} bathrooms</div>
+				</div>
+				<div class="description">
+					<h2>About this place</h2>
+					<p>{{ listing.description }}</p>
+				</div>
+				<div class="amenities" *ngIf="listing.amenities?.length">
+					<h2>What this place offers</h2>
+					<div class="amenities-grid">
+						<div class="amenity" *ngFor="let amenity of listing.amenities">
+							<i class="pi pi-check-circle"></i>
+							<span>{{ amenity }}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Booking Sidebar -->
+			<div class="booking-sidebar">
+				<div class="booking-card">
+					<div class="price-header">
+						<div class="price">
+							<span class="amount">${{ listing.price }}</span>
+							<span class="period">per night</span>
+						</div>
+					</div>
+					<div class="booking-form">
+						<div class="date-inputs">
+							<div class="date-field">
+								<label>Check-in</label>
+								<p-datepicker [(ngModel)]="checkInDate" [minDate]="today" placeholder="Add date"></p-datepicker>
+							</div>
+							<div class="date-field">
+								<label>Check-out</label>
+								<p-datepicker [(ngModel)]="checkOutDate" [minDate]="checkInDate || today" placeholder="Add date"></p-datepicker>
+							</div>
+						</div>
+						<button pButton label="Reserve" [disabled]="!checkInDate || !checkOutDate" (click)="reserve()"></button>
+						<p class="booking-note">You won't be charged yet</p>
+					</div>
+				</div>
+				<button pButton label="Share" icon="pi pi-share-alt" class="p-button-outlined" (click)="share()"></button>
+			</div>
+		</div>
+	</div>
+</div>
+<ng-template #loadingTemplate>
+	<div class="container">
+		<p-skeleton height="500px" borderRadius="16px"></p-skeleton>
+		<p-skeleton height="40px" width="60%" class="mt-3"></p-skeleton>
+		<p-skeleton height="20px" width="40%" class="mt-2"></p-skeleton>
+	</div>
+</ng-template>

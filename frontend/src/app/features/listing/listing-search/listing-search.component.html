@@ -1,0 +1,57 @@
+<div class="search-page">
+	<div class="search-hero">
+		<div class="container">
+			<h1 class="fade-in">Find your perfect stay</h1>
+			<div class="search-bar slide-in">
+				<span class="p-input-icon-left">
+					<i class="pi pi-search"></i>
+					<input 
+						pInputText 
+						type="text" 
+						[(ngModel)]="searchCriteria.location"
+						placeholder="Where are you going?"
+						(keyup.enter)="search()" />
+				</span>
+				<!-- New Autocomplete for categories -->
+				<p-autocomplete 
+					[(ngModel)]="searchCriteria.category"
+					[dropdown]="true"
+					[suggestions]="filteredCategories"
+					(completeMethod)="filterCategories($event)"
+					placeholder="Category">
+				</p-autocomplete>
+				<button 
+					pButton 
+					label="Search" 
+					icon="pi pi-search"
+					(click)="search()"></button>
+			</div>
+		</div>
+	</div>
+	<div class="container section">
+		<div class="results-header">
+			<h2>{{ listingsPage.totalElements }} stays found</h2>
+		</div>
+		<div class="listing-grid" *ngIf="!loading; else loadingTemplate">
+			<app-listing-card 
+				*ngFor="let listing of listingsPage.content"
+				[listing]="listing"
+				class="fade-in"></app-listing-card>
+		</div>
+		<ng-template #loadingTemplate>
+			<div class="listing-grid">
+				<p-skeleton 
+					*ngFor="let item of [1,2,3,4,5,6]"
+					height="400px"
+					borderRadius="12px"></p-skeleton>
+			</div>
+		</ng-template>
+		<p-paginator 
+			*ngIf="listingsPage.totalElements > 0"
+			[rows]="searchCriteria.size!"
+			[totalRecords]="listingsPage.totalElements"
+			[first]="searchCriteria.page! * searchCriteria.size!"
+			(onPageChange)="onPageChange($event)">
+		</p-paginator>
+	</div>
+</div>
