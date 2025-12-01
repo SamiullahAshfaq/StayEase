@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+  
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  
+  liquibase:
+    contexts: prod
+    drop-first: false
+  web:
+    error:
+      include-stacktrace: never
+
+logging:
+  level:
+    root: WARN
+    com.stayease: INFO
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+
+server:
+  port: ${PORT:8080}

@@ -1,0 +1,14 @@
+--liquibase formatted sql
+
+--changeset stayease:master-changelog
+--include file:db/changelog/0001_create_user_tables.sql
+--include file:db/changelog/0002_create_authority_tables.sql
+--include file:db/changelog/0003_create_listing_tables.sql
+--include file:db/changelog/0004_create_booking_tables.sql
+--include file:db/changelog/0005_create_service_offering_tables.sql
+--include file:db/changelog/0006_create_payment_tables.sql
+--include file:db/changelog/0007_create_review_tables.sql
+--include file:db/changelog/0008_create_chat_tables.sql
+--include file:db/changelog/0009_create_notification_tables.sql
+--include file:db/changelog/0010_create_admin_tables.sql
+--include file:db/changelog/0011_add_indexes.sql

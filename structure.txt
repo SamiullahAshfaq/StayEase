@@ -1,0 +1,508 @@
+stayease/
+├── backend/
+│   ├── .env
+│   ├── .gitignore
+│   ├── pom.xml
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── README.md
+│   ├── docker-compose.yml
+│   │
+│   └── src/
+│       ├── main/
+│       │   ├── java/
+│       │   │   └── com/stayease/
+│       │   │       ├── StayEaseApplication.java
+│       │   │       │
+│       │   │       ├── config/
+│       │   │       │   ├── DatabaseConfiguration.java
+│       │   │       │   ├── SecurityConfiguration.java
+│       │   │       │   ├── OAuth2Configuration.java
+│       │   │       │   ├── WebMvcConfiguration.java
+│       │   │       │   ├── LiquibaseConfiguration.java
+│       │   │       │   └── CorsConfiguration.java
+│       │   │       │
+│       │   │       ├── domain/
+│       │   │       │   ├── user/
+│       │   │       │   │   ├── entity/
+│       │   │       │   │   │   ├── User.java
+│       │   │       │   │   │   ├── Authority.java
+│       │   │       │   │   │   └── UserAuthority.java
+│       │   │       │   │   ├── repository/
+│       │   │       │   │   │   ├── UserRepository.java
+│       │   │       │   │   │   ├── AuthorityRepository.java
+│       │   │       │   │   │   └── UserAuthorityRepository.java
+│       │   │       │   │   ├── service/
+│       │   │       │   │   │   ├── UserService.java
+│       │   │       │   │   │   └── AuthService.java
+│       │   │       │   │   ├── controller/
+│       │   │       │   │   │   ├── UserController.java
+│       │   │       │   │   │   └── AuthController.java
+│       │   │       │   │   └── dto/
+│       │   │       │   │       ├── UserDTO.java
+│       │   │       │   │       ├── CreateUserDTO.java
+│       │   │       │   │       ├── UpdateUserDTO.java
+│       │   │       │   │       └── AuthResponseDTO.java
+│       │   │       │   │
+│       │   │       │   ├── listing/
+│       │   │       │   │   ├── entity/
+│       │   │       │   │   │   ├── Listing.java
+│       │   │       │   │   │   └── ListingImage.java
+│       │   │       │   │   ├── repository/
+│       │   │       │   │   │   ├── ListingRepository.java
+│       │   │       │   │   │   └── ListingImageRepository.java
+│       │   │       │   │   ├── service/
+│       │   │       │   │   │   └── ListingService.java
+│       │   │       │   │   ├── controller/
+│       │   │       │   │   │   └── ListingController.java
+│       │   │       │   │   └── dto/
+│       │   │       │   │       ├── ListingDTO.java
+│       │   │       │   │       ├── CreateListingDTO.java
+│       │   │       │   │       ├── UpdateListingDTO.java
+│       │   │       │   │       ├── ListingImageDTO.java
+│       │   │       │   │       └── SearchListingDTO.java
+│       │   │       │   │
+│       │   │       │   ├── booking/
+│       │   │       │   │   ├── entity/
+│       │   │       │   │   │   ├── Booking.java
+│       │   │       │   │   │   └── BookingAddon.java
+│       │   │       │   │   ├── repository/
+│       │   │       │   │   │   ├── BookingRepository.java
+│       │   │       │   │   │   └── BookingAddonRepository.java
+│       │   │       │   │   ├── service/
+│       │   │       │   │   │   └── BookingService.java
+│       │   │       │   │   ├── controller/
+│       │   │       │   │   │   └── BookingController.java
+│       │   │       │   │   └── dto/
+│       │   │       │   │       ├── BookingDTO.java
+│       │   │       │   │       ├── CreateBookingDTO.java
+│       │   │       │   │       ├── UpdateBookingDTO.java
+│       │   │       │   │       └── BookingAddonDTO.java
+│       │   │       │   │
+│       │   │       │   ├── serviceoffering/
+│       │   │       │   │   ├── entity/
+│       │   │       │   │   │   ├── ServiceOffering.java
+│       │   │       │   │   │   ├── ServiceImage.java
+│       │   │       │   │   │   └── ServiceBooking.java
+│       │   │       │   │   ├── repository/
+│       │   │       │   │   │   ├── ServiceOfferingRepository.java
+│       │   │       │   │   │   ├── ServiceImageRepository.java
+│       │   │       │   │   │   └── ServiceBookingRepository.java
+│       │   │       │   │   ├── service/
+│       │   │       │   │   │   ├── ServiceOfferingService.java
+│       │   │       │   │   │   └── ServiceBookingService.java
+│       │   │       │   │   ├── controller/
+│       │   │       │   │   │   ├── ServiceOfferingController.java
+│       │   │       │   │   │   └── ServiceBookingController.java
+│       │   │       │   │   └── dto/
+│       │   │       │   │       ├── ServiceOfferingDTO.java
+│       │   │       │   │       ├── CreateServiceOfferingDTO.java
+│       │   │       │   │       ├── ServiceImageDTO.java
+│       │   │       │   │       ├── ServiceBookingDTO.java
+│       │   │       │   │       └── CreateServiceBookingDTO.java
+│       │   │       │   │
+│       │   │       │   ├── payment/
+│       │   │       │   │   ├── entity/
+│       │   │       │   │   │   ├── Payment.java
+│       │   │       │   │   │   └── Payout.java
+│       │   │       │   │   ├── repository/
+│       │   │       │   │   │   ├── PaymentRepository.java
+│       │   │       │   │   │   └── PayoutRepository.java
+│       │   │       │   │   ├── service/
+│       │   │       │   │   │   ├── PaymentService.java
+│       │   │       │   │   │   ├── PayoutService.java
+│       │   │       │   │   │   └── StripeService.java
+│       │   │       │   │   ├── controller/
+│       │   │       │   │   │   ├── PaymentController.java
+│       │   │       │   │   │   └── PayoutController.java
+│       │   │       │   │   └── dto/
+│       │   │       │   │       ├── PaymentDTO.java
+│       │   │       │   │       ├── CreatePaymentDTO.java
+│       │   │       │   │       ├── PayoutDTO.java
+│       │   │       │   │       └── PaymentIntentDTO.java
+│       │   │       │   │
+│       │   │       │   ├── review/
+│       │   │       │   │   ├── entity/
+│       │   │       │   │   │   └── Review.java
+│       │   │       │   │   ├── repository/
+│       │   │       │   │   │   └── ReviewRepository.java
+│       │   │       │   │   ├── service/
+│       │   │       │   │   │   └── ReviewService.java
+│       │   │       │   │   ├── controller/
+│       │   │       │   │   │   └── ReviewController.java
+│       │   │       │   │   └── dto/
+│       │   │       │   │       ├── ReviewDTO.java
+│       │   │       │   │       ├── CreateReviewDTO.java
+│       │   │       │   │       └── UpdateReviewDTO.java
+│       │   │       │   │
+│       │   │       │   ├── chat/
+│       │   │       │   │   ├── entity/
+│       │   │       │   │   │   ├── Conversation.java
+│       │   │       │   │   │   ├── ConversationParticipant.java
+│       │   │       │   │   │   └── Message.java
+│       │   │       │   │   ├── repository/
+│       │   │       │   │   │   ├── ConversationRepository.java
+│       │   │       │   │   │   ├── ConversationParticipantRepository.java
+│       │   │       │   │   │   └── MessageRepository.java
+│       │   │       │   │   ├── service/
+│       │   │       │   │   │   ├── ConversationService.java
+│       │   │       │   │   │   └── MessageService.java
+│       │   │       │   │   ├── controller/
+│       │   │       │   │   │   ├── ConversationController.java
+│       │   │       │   │   │   └── MessageController.java
+│       │   │       │   │   └── dto/
+│       │   │       │   │       ├── ConversationDTO.java
+│       │   │       │   │       ├── CreateConversationDTO.java
+│       │   │       │   │       ├── MessageDTO.java
+│       │   │       │   │       └── SendMessageDTO.java
+│       │   │       │   │
+│       │   │       │   ├── notification/
+│       │   │       │   │   ├── entity/
+│       │   │       │   │   │   └── Notification.java
+│       │   │       │   │   ├── repository/
+│       │   │       │   │   │   └── NotificationRepository.java
+│       │   │       │   │   ├── service/
+│       │   │       │   │   │   └── NotificationService.java
+│       │   │       │   │   ├── controller/
+│       │   │       │   │   │   └── NotificationController.java
+│       │   │       │   │   └── dto/
+│       │   │       │   │       ├── NotificationDTO.java
+│       │   │       │   │       └── CreateNotificationDTO.java
+│       │   │       │   │
+│       │   │       │   └── admin/
+│       │   │       │       ├── entity/
+│       │   │       │       │   ├── AdminAction.java
+│       │   │       │       │   └── AuditLog.java
+│       │   │       │       ├── repository/
+│       │   │       │       │   ├── AdminActionRepository.java
+│       │   │       │       │   └── AuditLogRepository.java
+│       │   │       │       ├── service/
+│       │   │       │       │   ├── AdminService.java
+│       │   │       │       │   └── AuditService.java
+│       │   │       │       ├── controller/
+│       │   │       │       │   └── AdminController.java
+│       │   │       │       └── dto/
+│       │   │       │           ├── AdminActionDTO.java
+│       │   │       │           ├── AuditLogDTO.java
+│       │   │       │           └── AdminDashboardDTO.java
+│       │   │       │
+│       │   │       ├── shared/
+│       │   │       │   ├── dto/
+│       │   │       │   │   ├── BaseDTO.java
+│       │   │       │   │   ├── ApiResponse.java
+│       │   │       │   │   ├── PageDTO.java
+│       │   │       │   │   └── ErrorDTO.java
+│       │   │       │   ├── mapper/
+│       │   │       │   │   ├── UserMapper.java
+│       │   │       │   │   ├── ListingMapper.java
+│       │   │       │   │   ├── BookingMapper.java
+│       │   │       │   │   ├── ServiceOfferingMapper.java
+│       │   │       │   │   ├── PaymentMapper.java
+│       │   │       │   │   ├── ReviewMapper.java
+│       │   │       │   │   └── ConversationMapper.java
+│       │   │       │   ├── util/
+│       │   │       │   │   ├── DateUtil.java
+│       │   │       │   │   ├── PriceUtil.java
+│       │   │       │   │   ├── UuidUtil.java
+│       │   │       │   │   └── ValidationUtil.java
+│       │   │       │   └── constant/
+│       │   │       │       ├── AuthorityConstant.java
+│       │   │       │       ├── BookingStatus.java
+│       │   │       │       ├── PaymentStatus.java
+│       │   │       │       └── NotificationType.java
+│       │   │       │
+│       │   │       ├── exception/
+│       │   │       │   ├── GlobalExceptionHandler.java
+│       │   │       │   ├── BadRequestException.java
+│       │   │       │   ├── NotFoundException.java
+│       │   │       │   ├── UnauthorizedException.java
+│       │   │       │   ├── ForbiddenException.java
+│       │   │       │   ├── ConflictException.java
+│       │   │       │   └── PaymentException.java
+│       │   │       │
+│       │   │       └── security/
+│       │   │           ├── SecurityUtils.java
+│       │   │           ├── JwtTokenProvider.java
+│       │   │           ├── UserPrincipal.java
+│       │   │           └── CustomAuthenticationEntryPoint.java
+│       │   │
+│       │   └── resources/
+│       │       ├── application.yml
+│       │       ├── application-dev.yml
+│       │       ├── application-prod.yml
+│       │       └── db/
+│       │           └── changelog/
+│       │               ├── db.changelog-master.xml
+│       │               ├── 0001_create_user_tables.xml
+│       │               ├── 0002_create_authority_tables.xml
+│       │               ├── 0003_create_listing_tables.xml
+│       │               ├── 0004_create_booking_tables.xml
+│       │               ├── 0005_create_service_offering_tables.xml
+│       │               ├── 0006_create_payment_tables.xml
+│       │               ├── 0007_create_review_tables.xml
+│       │               ├── 0008_create_chat_tables.xml
+│       │               ├── 0009_create_notification_tables.xml
+│       │               ├── 0010_create_admin_tables.xml
+│       │               └── 0011_add_indexes.xml
+│       │
+│       └── test/
+│           └── java/
+│               └── com/stayease/
+│                   ├── domain/
+│                   │   ├── user/
+│                   │   │   ├── UserServiceTest.java
+│                   │   │   └── UserControllerTest.java
+│                   │   ├── listing/
+│                   │   │   ├── ListingServiceTest.java
+│                   │   │   └── ListingControllerTest.java
+│                   │   ├── booking/
+│                   │   │   ├── BookingServiceTest.java
+│                   │   │   └── BookingControllerTest.java
+│                   │   └── payment/
+│                   │       └── PaymentServiceTest.java
+│                   └── integration/
+│                       └── AuthenticationIntegrationTest.java
+│
+└── frontend/
+    ├── angular.json
+    ├── package.json
+    ├── tsconfig.json
+    ├── proxy.conf.json
+    ├── .gitignore
+    ├── README.md
+    │
+    └── src/
+        ├── main.ts
+        ├── index.html
+        ├── styles.scss
+        │
+        ├── environments/
+        │   ├── environment.ts
+        │   └── environment.development.ts
+        │
+        └── app/
+            ├── app.config.ts
+            ├── app.config.server.ts
+            ├── app.routes.ts
+            ├── app.component.ts
+            ├── app.component.html
+            ├── app.component.scss
+            │
+            ├── core/
+            │   ├── auth/
+            │   │   ├── auth.service.ts
+            │   │   ├── auth.guard.ts
+            │   │   ├── auth-callback.component.ts
+            │   │   └── auth.interceptor.ts
+            │   ├── guards/
+            │   │   ├── role.guard.ts
+            │   │   └── landlord.guard.ts
+            │   ├── interceptors/
+            │   │   ├── http-error.interceptor.ts
+            │   │   └── loading.interceptor.ts
+            │   ├── services/
+            │   │   ├── api.service.ts
+            │   │   ├── storage.service.ts
+            │   │   └── notification.service.ts
+            │   └── models/
+            │       ├── user.model.ts
+            │       ├── authority.model.ts
+            │       └── api-response.model.ts
+            │
+            ├── features/
+            │   ├── home/
+            │   │   ├── home.component.ts
+            │   │   ├── home.component.html
+            │   │   └── home.component.scss
+            │   │
+            │   ├── auth/
+            │   │   ├── login/
+            │   │   │   ├── login.component.ts
+            │   │   │   ├── login.component.html
+            │   │   │   └── login.component.scss
+            │   │   └── register/
+            │   │       ├── register.component.ts
+            │   │       ├── register.component.html
+            │   │       └── register.component.scss
+            │   │
+            │   ├── listing/
+            │   │   ├── services/
+            │   │   │   └── listing.service.ts
+            │   │   ├── models/
+            │   │   │   ├── listing.model.ts
+            │   │   │   └── listing-image.model.ts
+            │   │   ├── listing-search/
+            │   │   │   ├── listing-search.component.ts
+            │   │   │   ├── listing-search.component.html
+            │   │   │   └── listing-search.component.scss
+            │   │   ├── listing-detail/
+            │   │   │   ├── listing-detail.component.ts
+            │   │   │   ├── listing-detail.component.html
+            │   │   │   └── listing-detail.component.scss
+            │   │   ├── listing-create/
+            │   │   │   ├── listing-create.component.ts
+            │   │   │   ├── listing-create.component.html
+            │   │   │   └── listing-create.component.scss
+            │   │   └── listing-card/
+            │   │       ├── listing-card.component.ts
+            │   │       ├── listing-card.component.html
+            │   │       └── listing-card.component.scss
+            │   │
+            │   ├── booking/
+            │   │   ├── services/
+            │   │   │   └── booking.service.ts
+            │   │   ├── models/
+            │   │   │   └── booking.model.ts
+            │   │   ├── booking-create/
+            │   │   │   ├── booking-create.component.ts
+            │   │   │   ├── booking-create.component.html
+            │   │   │   └── booking-create.component.scss
+            │   │   ├── booking-list/
+            │   │   │   ├── booking-list.component.ts
+            │   │   │   ├── booking-list.component.html
+            │   │   │   └── booking-list.component.scss
+            │   │   └── booking-detail/
+            │   │       ├── booking-detail.component.ts
+            │   │       ├── booking-detail.component.html
+            │   │       └── booking-detail.component.scss
+            │   │
+            │   ├── service-offering/
+            │   │   ├── services/
+            │   │   │   ├── service-offering.service.ts
+            │   │   │   └── service-booking.service.ts
+            │   │   ├── models/
+            │   │   │   ├── service-offering.model.ts
+            │   │   │   └── service-booking.model.ts
+            │   │   ├── service-list/
+            │   │   │   ├── service-list.component.ts
+            │   │   │   ├── service-list.component.html
+            │   │   │   └── service-list.component.scss
+            │   │   ├── service-detail/
+            │   │   │   ├── service-detail.component.ts
+            │   │   │   ├── service-detail.component.html
+            │   │   │   └── service-detail.component.scss
+            │   │   └── service-create/
+            │   │       ├── service-create.component.ts
+            │   │       ├── service-create.component.html
+            │   │       └── service-create.component.scss
+            │   │
+            │   ├── payment/
+            │   │   ├── services/
+            │   │   │   └── payment.service.ts
+            │   │   ├── models/
+            │   │   │   └── payment.model.ts
+            │   │   ├── payment-form/
+            │   │   │   ├── payment-form.component.ts
+            │   │   │   ├── payment-form.component.html
+            │   │   │   └── payment-form.component.scss
+            │   │   └── payment-success/
+            │   │       ├── payment-success.component.ts
+            │   │       ├── payment-success.component.html
+            │   │       └── payment-success.component.scss
+            │   │
+            │   ├── review/
+            │   │   ├── services/
+            │   │   │   └── review.service.ts
+            │   │   ├── models/
+            │   │   │   └── review.model.ts
+            │   │   ├── review-list/
+            │   │   │   ├── review-list.component.ts
+            │   │   │   ├── review-list.component.html
+            │   │   │   └── review-list.component.scss
+            │   │   └── review-form/
+            │   │       ├── review-form.component.ts
+            │   │       ├── review-form.component.html
+            │   │       └── review-form.component.scss
+            │   │
+            │   ├── chat/
+            │   │   ├── services/
+            │   │   │   ├── conversation.service.ts
+            │   │   │   └── message.service.ts
+            │   │   ├── models/
+            │   │   │   ├── conversation.model.ts
+            │   │   │   └── message.model.ts
+            │   │   ├── conversation-list/
+            │   │   │   ├── conversation-list.component.ts
+            │   │   │   ├── conversation-list.component.html
+            │   │   │   └── conversation-list.component.scss
+            │   │   └── chat-window/
+            │   │       ├── chat-window.component.ts
+            │   │       ├── chat-window.component.html
+            │   │       └── chat-window.component.scss
+            │   │
+            │   ├── profile/
+            │   │   ├── profile-view/
+            │   │   │   ├── profile-view.component.ts
+            │   │   │   ├── profile-view.component.html
+            │   │   │   └── profile-view.component.scss
+            │   │   ├── profile-edit/
+            │   │   │   ├── profile-edit.component.ts
+            │   │   │   ├── profile-edit.component.html
+            │   │   │   └── profile-edit.component.scss
+            │   │   └── my-listings/
+            │   │       ├── my-listings.component.ts
+            │   │       ├── my-listings.component.html
+            │   │       └── my-listings.component.scss
+            │   │
+            │   └── admin/
+            │       ├── services/
+            │       │   └── admin.service.ts
+            │       ├── admin-dashboard/
+            │       │   ├── admin-dashboard.component.ts
+            │       │   ├── admin-dashboard.component.html
+            │       │   └── admin-dashboard.component.scss
+            │       ├── user-management/
+            │       │   ├── user-management.component.ts
+            │       │   ├── user-management.component.html
+            │       │   └── user-management.component.scss
+            │       └── audit-log/
+            │           ├── audit-log.component.ts
+            │           ├── audit-log.component.html
+            │           └── audit-log.component.scss
+            │
+            ├── shared/
+            │   ├── components/
+            │   │   ├── header/
+            │   │   │   ├── header.component.ts
+            │   │   │   ├── header.component.html
+            │   │   │   └── header.component.scss
+            │   │   ├── footer/
+            │   │   │   ├── footer.component.ts
+            │   │   │   ├── footer.component.html
+            │   │   │   └── footer.component.scss
+            │   │   ├── loading-spinner/
+            │   │   │   ├── loading-spinner.component.ts
+            │   │   │   ├── loading-spinner.component.html
+            │   │   │   └── loading-spinner.component.scss
+            │   │   ├── error-message/
+            │   │   │   ├── error-message.component.ts
+            │   │   │   ├── error-message.component.html
+            │   │   │   └── error-message.component.scss
+            │   │   ├── image-upload/
+            │   │   │   ├── image-upload.component.ts
+            │   │   │   ├── image-upload.component.html
+            │   │   │   └── image-upload.component.scss
+            │   │   └── date-picker/
+            │   │       ├── date-picker.component.ts
+            │   │       ├── date-picker.component.html
+            │   │       └── date-picker.component.scss
+            │   ├── directives/
+            │   │   ├── lazy-load-image.directive.ts
+            │   │   └── click-outside.directive.ts
+            │   ├── pipes/
+            │   │   ├── currency-format.pipe.ts
+            │   │   ├── date-format.pipe.ts
+            │   │   └── truncate.pipe.ts
+            │   └── validators/
+            │       ├── custom-validators.ts
+            │       └── password-validator.ts
+            │
+            └── layout/
+                ├── main-layout/
+                │   ├── main-layout.component.ts
+                │   ├── main-layout.component.html
+                │   └── main-layout.component.scss
+                └── admin-layout/
+                    ├── admin-layout.component.ts
+                    ├── admin-layout.component.html
+                    └── admin-layout.component.scss
