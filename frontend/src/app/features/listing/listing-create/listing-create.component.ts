@@ -6,8 +6,7 @@ import { ButtonModule } from 'primeng/button';
   selector: 'app-listing-create',
   standalone: true,
   imports: [CommonModule, ButtonModule],
-  templateUrl: './listing-create.component.html',
-  styleUrls: ['./listing-create.component.scss']
+  templateUrl: './listing-create.component.html'
 })
 export class ListingCreateComponent {
   goBack() {

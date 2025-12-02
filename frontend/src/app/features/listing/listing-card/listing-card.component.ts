@@ -10,8 +10,7 @@ import { Listing } from '../models/listing.model';
   selector: 'app-listing-card',
   standalone: true,
   imports: [CommonModule, CardModule, ButtonModule, TagModule],
-  templateUrl: './listing-card.component.html',
-  styleUrls: ['./listing-card.component.scss']
+  templateUrl: './listing-card.component.html'
 })
 export class ListingCardComponent {
   @Input() listing!: Listing;

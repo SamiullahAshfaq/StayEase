@@ -23,8 +23,7 @@ import { Listing, Page, SearchListing } from '../models/listing.model';
     SkeletonModule,
     ListingCardComponent
   ],
-  templateUrl: './listing-search.component.html',
-  styleUrls: ['./listing-search.component.scss']
+  templateUrl: './listing-search.component.html'
 })
 export class ListingSearchComponent implements OnInit {
   private listingService = inject(ListingService);

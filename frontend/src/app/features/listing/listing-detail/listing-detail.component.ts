@@ -35,8 +35,7 @@ export interface Listing {
     DatePicker,
     SkeletonModule
   ],
-  templateUrl: './listing-detail.component.html',
-  styleUrls: ['./listing-detail.component.scss']
+  templateUrl: './listing-detail.component.html'
 })
 export class ListingDetailComponent implements OnInit {
   @Input() id!: string;

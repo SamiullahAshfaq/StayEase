@@ -31,7 +31,6 @@ import { DividerModule } from 'primeng/divider';
     DividerModule
   ],
    templateUrl: './login.component.html',
-   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);

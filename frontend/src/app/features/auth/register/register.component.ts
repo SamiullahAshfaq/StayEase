@@ -33,7 +33,6 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     SelectButtonModule
   ],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
