@@ -1,61 +1,282 @@
-<div class="search-page">
-  <div class="search-hero">
-    <div class="container">
-      <h1 class="fade-in">Find your perfect stay</h1>
-      <div class="search-bar slide-in">
-        <span class="p-input-icon-left">
-          <i class="pi pi-search"></i>
-          <input
-            pInputText
-            type="text"
-            [(ngModel)]="searchCriteria.location"
-            placeholder="Where are you going?"
-            (keyup.enter)="search()" />
-          </span>
-          <!-- New Autocomplete for categories -->
-          <p-autocomplete
-            [(ngModel)]="searchCriteria.category"
-            [dropdown]="true"
-            [suggestions]="filteredCategories"
-            (completeMethod)="filterCategories($event)"
-            placeholder="Category">
-          </p-autocomplete>
-          <button
-            pButton
-            label="Search"
-            icon="pi pi-search"
-          (click)="search()"></button>
-        </div>
+<div class="min-h-screen bg-white">
+  <!-- Category Filter Bar -->
+  <div class="border-b sticky top-0 bg-white z-40">
+    <div class="max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-8 py-4 overflow-x-auto scrollbar-hide">
+        <button
+          *ngFor="let category of categories"
+          (click)="selectCategory(category)"
+          [class.border-b-2]="selectedCategory === category"
+          [class.border-black]="selectedCategory === category"
+          [class.text-gray-900]="selectedCategory === category"
+          [class.text-gray-500]="selectedCategory !== category"
+          class="flex flex-col items-center gap-2 pb-3 px-2 hover:text-gray-900 hover:border-b-2 hover:border-gray-200 transition-all duration-200 whitespace-nowrap cursor-pointer flex-shrink-0">
+          <span class="text-xs font-medium">{{ category }}</span>
+        </button>
       </div>
-    </div>
-    <div class="container section">
-      <div class="results-header">
-        <h2>{{ listingsPage.totalElements }} stays found</h2>
-      </div>
-      @if (!loading) {
-        <div class="listing-grid">
-          @for (listing of listingsPage.content; track listing) {
-            <app-listing-card
-              [listing]="listing"
-            class="fade-in"></app-listing-card>
-          }
-        </div>
-      } @else {
-        <div class="listing-grid">
-          @for (item of [1,2,3,4,5,6]; track item) {
-            <p-skeleton
-              height="400px"
-            borderRadius="12px"></p-skeleton>
-          }
-        </div>
-      }
-      @if (listingsPage.totalElements > 0) {
-        <p-paginator
-          [rows]="searchCriteria.size!"
-          [totalRecords]="listingsPage.totalElements"
-          [first]="searchCriteria.page! * searchCriteria.size!"
-          (onPageChange)="onPageChange($event)">
-        </p-paginator>
-      }
     </div>
   </div>
+
+  <!-- Filters Button -->
+  <div class="max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-semibold text-gray-900">
+          {{ totalElements }} stays
+          <span *ngIf="searchParams.location"> in {{ searchParams.location }}</span>
+        </h1>
+        <p *ngIf="hasActiveFilters()" class="text-sm text-gray-600 mt-1">
+          {{ getActiveFiltersCount() }} active filter(s)
+          <button (click)="clearAllFilters()" class="text-black underline ml-2 hover:text-gray-700">
+            Clear all
+          </button>
+        </p>
+      </div>
+      
+      <button
+        (click)="openFiltersModal()"
+        class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-xl hover:border-black transition-colors duration-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+        </svg>
+        <span class="font-semibold text-sm">Filters</span>
+        <span *ngIf="hasActiveFilters()" class="flex items-center justify-center w-5 h-5 bg-black text-white text-xs rounded-full">
+          {{ getActiveFiltersCount() }}
+        </span>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
+      {{ error }}
+    </div>
+
+    <!-- Listings Grid -->
+    <div *ngIf="!loading && listings.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-10">
+      <app-listing-card *ngFor="let listing of listings" [listing]="listing"></app-listing-card>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && listings.length === 0" class="text-center py-20">
+      <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <h3 class="mt-4 text-lg font-medium text-gray-900">No listings found</h3>
+      <p class="mt-2 text-sm text-gray-500">Try adjusting your filters or search criteria.</p>
+      <button 
+        *ngIf="hasActiveFilters()"
+        (click)="clearAllFilters()"
+        class="mt-6 px-6 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors duration-200">
+        Clear all filters
+      </button>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!loading && listings.length > 0 && totalPages > 1" class="flex justify-center items-center gap-2 mt-12 pb-12">
+      <button
+        (click)="changePage(currentPage - 1)"
+        [disabled]="currentPage === 0"
+        [class.opacity-50]="currentPage === 0"
+        [class.cursor-not-allowed]="currentPage === 0"
+        class="px-4 py-2 border border-gray-300 rounded-full hover:border-black transition-colors duration-200 disabled:hover:border-gray-300">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      
+      <span class="px-4 py-2 text-sm font-medium">
+        Page {{ currentPage + 1 }} of {{ totalPages }}
+      </span>
+      
+      <button
+        (click)="changePage(currentPage + 1)"
+        [disabled]="currentPage === totalPages - 1"
+        [class.opacity-50]="currentPage === totalPages - 1"
+        [class.cursor-not-allowed]="currentPage === totalPages - 1"
+        class="px-4 py-2 border border-gray-300 rounded-full hover:border-black transition-colors duration-200 disabled:hover:border-gray-300">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Modal -->
+  <div
+    *ngIf="showFiltersModal"
+    class="fixed inset-0 z-50 overflow-y-auto"
+    (click)="closeFiltersModal()">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <!-- Background overlay -->
+      <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+
+      <!-- Modal panel -->
+      <div
+        (click)="$event.stopPropagation()"
+        class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b">
+          <button (click)="closeFiltersModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+          <h2 class="text-lg font-semibold">Filters</h2>
+          <button (click)="clearFilters()" class="text-sm font-semibold underline hover:text-gray-700">
+            Clear all
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="px-6 py-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+          
+          <!-- Price Range -->
+          <div class="pb-8 border-b">
+            <h3 class="text-lg font-semibold mb-6">Price range</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Minimum</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    [(ngModel)]="tempFilters.minPrice"
+                    placeholder="0"
+                    class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Maximum</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <input
+                    type="number"
+                    [(ngModel)]="tempFilters.maxPrice"
+                    placeholder="1000+"
+                    class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Property Type -->
+          <div class="py-8 border-b">
+            <h3 class="text-lg font-semibold mb-6">Property type</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <button
+                *ngFor="let type of propertyTypes"
+                (click)="togglePropertyType(type)"
+                [class.border-black]="tempFilters.propertyTypes.includes(type)"
+                [class.bg-gray-50]="tempFilters.propertyTypes.includes(type)"
+                class="px-4 py-3 border border-gray-300 rounded-xl hover:border-black transition-colors duration-200 text-left text-sm font-medium">
+                {{ type }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Rooms and beds -->
+          <div class="py-8 border-b space-y-6">
+            <h3 class="text-lg font-semibold">Rooms and beds</h3>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-3">Bedrooms</label>
+              <div class="flex items-center gap-3">
+                <button
+                  *ngFor="let num of [1,2,3,4,5,6,7,8]"
+                  (click)="tempFilters.minBedrooms = num"
+                  [class.border-black]="tempFilters.minBedrooms === num"
+                  [class.bg-black]="tempFilters.minBedrooms === num"
+                  [class.text-white]="tempFilters.minBedrooms === num"
+                  class="w-12 h-12 border border-gray-300 rounded-lg hover:border-black transition-colors duration-200 text-sm font-medium">
+                  {{ num }}{{ num === 8 ? '+' : '' }}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-3">Beds</label>
+              <div class="flex items-center gap-3">
+                <button
+                  *ngFor="let num of [1,2,3,4,5,6,7,8]"
+                  (click)="tempFilters.minBeds = num"
+                  [class.border-black]="tempFilters.minBeds === num"
+                  [class.bg-black]="tempFilters.minBeds === num"
+                  [class.text-white]="tempFilters.minBeds === num"
+                  class="w-12 h-12 border border-gray-300 rounded-lg hover:border-black transition-colors duration-200 text-sm font-medium">
+                  {{ num }}{{ num === 8 ? '+' : '' }}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-3">Bathrooms</label>
+              <div class="flex items-center gap-3">
+                <button
+                  *ngFor="let num of [1,2,3,4,5,6,7,8]"
+                  (click)="tempFilters.minBathrooms = num"
+                  [class.border-black]="tempFilters.minBathrooms === num"
+                  [class.bg-black]="tempFilters.minBathrooms === num"
+                  [class.text-white]="tempFilters.minBathrooms === num"
+                  class="w-12 h-12 border border-gray-300 rounded-lg hover:border-black transition-colors duration-200 text-sm font-medium">
+                  {{ num }}{{ num === 8 ? '+' : '' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Amenities -->
+          <div class="py-8 border-b">
+            <h3 class="text-lg font-semibold mb-6">Amenities</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <label
+                *ngFor="let amenity of amenities"
+                class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors duration-200">
+                <input
+                  type="checkbox"
+                  [checked]="tempFilters.amenities.includes(amenity)"
+                  (change)="toggleAmenity(amenity)"
+                  class="w-5 h-5 border-gray-300 rounded focus:ring-black text-black cursor-pointer">
+                <span class="text-sm">{{ amenity }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Booking options -->
+          <div class="py-8">
+            <h3 class="text-lg font-semibold mb-6">Booking options</h3>
+            <label class="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors duration-200">
+              <div>
+                <div class="font-medium">Instant Book</div>
+                <div class="text-sm text-gray-600">Listings you can book without waiting for host approval</div>
+              </div>
+              <input
+                type="checkbox"
+                [(ngModel)]="tempFilters.instantBook"
+                class="w-5 h-5 border-gray-300 rounded focus:ring-black text-black cursor-pointer">
+            </label>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-between px-6 py-4 border-t bg-white">
+          <button
+            (click)="clearFilters()"
+            class="text-sm font-semibold underline hover:text-gray-700">
+            Clear all
+          </button>
+          <button
+            (click)="applyFilters()"
+            class="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 font-semibold">
+            Show {{ totalElements }} stays
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,16 +1,26 @@
 package com.stayease.domain.user.service;
 
-import com.stayease.domain.user.dto.AuthResponseDTO;
-import com.stayease.domain.user.dto.CreateUserDTO;
-import com.stayease.domain.user.dto.UserDTO;
+import com.stayease.domain.user.dto.*;
+import com.stayease.domain.user.entity.Authority;
 import com.stayease.domain.user.entity.User;
+import com.stayease.domain.user.entity.UserAuthority;
+import com.stayease.domain.user.repository.AuthorityRepository;
+import com.stayease.domain.user.repository.UserRepository;
+import com.stayease.exception.BadRequestException;
 import com.stayease.exception.UnauthorizedException;
+import com.stayease.security.JwtTokenProvider;
+import com.stayease.security.UserPrincipal;
 import com.stayease.shared.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -18,50 +28,104 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AuthService {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
+    private final AuthorityRepository authorityRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
 
-    public UserDTO register(CreateUserDTO createUserDTO) {
-        log.info("Registering new user with email: {}", createUserDTO.getEmail());
-        return userService.createUser(createUserDTO);
-    }
+    public AuthResponseDTO register(RegisterDTO registerDTO) {
+        log.info("Registering new user: {}", registerDTO.getEmail());
 
-    public AuthResponseDTO handleOAuthCallback(Jwt jwt) {
-        if (jwt == null) {
-            throw new UnauthorizedException("Invalid token");
+        if (userRepository.existsByEmail(registerDTO.getEmail())) {
+            throw new BadRequestException("Email already registered");
         }
 
-        String email = jwt.getClaimAsString("email");
-        String firstName = jwt.getClaimAsString("given_name");
-        String lastName = jwt.getClaimAsString("family_name");
-        String picture = jwt.getClaimAsString("picture");
+        User user = User.builder()
+                .email(registerDTO.getEmail())
+                .password(passwordEncoder.encode(registerDTO.getPassword()))
+                .firstName(registerDTO.getFirstName())
+                .lastName(registerDTO.getLastName())
+                .phoneNumber(registerDTO.getPhoneNumber())
+                .accountStatus(User.AccountStatus.ACTIVE)
+                .build();
 
-        log.info("Processing OAuth callback for user: {}", email);
+        // Assign default ROLE_USER
+        Authority userAuthority = authorityRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Default authority not found"));
+        
+        UserAuthority userAuthorityMapping = UserAuthority.builder()
+                .authority(userAuthority)
+                .build();
+        
+        user.addAuthority(userAuthorityMapping);
 
-        // Get or create user from OAuth data
-        User user = userService.getOrCreateUserFromOAuth(email, firstName, lastName, picture);
-        UserDTO userDTO = userMapper.toDTO(user);
+        // If user wants to be a landlord, add ROLE_LANDLORD
+        if (Boolean.TRUE.equals(registerDTO.getIsLandlord())) {
+            Authority landlordAuthority = authorityRepository.findByName("ROLE_LANDLORD")
+                    .orElseThrow(() -> new RuntimeException("Landlord authority not found"));
+            
+            UserAuthority landlordMapping = UserAuthority.builder()
+                    .authority(landlordAuthority)
+                    .build();
+            
+            user.addAuthority(landlordMapping);
+        }
 
-        // Build response
+        User savedUser = userRepository.save(user);
+        log.info("User registered successfully: {}", savedUser.getPublicId());
+
+        UserPrincipal userPrincipal = UserPrincipal.create(savedUser);
+        String token = tokenProvider.generateTokenFromPrincipal(userPrincipal);
+
         return AuthResponseDTO.builder()
-                .token(jwt.getTokenValue())
+                .token(token)
                 .tokenType("Bearer")
-                .expiresIn(jwt.getExpiresAt() != null ? 
-                        jwt.getExpiresAt().getEpochSecond() - jwt.getIssuedAt().getEpochSecond() : 
-                        3600L)
-                .user(userDTO)
+                .expiresIn(86400000L) // 24 hours
+                .user(userMapper.toDTO(savedUser))
+                .build();
+    }
+
+    public AuthResponseDTO login(LoginDTO loginDTO) {
+        log.info("User login attempt: {}", loginDTO.getEmail());
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDTO.getEmail(),
+                        loginDTO.getPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = tokenProvider.generateToken(authentication);
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        // Update last login
+        User user = userRepository.findByPublicId(userPrincipal.getPublicId())
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
+        user.setLastLoginAt(Instant.now());
+        userRepository.save(user);
+
+        User fullUser = userRepository.findByPublicIdWithAuthorities(userPrincipal.getPublicId())
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
+
+        log.info("User logged in successfully: {}", user.getPublicId());
+
+        return AuthResponseDTO.builder()
+                .token(token)
+                .tokenType("Bearer")
+                .expiresIn(86400000L) // 24 hours
+                .user(userMapper.toDTO(fullUser))
                 .build();
     }
 
     @Transactional(readOnly = true)
-    public UserDTO getCurrentUserFromJwt(Jwt jwt) {
-        if (jwt == null) {
-            throw new UnauthorizedException("Invalid token");
-        }
-
-        String email = jwt.getClaimAsString("email");
-        log.info("Fetching current user from JWT: {}", email);
+    public UserDTO getCurrentUser(UserPrincipal currentUser) {
+        User user = userRepository.findByPublicIdWithAuthorities(currentUser.getPublicId())
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
         
-        return userService.getUserByEmail(email);
+        return userMapper.toDTO(user);
     }
 }

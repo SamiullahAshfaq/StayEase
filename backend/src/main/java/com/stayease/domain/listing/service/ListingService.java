@@ -1,25 +1,24 @@
 package com.stayease.domain.listing.service;
 
-import com.stayease.domain.listing.dto.CreateListingDTO;
-import com.stayease.domain.listing.dto.ListingDTO;
-import com.stayease.domain.listing.dto.SearchListingDTO;
-import com.stayease.domain.listing.dto.UpdateListingDTO;
+import com.stayease.domain.listing.dto.*;
 import com.stayease.domain.listing.entity.Listing;
-import com.stayease.domain.listing.entity.ListingImage;
+import com.stayease.domain.listing.repository.ListingImageRepository;
 import com.stayease.domain.listing.repository.ListingRepository;
 import com.stayease.exception.ForbiddenException;
 import com.stayease.exception.NotFoundException;
-import com.stayease.security.SecurityUtils;
 import com.stayease.shared.mapper.ListingMapper;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,148 +29,217 @@ import java.util.UUID;
 public class ListingService {
 
     private final ListingRepository listingRepository;
+    private final ListingImageRepository listingImageRepository;
     private final ListingMapper listingMapper;
 
-    public ListingDTO createListing(CreateListingDTO createListingDTO) {
-        UUID landlordPublicId = SecurityUtils.getCurrentUserPublicId()
-                .orElseThrow(() -> new ForbiddenException("User must be authenticated"));
-
+    public ListingDTO createListing(CreateListingDTO dto, UUID landlordPublicId) {
         log.info("Creating new listing for landlord: {}", landlordPublicId);
 
-        Listing listing = listingMapper.toEntity(createListingDTO);
+        Listing listing = listingMapper.toEntity(dto);
         listing.setLandlordPublicId(landlordPublicId);
-
-        // Add images if provided
-        if (createListingDTO.getImageUrls() != null && !createListingDTO.getImageUrls().isEmpty()) {
-            for (int i = 0; i < createListingDTO.getImageUrls().size(); i++) {
-                ListingImage image = listingMapper.imageToEntity(createListingDTO.getImageUrls().get(i), i);
-                listing.addImage(image);
-            }
-        }
-
+        
         Listing savedListing = listingRepository.save(listing);
-        log.info("Listing created successfully with publicId: {}", savedListing.getPublicId());
-
+        log.info("Listing created successfully with ID: {}", savedListing.getPublicId());
+        
         return listingMapper.toDTO(savedListing);
     }
 
     @Transactional(readOnly = true)
     public ListingDTO getListingByPublicId(UUID publicId) {
-        log.info("Fetching listing with publicId: {}", publicId);
+        log.debug("Fetching listing with publicId: {}", publicId);
+        
         Listing listing = listingRepository.findByPublicIdWithImages(publicId)
-                .orElseThrow(() -> new NotFoundException("Listing not found with publicId: " + publicId));
+                .orElseThrow(() -> new NotFoundException("Listing not found with ID: " + publicId));
+        
         return listingMapper.toDTO(listing);
     }
 
     @Transactional(readOnly = true)
     public Page<ListingDTO> getAllListings(int page, int size, String sortBy, String sortDirection) {
-        log.info("Fetching all listings - page: {}, size: {}", page, size);
+        log.debug("Fetching all active listings - page: {}, size: {}", page, size);
         
-        Sort.Direction direction = sortDirection.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Sort sort = sortDirection.equalsIgnoreCase("ASC") ? 
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         
-        return listingRepository.findAll(pageable)
-                .map(listingMapper::toDTO);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        
+        Page<Listing> listings = listingRepository.findAll(
+                (Specification<Listing>) (root, query, cb) -> 
+                        cb.equal(root.get("status"), Listing.ListingStatus.ACTIVE),
+                pageable
+        );
+        
+        return listings.map(listingMapper::toDTO);
     }
 
     @Transactional(readOnly = true)
     public Page<ListingDTO> searchListings(SearchListingDTO searchDTO) {
-        log.info("Searching listings with criteria: {}", searchDTO);
+        log.debug("Searching listings with criteria: {}", searchDTO);
         
-        Sort.Direction direction = searchDTO.getSortDirection().equalsIgnoreCase("ASC") ? 
-                Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(
-                searchDTO.getPage(), 
-                searchDTO.getSize(), 
-                Sort.by(direction, searchDTO.getSortBy())
-        );
+        Sort sort = searchDTO.getSortDirection().equalsIgnoreCase("ASC") ? 
+                Sort.by(searchDTO.getSortBy()).ascending() : 
+                Sort.by(searchDTO.getSortBy()).descending();
         
-        return listingRepository.searchListings(
-                searchDTO.getLocation(),
-                searchDTO.getCategory(),
-                searchDTO.getMinPrice(),
-                searchDTO.getMaxPrice(),
-                searchDTO.getGuests(),
-                pageable
-        ).map(listingMapper::toDTO);
+        Pageable pageable = PageRequest.of(searchDTO.getPage(), searchDTO.getSize(), sort);
+        
+        Specification<Listing> spec = createSpecification(searchDTO);
+        
+        Page<Listing> listings = listingRepository.findAll(spec, pageable);
+        
+        return listings.map(listingMapper::toDTO);
     }
 
     @Transactional(readOnly = true)
-    public Page<ListingDTO> getMyListings(int page, int size) {
-        UUID landlordPublicId = SecurityUtils.getCurrentUserPublicId()
-                .orElseThrow(() -> new ForbiddenException("User must be authenticated"));
-
-        log.info("Fetching listings for landlord: {}", landlordPublicId);
+    public List<ListingDTO> getListingsByLandlord(UUID landlordPublicId) {
+        log.debug("Fetching listings for landlord: {}", landlordPublicId);
         
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return listingRepository.findByLandlordPublicId(landlordPublicId, pageable)
-                .map(listingMapper::toDTO);
+        List<Listing> listings = listingRepository.findByLandlordPublicId(landlordPublicId);
+        
+        return listingMapper.toDTOList(listings);
     }
 
-    public ListingDTO updateListing(UUID publicId, UpdateListingDTO updateListingDTO) {
-        log.info("Updating listing with publicId: {}", publicId);
-
-        Listing listing = listingRepository.findByPublicIdWithImages(publicId)
-                .orElseThrow(() -> new NotFoundException("Listing not found with publicId: " + publicId));
-
-        // Check if user is the landlord
-        UUID currentUserPublicId = SecurityUtils.getCurrentUserPublicId()
-                .orElseThrow(() -> new ForbiddenException("User must be authenticated"));
+    @Transactional(readOnly = true)
+    public Page<ListingDTO> getListingsByCategory(String category, int page, int size) {
+        log.debug("Fetching listings by category: {}", category);
         
-        if (!listing.getLandlordPublicId().equals(currentUserPublicId) && 
-            !SecurityUtils.hasAuthority("ROLE_ADMIN")) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        
+        Page<Listing> listings = listingRepository.findByCategory(category, pageable);
+        
+        return listings.map(listingMapper::toDTO);
+    }
+
+    public ListingDTO updateListing(UUID publicId, UpdateListingDTO dto, UUID currentUserPublicId) {
+        log.info("Updating listing: {}", publicId);
+        
+        Listing listing = listingRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new NotFoundException("Listing not found with ID: " + publicId));
+        
+        if (!listing.getLandlordPublicId().equals(currentUserPublicId)) {
             throw new ForbiddenException("You don't have permission to update this listing");
         }
-
-        // Update fields if provided
-        if (updateListingDTO.getTitle() != null) listing.setTitle(updateListingDTO.getTitle());
-        if (updateListingDTO.getDescription() != null) listing.setDescription(updateListingDTO.getDescription());
-        if (updateListingDTO.getLocation() != null) listing.setLocation(updateListingDTO.getLocation());
-        if (updateListingDTO.getPrice() != null) listing.setPrice(updateListingDTO.getPrice());
-        if (updateListingDTO.getGuests() != null) listing.setGuests(updateListingDTO.getGuests());
-        if (updateListingDTO.getBedrooms() != null) listing.setBedrooms(updateListingDTO.getBedrooms());
-        if (updateListingDTO.getBeds() != null) listing.setBeds(updateListingDTO.getBeds());
-        if (updateListingDTO.getBathrooms() != null) listing.setBathrooms(updateListingDTO.getBathrooms());
-        if (updateListingDTO.getCategory() != null) listing.setCategory(updateListingDTO.getCategory());
-        if (updateListingDTO.getRules() != null) listing.setRules(updateListingDTO.getRules());
-
-        // Update images if provided
-        if (updateListingDTO.getImageUrls() != null) {
-            listing.getImages().clear();
-            for (int i = 0; i < updateListingDTO.getImageUrls().size(); i++) {
-                ListingImage image = listingMapper.imageToEntity(updateListingDTO.getImageUrls().get(i), i);
-                listing.addImage(image);
-            }
-        }
-
+        
+        listingMapper.updateEntity(listing, dto);
+        
         Listing updatedListing = listingRepository.save(listing);
-        log.info("Listing updated successfully with publicId: {}", publicId);
-
+        log.info("Listing updated successfully: {}", publicId);
+        
         return listingMapper.toDTO(updatedListing);
     }
 
-    public void deleteListing(UUID publicId) {
-        log.info("Deleting listing with publicId: {}", publicId);
-
-        Listing listing = listingRepository.findByPublicId(publicId)
-                .orElseThrow(() -> new NotFoundException("Listing not found with publicId: " + publicId));
-
-        // Check if user is the landlord
-        UUID currentUserPublicId = SecurityUtils.getCurrentUserPublicId()
-                .orElseThrow(() -> new ForbiddenException("User must be authenticated"));
+    public void deleteListing(UUID publicId, UUID currentUserPublicId) {
+        log.info("Deleting listing: {}", publicId);
         
-        if (!listing.getLandlordPublicId().equals(currentUserPublicId) && 
-            !SecurityUtils.hasAuthority("ROLE_ADMIN")) {
+        Listing listing = listingRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new NotFoundException("Listing not found with ID: " + publicId));
+        
+        if (!listing.getLandlordPublicId().equals(currentUserPublicId)) {
             throw new ForbiddenException("You don't have permission to delete this listing");
         }
-
+        
         listingRepository.delete(listing);
-        log.info("Listing deleted successfully with publicId: {}", publicId);
+        log.info("Listing deleted successfully: {}", publicId);
     }
 
-    @Transactional(readOnly = true)
-    public List<String> getAllCategories() {
-        log.info("Fetching all listing categories");
-        return listingRepository.findAllCategories();
+    public ListingDTO updateListingStatus(UUID publicId, Listing.ListingStatus status, UUID currentUserPublicId) {
+        log.info("Updating listing status: {} to {}", publicId, status);
+        
+        Listing listing = listingRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new NotFoundException("Listing not found with ID: " + publicId));
+        
+        if (!listing.getLandlordPublicId().equals(currentUserPublicId)) {
+            throw new ForbiddenException("You don't have permission to update this listing");
+        }
+        
+        listing.setStatus(status);
+        Listing updatedListing = listingRepository.save(listing);
+        
+        return listingMapper.toDTO(updatedListing);
+    }
+
+    private Specification<Listing> createSpecification(SearchListingDTO searchDTO) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            
+            // Always filter active listings
+            predicates.add(cb.equal(root.get("status"), Listing.ListingStatus.ACTIVE));
+            
+            // Location filters
+            if (searchDTO.getLocation() != null && !searchDTO.getLocation().isEmpty()) {
+                String locationPattern = "%" + searchDTO.getLocation().toLowerCase() + "%";
+                predicates.add(cb.or(
+                    cb.like(cb.lower(root.get("location")), locationPattern),
+                    cb.like(cb.lower(root.get("city")), locationPattern),
+                    cb.like(cb.lower(root.get("country")), locationPattern)
+                ));
+            }
+            
+            if (searchDTO.getCity() != null && !searchDTO.getCity().isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("city")), 
+                    "%" + searchDTO.getCity().toLowerCase() + "%"));
+            }
+            
+            if (searchDTO.getCountry() != null && !searchDTO.getCountry().isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("country")), 
+                    "%" + searchDTO.getCountry().toLowerCase() + "%"));
+            }
+            
+            // Guest count
+            if (searchDTO.getGuests() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("maxGuests"), searchDTO.getGuests()));
+            }
+            
+            // Price range
+            if (searchDTO.getMinPrice() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("pricePerNight"), searchDTO.getMinPrice()));
+            }
+            
+            if (searchDTO.getMaxPrice() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("pricePerNight"), searchDTO.getMaxPrice()));
+            }
+            
+            // Property types
+            if (searchDTO.getPropertyTypes() != null && !searchDTO.getPropertyTypes().isEmpty()) {
+                predicates.add(root.get("propertyType").in(searchDTO.getPropertyTypes()));
+            }
+            
+            // Categories
+            if (searchDTO.getCategories() != null && !searchDTO.getCategories().isEmpty()) {
+                predicates.add(root.get("category").in(searchDTO.getCategories()));
+            }
+            
+            // Bedrooms
+            if (searchDTO.getMinBedrooms() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("bedrooms"), searchDTO.getMinBedrooms()));
+            }
+            
+            // Beds
+            if (searchDTO.getMinBeds() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("beds"), searchDTO.getMinBeds()));
+            }
+            
+            // Bathrooms
+            if (searchDTO.getMinBathrooms() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("bathrooms"), searchDTO.getMinBathrooms()));
+            }
+            
+            // Instant book
+            if (searchDTO.getInstantBook() != null && searchDTO.getInstantBook()) {
+                predicates.add(cb.isTrue(root.get("instantBook")));
+            }
+            
+            // Amenities - check if listing has all requested amenities
+            if (searchDTO.getAmenities() != null && !searchDTO.getAmenities().isEmpty()) {
+                for (String amenity : searchDTO.getAmenities()) {
+                    predicates.add(cb.isTrue(cb.function(
+                        "jsonb_exists",
+                        Boolean.class,
+                        root.get("amenities"),
+                        cb.literal(amenity)
+                    )));
+                }
+            }
+            return cb.and(predicates.toArray(Predicate[]::new));
+        };
     }
 }

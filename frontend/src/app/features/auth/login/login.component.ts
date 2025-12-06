@@ -1,51 +1,26 @@
-import { Component, inject, signal } from '@angular/core';
-
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
-
-// PrimeNG Imports
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
-import { CheckboxModule } from 'primeng/checkbox';
-import { MessageModule } from 'primeng/message';
-import { RippleModule } from 'primeng/ripple';
-import { CardModule } from 'primeng/card';
-import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-    ButtonModule,
-    InputTextModule,
-    PasswordModule,
-    CheckboxModule,
-    MessageModule,
-    RippleModule,
-    CardModule,
-    DividerModule
-<<<<<<< HEAD
-  ],
-   templateUrl: './login.component.html',
-=======
-],
-   templateUrl: './login.component.html'
->>>>>>> 3bd6c1d (removed scss)
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  templateUrl: './login.component.html'
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-
   loginForm: FormGroup;
-  loading = signal(false);
-  errorMessage = signal<string | null>(null);
+  loading = false;
+  error: string | null = null;
+  showPassword = false;
 
-  constructor() {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
@@ -55,31 +30,41 @@ export class LoginComponent {
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
+      Object.keys(this.loginForm.controls).forEach(key => {
+        this.loginForm.get(key)?.markAsTouched();
+      });
       return;
     }
 
-    this.loading.set(true);
-    this.errorMessage.set(null);
+    this.loading = true;
+    this.error = null;
 
-    const { email, password } = this.loginForm.value;
-
-    this.authService.login({ email, password }).subscribe({
+    this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
-        this.loading.set(false);
-        // Navigate based on user role
-        const user = response.data?.user;
-        if (user?.authorities?.includes('ROLE_LANDLORD')) {
-          this.router.navigate(['/my-listings']);
-        } else {
-          this.router.navigate(['/listings']);
+        if (response.success) {
+          this.router.navigate(['/']);
         }
+        this.loading = false;
       },
       error: (error) => {
-        this.loading.set(false);
-        this.errorMessage.set(
-          error.error?.message || 'Invalid email or password. Please try again.'
-        );
+        this.error = error.error?.message || 'Invalid email or password';
+        this.loading = false;
       }
     });
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  getErrorMessage(field: string): string {
+    const control = this.loginForm.get(field);
+    if (control?.hasError('required')) {
+      return `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+    }
+    if (control?.hasError('email')) {
+      return 'Please enter a valid email address';
+    }
+    return '';
   }
 }

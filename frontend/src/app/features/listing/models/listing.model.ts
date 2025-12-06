@@ -1,79 +1,199 @@
+import { ListingImage } from './listing-image.model';
+
 export interface Listing {
-  city: string;
-  state: string;
-  country: string;
-  amenities: never[];
-  id: any;
   publicId: string;
   landlordPublicId: string;
   title: string;
   description: string;
   location: string;
-  price: number;
+  city: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  pricePerNight: number;
   currency: string;
-  guests: number;
+  maxGuests: number;
   bedrooms: number;
   beds: number;
   bathrooms: number;
+  propertyType: string;
   category: string;
-  rules?: string;
+  amenities: string[];
+  houseRules?: string;
+  cancellationPolicy: string;
+  minimumStay: number;
+  maximumStay?: number;
+  instantBook: boolean;
+  status: ListingStatus;
   images: ListingImage[];
+  coverImageUrl?: string;
+  averageRating?: number;
+  totalReviews?: number;
   createdAt: string;
   updatedAt: string;
 }
-
-export interface ListingImage {
-  id: number;
-  url: string;
-  caption?: string;
-  sortOrder: number;
+export enum ListingStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  PENDING_APPROVAL = 'PENDING_APPROVAL',
+  SUSPENDED = 'SUSPENDED',
+  DELETED = 'DELETED'
 }
 
 export interface CreateListing {
   title: string;
   description: string;
   location: string;
-  price: number;
-  currency?: string;
-  guests: number;
+  city: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  pricePerNight: number;
+  currency: string;
+  maxGuests: number;
   bedrooms: number;
   beds: number;
   bathrooms: number;
+  propertyType: string;
   category: string;
-  rules?: string;
-  imageUrls?: string[];
+  amenities: string[];
+  houseRules?: string;
+  cancellationPolicy: string;
+  minimumStay: number;
+  maximumStay?: number;
+  instantBook: boolean;
+  images: ListingImage[];
 }
 
 export interface UpdateListing {
   title?: string;
   description?: string;
   location?: string;
-  price?: number;
-  guests?: number;
+  city?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  pricePerNight?: number;
+  currency?: string;
+  maxGuests?: number;
   bedrooms?: number;
   beds?: number;
   bathrooms?: number;
+  propertyType?: string;
   category?: string;
-  rules?: string;
-  imageUrls?: string[];
+  amenities?: string[];
+  houseRules?: string;
+  cancellationPolicy?: string;
+  minimumStay?: number;
+  maximumStay?: number;
+  instantBook?: boolean;
+  status?: ListingStatus;
+  images?: ListingImage[];
 }
 
-export interface SearchListing {
+export interface SearchListingParams {
   location?: string;
-  category?: string;
+  city?: string;
+  country?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
   minPrice?: number;
   maxPrice?: number;
-  guests?: number;
-  page?: number;
-  size?: number;
+  propertyTypes?: string[];
+  categories?: string[];
+  amenities?: string[];
+  minBedrooms?: number;
+  minBeds?: number;
+  minBathrooms?: number;
+  instantBook?: boolean;
   sortBy?: string;
   sortDirection?: string;
+  page?: number;
+  size?: number;
 }
 
-export interface Page<T> {
-  content: T[];
+export interface ListingPage {
+  content: Listing[];
   totalElements: number;
   totalPages: number;
   size: number;
   number: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
+
+export const PROPERTY_TYPES = [
+  'House',
+  'Apartment',
+  'Condo',
+  'Villa',
+  'Cottage',
+  'Cabin',
+  'Loft',
+  'Townhouse',
+  'Bungalow',
+  'Chalet'
+];
+
+export const CATEGORIES = [
+  'Amazing views',
+  'Beachfront',
+  'Trending',
+  'Cabins',
+  'Lakefront',
+  'Mansions',
+  'Countryside',
+  'Design',
+  'Pools',
+  'Tropical',
+  'Islands',
+  'Caves',
+  'Castles',
+  'Skiing',
+  'Camping',
+  'Luxe',
+  'Tiny homes',
+  'Treehouses',
+  'Farms',
+  'Historical homes'
+];
+
+export const AMENITIES = [
+  'WiFi',
+  'Kitchen',
+  'Washer',
+  'Dryer',
+  'Air conditioning',
+  'Heating',
+  'TV',
+  'Hair dryer',
+  'Iron',
+  'Pool',
+  'Hot tub',
+  'Free parking',
+  'EV charger',
+  'Gym',
+  'Breakfast',
+  'Smoking allowed',
+  'Pets allowed',
+  'Self check-in',
+  'Workspace',
+  'Fireplace',
+  'Piano',
+  'BBQ grill',
+  'Outdoor dining',
+  'Beach access',
+  'Ski-in/Ski-out'
+];
+
+export const CANCELLATION_POLICIES = [
+  'FLEXIBLE',
+  'MODERATE',
+  'STRICT',
+  'SUPER_STRICT'
+];

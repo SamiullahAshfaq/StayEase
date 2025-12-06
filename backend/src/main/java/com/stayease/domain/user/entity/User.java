@@ -2,12 +2,10 @@ package com.stayease.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -27,8 +25,11 @@ public class User {
     @Column(name = "public_id", nullable = false, unique = true, updatable = false)
     private UUID publicId;
 
-    @Column(name = "email", nullable = false, unique = true, length = 255)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
@@ -36,56 +37,74 @@ public class User {
     @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
-    @Column(name = "image_url", length = 500)
-    private String imageUrl;
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
 
-    @Column(name = "password_hash", length = 255)
-    private String passwordHash;
+    @Column(name = "profile_image_url", length = 1000)
+    private String profileImageUrl;
 
-    @Column(name = "verified", nullable = false)
-    @Builder.Default
-    private Boolean verified = false;
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
 
-    @CreationTimestamp
+    @Column(name = "bio", columnDefinition = "TEXT")
+    private String bio;
+
+    @Column(name = "language", length = 10)
+    private String language = "en";
+
+    @Column(name = "currency", length = 10)
+    private String currency = "USD";
+
+    @Column(name = "is_email_verified")
+    private Boolean isEmailVerified = false;
+
+    @Column(name = "is_phone_verified")
+    private Boolean isPhoneVerified = false;
+
+    @Column(name = "account_status", nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus = AccountStatus.ACTIVE;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<UserAuthority> authorities = new ArrayList<>();
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Builder.Default
-    private Set<UserAuthority> authorities = new HashSet<>();
+    @Column(name = "last_login_at")
+    private Instant lastLoginAt;
 
     @PrePersist
     protected void onCreate() {
         if (publicId == null) {
             publicId = UUID.randomUUID();
         }
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
     }
 
-    public void addAuthority(Authority authority) {
-        UserAuthority userAuthority = new UserAuthority();
-        userAuthority.setUser(this);
-        userAuthority.setAuthority(authority);
-        authorities.add(userAuthority);
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = Instant.now();
     }
 
-    public void removeAuthority(Authority authority) {
-        authorities.removeIf(ua -> ua.getAuthority().equals(authority));
+    public void addAuthority(UserAuthority authority) {
+        authorities.add(authority);
+        authority.setUser(this);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return publicId != null && publicId.equals(user.publicId);
+    public void removeAuthority(UserAuthority authority) {
+        authorities.remove(authority);
+        authority.setUser(null);
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public enum AccountStatus {
+        ACTIVE,
+        SUSPENDED,
+        DEACTIVATED,
+        PENDING_VERIFICATION
     }
 }

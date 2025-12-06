@@ -3,9 +3,6 @@ package com.stayease.domain.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "authority")
 @Getter
@@ -16,26 +13,13 @@ import java.util.Set;
 public class Authority {
 
     @Id
-    @Column(name = "name", length = 50)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "authority_seq")
+    @SequenceGenerator(name = "authority_seq", sequenceName = "authority_seq", allocationSize = 50)
+    private Long id;
+
+    @Column(name = "name", nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column(name = "description", length = 255)
+    @Column(name = "description")
     private String description;
-
-    @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private Set<UserAuthority> users = new HashSet<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Authority)) return false;
-        Authority authority = (Authority) o;
-        return name != null && name.equals(authority.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

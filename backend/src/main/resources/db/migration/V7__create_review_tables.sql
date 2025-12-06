@@ -1,6 +1,4 @@
---liquibase formatted sql
-
---changeset stayease:0007-create-review-table
+-- Create review table
 CREATE TABLE review (
     id BIGSERIAL PRIMARY KEY,
     public_id UUID NOT NULL UNIQUE,
@@ -20,16 +18,13 @@ CREATE TABLE review (
         (target_listing_id IS NULL AND target_service_id IS NOT NULL)
     )
 );
---rollback DROP TABLE review;
 
---changeset stayease:0007-create-review-indexes
+-- Create review indexes
 CREATE UNIQUE INDEX uk_review_public_id ON review(public_id);
 CREATE INDEX idx_review_author ON review(author_public_id);
 CREATE INDEX idx_review_listing ON review(target_listing_id);
 CREATE INDEX idx_review_service ON review(target_service_id);
 CREATE INDEX idx_review_rating ON review(rating);
---rollback DROP INDEX IF EXISTS uk_review_public_id, idx_review_author, idx_review_listing, idx_review_service, idx_review_rating;
 
---changeset stayease:0007-create-review-sequence
+-- Create review sequence
 CREATE SEQUENCE review_seq START WITH 1 INCREMENT BY 50;
---rollback DROP SEQUENCE IF EXISTS review_seq;

@@ -30,13 +30,8 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     CardModule,
     DividerModule,
     SelectButtonModule
-<<<<<<< HEAD
-  ],
-  templateUrl: './register.component.html',
-=======
 ],
   templateUrl: './register.component.html'
->>>>>>> 3bd6c1d (removed scss)
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
@@ -88,8 +83,8 @@ export class RegisterComponent {
       password,
       firstName,
       lastName,
-      authorities: [userType]
-    }).subscribe({
+      role: userType
+    } as any).subscribe({
       next: () => {
         this.loading.set(false);
         this.successMessage.set('Account created successfully! Redirecting to login...');
