@@ -274,7 +274,7 @@ stayease/
     └── src/
         ├── main.ts
         ├── index.html
-        ├── styles.scss
+        ├── styles.css
         │
         ├── environments/
         │   ├── environment.ts
@@ -286,7 +286,6 @@ stayease/
             ├── app.routes.ts
             ├── app.component.ts
             ├── app.component.html
-            ├── app.component.scss
             │
             ├── core/
             │   ├── auth/
@@ -311,18 +310,15 @@ stayease/
             ├── features/
             │   ├── home/
             │   │   ├── home.component.ts
-            │   │   ├── home.component.html
-            │   │   └── home.component.scss
+            │   │   └── home.component.html
             │   │
             │   ├── auth/
             │   │   ├── login/
             │   │   │   ├── login.component.ts
-            │   │   │   ├── login.component.html
-            │   │   │   └── login.component.scss
+            │   │   │   └── login.component.html
             │   │   └── register/
             │   │       ├── register.component.ts
-            │   │       ├── register.component.html
-            │   │       └── register.component.scss
+            │   │       └── register.component.html
             │   │
             │   ├── listing/
             │   │   ├── services/
@@ -332,20 +328,16 @@ stayease/
             │   │   │   └── listing-image.model.ts
             │   │   ├── listing-search/
             │   │   │   ├── listing-search.component.ts
-            │   │   │   ├── listing-search.component.html
-            │   │   │   └── listing-search.component.scss
+            │   │   │   └── listing-search.component.html
             │   │   ├── listing-detail/
             │   │   │   ├── listing-detail.component.ts
-            │   │   │   ├── listing-detail.component.html
-            │   │   │   └── listing-detail.component.scss
+            │   │   │   └── listing-detail.component.html
             │   │   ├── listing-create/
             │   │   │   ├── listing-create.component.ts
-            │   │   │   ├── listing-create.component.html
-            │   │   │   └── listing-create.component.scss
+            │   │   │   └── listing-create.component.html
             │   │   └── listing-card/
             │   │       ├── listing-card.component.ts
-            │   │       ├── listing-card.component.html
-            │   │       └── listing-card.component.scss
+            │   │       └── listing-card.component.html
             │   │
             │   ├── booking/
             │   │   ├── services/
@@ -354,16 +346,13 @@ stayease/
             │   │   │   └── booking.model.ts
             │   │   ├── booking-create/
             │   │   │   ├── booking-create.component.ts
-            │   │   │   ├── booking-create.component.html
-            │   │   │   └── booking-create.component.scss
+            │   │   │   └── booking-create.component.html
             │   │   ├── booking-list/
             │   │   │   ├── booking-list.component.ts
-            │   │   │   ├── booking-list.component.html
-            │   │   │   └── booking-list.component.scss
+            │   │   │   └── booking-list.component.html
             │   │   └── booking-detail/
             │   │       ├── booking-detail.component.ts
-            │   │       ├── booking-detail.component.html
-            │   │       └── booking-detail.component.scss
+            │   │       └── booking-detail.component.html
             │   │
             │   ├── service-offering/
             │   │   ├── services/
@@ -374,16 +363,13 @@ stayease/
             │   │   │   └── service-booking.model.ts
             │   │   ├── service-list/
             │   │   │   ├── service-list.component.ts
-            │   │   │   ├── service-list.component.html
-            │   │   │   └── service-list.component.scss
+            │   │   │   └── service-list.component.html
             │   │   ├── service-detail/
             │   │   │   ├── service-detail.component.ts
-            │   │   │   ├── service-detail.component.html
-            │   │   │   └── service-detail.component.scss
+            │   │   │   └── service-detail.component.html
             │   │   └── service-create/
             │   │       ├── service-create.component.ts
-            │   │       ├── service-create.component.html
-            │   │       └── service-create.component.scss
+            │   │       └── service-create.component.html
             │   │
             │   ├── payment/
             │   │   ├── services/
@@ -392,12 +378,10 @@ stayease/
             │   │   │   └── payment.model.ts
             │   │   ├── payment-form/
             │   │   │   ├── payment-form.component.ts
-            │   │   │   ├── payment-form.component.html
-            │   │   │   └── payment-form.component.scss
+            │   │   │   └── payment-form.component.html
             │   │   └── payment-success/
             │   │       ├── payment-success.component.ts
-            │   │       ├── payment-success.component.html
-            │   │       └── payment-success.component.scss
+            │   │       └── payment-success.component.html
             │   │
             │   ├── review/
             │   │   ├── services/
@@ -406,12 +390,10 @@ stayease/
             │   │   │   └── review.model.ts
             │   │   ├── review-list/
             │   │   │   ├── review-list.component.ts
-            │   │   │   ├── review-list.component.html
-            │   │   │   └── review-list.component.scss
+            │   │   │   └── review-list.component.html
             │   │   └── review-form/
             │   │       ├── review-form.component.ts
-            │   │       ├── review-form.component.html
-            │   │       └── review-form.component.scss
+            │   │       └── review-form.component.html
             │   │
             │   ├── chat/
             │   │   ├── services/
@@ -422,69 +404,55 @@ stayease/
             │   │   │   └── message.model.ts
             │   │   ├── conversation-list/
             │   │   │   ├── conversation-list.component.ts
-            │   │   │   ├── conversation-list.component.html
-            │   │   │   └── conversation-list.component.scss
+            │   │   │   └── conversation-list.component.html
             │   │   └── chat-window/
             │   │       ├── chat-window.component.ts
-            │   │       ├── chat-window.component.html
-            │   │       └── chat-window.component.scss
+            │   │       └── chat-window.component.html
             │   │
             │   ├── profile/
             │   │   ├── profile-view/
             │   │   │   ├── profile-view.component.ts
-            │   │   │   ├── profile-view.component.html
-            │   │   │   └── profile-view.component.scss
+            │   │   │   └── profile-view.component.html
             │   │   ├── profile-edit/
             │   │   │   ├── profile-edit.component.ts
-            │   │   │   ├── profile-edit.component.html
-            │   │   │   └── profile-edit.component.scss
+            │   │   │   └── profile-edit.component.html
             │   │   └── my-listings/
             │   │       ├── my-listings.component.ts
-            │   │       ├── my-listings.component.html
-            │   │       └── my-listings.component.scss
+            │   │       └── my-listings.component.html
             │   │
             │   └── admin/
             │       ├── services/
             │       │   └── admin.service.ts
             │       ├── admin-dashboard/
             │       │   ├── admin-dashboard.component.ts
-            │       │   ├── admin-dashboard.component.html
-            │       │   └── admin-dashboard.component.scss
+            │       │   └── admin-dashboard.component.html
             │       ├── user-management/
             │       │   ├── user-management.component.ts
-            │       │   ├── user-management.component.html
-            │       │   └── user-management.component.scss
+            │       │   └── user-management.component.html
             │       └── audit-log/
             │           ├── audit-log.component.ts
-            │           ├── audit-log.component.html
-            │           └── audit-log.component.scss
+            │           └── audit-log.component.html
             │
             ├── shared/
             │   ├── components/
             │   │   ├── header/
             │   │   │   ├── header.component.ts
-            │   │   │   ├── header.component.html
-            │   │   │   └── header.component.scss
+            │   │   │   └── header.component.html
             │   │   ├── footer/
             │   │   │   ├── footer.component.ts
-            │   │   │   ├── footer.component.html
-            │   │   │   └── footer.component.scss
+            │   │   │   └── footer.component.html
             │   │   ├── loading-spinner/
             │   │   │   ├── loading-spinner.component.ts
-            │   │   │   ├── loading-spinner.component.html
-            │   │   │   └── loading-spinner.component.scss
+            │   │   │   └── loading-spinner.component.html
             │   │   ├── error-message/
             │   │   │   ├── error-message.component.ts
-            │   │   │   ├── error-message.component.html
-            │   │   │   └── error-message.component.scss
+            │   │   │   └── error-message.component.html
             │   │   ├── image-upload/
             │   │   │   ├── image-upload.component.ts
-            │   │   │   ├── image-upload.component.html
-            │   │   │   └── image-upload.component.scss
+            │   │   │   └── image-upload.component.html
             │   │   └── date-picker/
             │   │       ├── date-picker.component.ts
-            │   │       ├── date-picker.component.html
-            │   │       └── date-picker.component.scss
+            │   │       └── date-picker.component.html
             │   ├── directives/
             │   │   ├── lazy-load-image.directive.ts
             │   │   └── click-outside.directive.ts
@@ -499,9 +467,7 @@ stayease/
             └── layout/
                 ├── main-layout/
                 │   ├── main-layout.component.ts
-                │   ├── main-layout.component.html
-                │   └── main-layout.component.scss
+                │   └── main-layout.component.html
                 └── admin-layout/
                     ├── admin-layout.component.ts
-                    ├── admin-layout.component.html
-                    └── admin-layout.component.scss
+                    └── admin-layout.component.html

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -28,13 +28,16 @@ export interface Listing {
   selector: 'app-listing-detail',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     ButtonModule,
     GalleriaModule,
     DatePicker,
     SkeletonModule
+<<<<<<< HEAD
   ],
+=======
+],
+>>>>>>> 3bd6c1d (removed scss)
   templateUrl: './listing-detail.component.html'
 })
 export class ListingDetailComponent implements OnInit {

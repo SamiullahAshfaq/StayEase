@@ -19,43 +19,42 @@ import { MenuItem } from 'primeng/api';
             <i class="pi pi-home"></i>
             <span>StayEase</span>
           </a>
-          
+    
           <nav class="nav-links">
             <a routerLink="/listings" class="nav-link">Explore</a>
-            <a routerLink="/create-listing" *ngIf="auth.isAuthenticated$ | async" class="nav-link">Host</a>
+            @if (auth.isAuthenticated$ | async) {
+              <a routerLink="/create-listing" class="nav-link">Host</a>
+            }
           </nav>
-          
+    
           <div class="auth-section">
-            <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
-              <button pButton 
-                      label="My Listings" 
-                      icon="pi pi-list" 
-                      class="p-button-text"
-                      routerLink="/my-listings"></button>
-              
-              <p-avatar 
-                [image]="(auth.user$ | async)?.picture" 
+            @if (auth.isAuthenticated$ | async) {
+              <button pButton
+                label="My Listings"
+                icon="pi pi-list"
+                class="p-button-text"
+              routerLink="/my-listings"></button>
+              <p-avatar
+                [image]="(auth.user$ | async)?.picture"
                 shape="circle"
                 (click)="menu.toggle($event)"
-                styleClass="cursor-pointer"></p-avatar>
-              
+              styleClass="cursor-pointer"></p-avatar>
               <p-menu #menu [model]="menuItems" [popup]="true"></p-menu>
-            </ng-container>
-            
-            <ng-template #loggedOut>
-              <button pButton 
-                      label="Log In" 
-                      class="p-button-text"
-                      (click)="auth.loginWithRedirect()"></button>
-              <button pButton 
-                      label="Sign Up" 
-                      (click)="auth.loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } })"></button>
-            </ng-template>
+            } @else {
+              <button pButton
+                label="Log In"
+                class="p-button-text"
+              (click)="auth.loginWithRedirect()"></button>
+              <button pButton
+                label="Sign Up"
+              (click)="auth.loginWithRedirect({ authorizationParams: { screen_hint: 'signup' } })"></button>
+            }
+    
           </div>
         </div>
       </div>
     </header>
-  `,
+    `,
   styles: [`
     .header {
       position: sticky;
