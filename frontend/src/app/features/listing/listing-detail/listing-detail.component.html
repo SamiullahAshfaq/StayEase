@@ -1,108 +1,403 @@
-@if (!loading && listing) {
-  <div class="detail-page">
-    <!-- Gallery Section -->
-    <div class="gallery-section">
-      <div class="image-grid">
-        <div class="main-image" (click)="showGalleria = true">
-          <img [src]="listing.images[0]" [alt]="listing.title">
-          <div class="view-all-overlay">
-            <i class="pi pi-images"></i>
-            <span>View all {{ listing.images.length }} photos</span>
-          </div>
-        </div>
-        <div class="thumbnail-grid">
-          @for (img of listing.images.slice(1,5); track img) {
-            <div class="thumbnail" (click)="showGalleria = true">
-              <img [src]="img" [alt]="listing.title">
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-    <!-- Fullscreen Galleria -->
-    <p-galleria
-      [value]="listing.images"
-      [(visible)]="showGalleria"
-      [numVisible]="5"
-      [circular]="true"
-      [fullScreen]="true"
-      [showItemNavigators]="true"
-      [showThumbnails]="true">
-      <ng-template pTemplate="item" let-item>
-        <img [src]="item" class="galleria-image">
-      </ng-template>
-      <ng-template pTemplate="thumbnail" let-item>
-        <img [src]="item" class="galleria-thumbnail">
-      </ng-template>
-    </p-galleria>
-    <!-- Detail Info -->
-    <div class="container">
-      <div class="detail-grid">
-        <div class="detail-content">
-          <div class="detail-header">
-            <h1>{{ listing.title }}</h1>
-            <div class="location">
-              <i class="pi pi-map-marker"></i>
-              <span>{{ listing.city }}, {{ listing.state }}, {{ listing.country }}</span>
-            </div>
-          </div>
-          <div class="property-stats">
-            <div class="stat"><i class="pi pi-users"></i> {{ listing.guests }} guests</div>
-            <div class="stat"><i class="pi pi-home"></i> {{ listing.bedrooms }} bedrooms</div>
-            <div class="stat"><i class="pi pi-inbox"></i> {{ listing.beds }} beds</div>
-            <div class="stat"><i class="pi pi-shield"></i> {{ listing.bathrooms }} bathrooms</div>
-          </div>
-          <div class="description">
-            <h2>About this place</h2>
-            <p>{{ listing.description }}</p>
-          </div>
-          @if (listing.amenities?.length) {
-            <div class="amenities">
-              <h2>What this place offers</h2>
-              <div class="amenities-grid">
-                @for (amenity of listing.amenities; track amenity) {
-                  <div class="amenity">
-                    <i class="pi pi-check-circle"></i>
-                    <span>{{ amenity }}</span>
-                  </div>
-                }
-              </div>
-            </div>
-          }
-        </div>
-        <!-- Booking Sidebar -->
-        <div class="booking-sidebar">
-          <div class="booking-card">
-            <div class="price-header">
-              <div class="price">
-                <span class="amount">${{ listing.price }}</span>
-                <span class="period">per night</span>
-              </div>
-            </div>
-            <div class="booking-form">
-              <div class="date-inputs">
-                <div class="date-field">
-                  <label>Check-in</label>
-                  <p-datepicker [(ngModel)]="checkInDate" [minDate]="today" placeholder="Add date"></p-datepicker>
-                </div>
-                <div class="date-field">
-                  <label>Check-out</label>
-                  <p-datepicker [(ngModel)]="checkOutDate" [minDate]="checkInDate || today" placeholder="Add date"></p-datepicker>
-                </div>
-              </div>
-              <button pButton label="Reserve" [disabled]="!checkInDate || !checkOutDate" (click)="reserve()"></button>
-              <p class="booking-note">You won't be charged yet</p>
-            </div>
-          </div>
-          <button pButton label="Share" icon="pi pi-share-alt" class="p-button-outlined" (click)="share()"></button>
-        </div>
-      </div>
+@if (loading) {
+  <div class="flex justify-center items-center min-h-screen">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+  </div>
+} @else if (error) {
+  <div class="max-w-7xl mx-auto px-8 py-20">
+    <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-red-800">
+      {{ error }}
     </div>
   </div>
-} @else {
-  <div class="container">
-    <p-skeleton height="500px" borderRadius="16px"></p-skeleton>
-    <p-skeleton height="40px" width="60%" class="mt-3"></p-skeleton>
-    <p-skeleton height="20px" width="40%" class="mt-2"></p-skeleton>
+} @else if (listing) {
+  <div class="pb-20">
+    <!-- Header -->
+    <div class="max-w-[1120px] mx-auto px-8 py-6">
+      <h1 class="text-3xl font-semibold mb-2">{{ listing.title }}</h1>
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4 flex-wrap text-sm">
+          @if (listing.averageRating) {
+            <div class="flex items-center gap-1">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+              <span class="font-semibold">{{ listing.averageRating.toFixed(2) }}</span>
+              <span class="text-gray-600">({{ listing.totalReviews || 0 }} reviews)</span>
+            </div>
+            <span class="text-gray-600">·</span>
+          }
+          <button class="font-semibold underline hover:text-gray-700">
+            {{ listing.city }}, {{ listing.country }}
+          </button>
+        </div>
+        
+        <div class="flex items-center gap-4">
+          <button (click)="toggleShare()" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+            </svg>
+            <span class="font-semibold underline">Share</span>
+          </button>
+          <button (click)="saveListing()" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+            <span class="font-semibold underline">Save</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Images Grid -->
+    <div class="max-w-[1120px] mx-auto px-8 mb-12">
+      <div class="grid grid-cols-4 grid-rows-2 gap-2 rounded-xl overflow-hidden h-[500px]">
+        <!-- Main large image -->
+        @if (listing.images[0]) {
+          <div 
+            class="col-span-2 row-span-2 cursor-pointer group relative overflow-hidden"
+            (click)="openPhotoGallery(0)">
+            <img 
+              [src]="listing.images[0].url" 
+              [alt]="listing.title"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+          </div>
+        }
+        
+        <!-- Grid images -->
+        @for (image of listing.images.slice(1, 5); track image.url; let i = $index) {
+          <div 
+            class="cursor-pointer group relative overflow-hidden"
+            (click)="openPhotoGallery(i + 1)">
+            <img 
+              [src]="image.url" 
+              [alt]="listing.title"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            
+            <!-- Show all photos button on last image -->
+            @if (i === 3 && listing.images.length > 5) {
+              <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <button class="px-4 py-2 bg-white text-black rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200">
+                  Show all {{ listing.images.length }} photos
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-[1120px] mx-auto px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        
+        <!-- Left column - Details -->
+        <div class="lg:col-span-2 space-y-8">
+          
+          <!-- Title & Host -->
+          <div class="pb-8 border-b">
+            <h2 class="text-2xl font-semibold mb-2">
+              {{ listing.propertyType }} in {{ listing.city }}
+            </h2>
+            <div class="flex items-center gap-2 text-base text-gray-700">
+              <span>{{ listing.maxGuests }} guests</span>
+              <span>·</span>
+              <span>{{ listing.bedrooms }} bedrooms</span>
+              <span>·</span>
+              <span>{{ listing.beds }} beds</span>
+              <span>·</span>
+              <span>{{ listing.bathrooms }} baths</span>
+            </div>
+          </div>
+
+          <!-- Features -->
+          <div class="pb-8 border-b space-y-6">
+            <div class="flex gap-4">
+              <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+              <div>
+                <h3 class="font-semibold mb-1">Entire place</h3>
+                <p class="text-gray-600 text-sm">You'll have the {{ listing.propertyType.toLowerCase() }} to yourself.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4">
+              <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+              <div>
+                <h3 class="font-semibold mb-1">Enhanced Clean</h3>
+                <p class="text-gray-600 text-sm">This host committed to enhanced cleaning.</p>
+              </div>
+            </div>
+
+            @if (listing.instantBook) {
+              <div class="flex gap-4">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <div>
+                  <h3 class="font-semibold mb-1">Instant Book</h3>
+                  <p class="text-gray-600 text-sm">Book without waiting for host approval.</p>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Description -->
+          <div class="pb-8 border-b">
+            <h3 class="text-xl font-semibold mb-4">About this place</h3>
+            <p class="text-gray-700 whitespace-pre-line leading-relaxed">{{ listing.description }}</p>
+          </div>
+
+          <!-- Amenities -->
+          <div class="pb-8 border-b">
+            <h3 class="text-xl font-semibold mb-6">What this place offers</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              @for (amenity of listing.amenities.slice(0, 10); track amenity) {
+                <div class="flex items-center gap-4">
+                  <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span>{{ amenity }}</span>
+                </div>
+              }
+            </div>
+            @if (listing.amenities.length > 10) {
+              <button class="mt-6 px-6 py-3 border border-black rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200">
+                Show all {{ listing.amenities.length }} amenities
+              </button>
+            }
+          </div>
+
+          <!-- House Rules -->
+          @if (listing.houseRules) {
+            <div class="pb-8 border-b">
+              <h3 class="text-xl font-semibold mb-4">House rules</h3>
+              <p class="text-gray-700 whitespace-pre-line">{{ listing.houseRules }}</p>
+            </div>
+          }
+
+          <!-- Cancellation Policy -->
+          <div class="pb-8 border-b">
+            <h3 class="text-xl font-semibold mb-4">Cancellation policy</h3>
+            <p class="text-gray-700">{{ listing.cancellationPolicy }} cancellation policy</p>
+            <button class="mt-2 font-semibold underline hover:text-gray-700">Learn more</button>
+          </div>
+        </div>
+
+        <!-- Right column - Booking Card -->
+        <div class="lg:col-span-1">
+          <div class="border border-gray-300 rounded-xl shadow-xl p-6 sticky top-24">
+            
+            <!-- Price -->
+            <div class="flex items-baseline gap-1 mb-6">
+              <span class="text-2xl font-semibold">${{ listing.pricePerNight }}</span>
+              <span class="text-gray-600">night</span>
+            </div>
+
+            <!-- Date Selection -->
+            <div class="border border-gray-300 rounded-lg mb-4">
+              <div class="grid grid-cols-2 divide-x divide-gray-300">
+                <div class="p-3">
+                  <label class="text-xs font-semibold uppercase">Check-in</label>
+                  <input 
+                    type="date"
+                    [(ngModel)]="checkIn"
+                    [min]="today"
+                    class="w-full mt-1 text-sm focus:outline-none">
+                </div>
+                <div class="p-3">
+                  <label class="text-xs font-semibold uppercase">Checkout</label>
+                  <input 
+                    type="date"
+                    [(ngModel)]="checkOut"
+                    [min]="checkIn || today"
+                    class="w-full mt-1 text-sm focus:outline-none">
+                </div>
+              </div>
+              <div class="p-3 border-t border-gray-300">
+                <label class="text-xs font-semibold uppercase">Guests</label>
+                <select 
+                  [(ngModel)]="guests"
+                  class="w-full mt-1 text-sm focus:outline-none">
+                  @for (n of [].constructor(listing.maxGuests); track i; let i = $index) {
+                    <option [value]="i + 1">
+                      {{ i + 1 }} guest{{ i > 0 ? 's' : '' }}
+                    </option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <!-- Reserve Button -->
+            <button 
+              (click)="proceedToBooking()"
+              [disabled]="!checkIn || !checkOut"
+              class="w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-lg hover:from-rose-600 hover:to-pink-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              Reserve
+            </button>
+            <p class="text-center text-sm text-gray-600 mt-3">You won't be charged yet</p>
+
+            <!-- Price Breakdown -->
+            @if (checkIn && checkOut) {
+              <div class="mt-6 space-y-3">
+                <div class="flex justify-between">
+                  <span class="underline">${{ listing.pricePerNight }} x {{ calculateNights() }} nights</span>
+                  <span>${{ listing.pricePerNight * calculateNights() }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="underline">Service fee</span>
+                  <span>${{ (listing.pricePerNight * calculateNights() * 0.14).toFixed(2) }}</span>
+                </div>
+                <div class="pt-3 border-t flex justify-between font-semibold">
+                  <span>Total</span>
+                  <span>${{ (listing.pricePerNight * calculateNights() * 1.14).toFixed(2) }}</span>
+                </div>
+              </div>
+            }
+
+            <!-- Report -->
+            <button (click)="reportListing()" class="w-full mt-6 flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>
+              </svg>
+              <span class="underline">Report this listing</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo Gallery Modal -->
+    @if (showAllPhotos) {
+      <div
+        class="fixed inset-0 z-50 bg-black">
+        
+        <!-- Header -->
+        <div class="absolute top-0 left-0 right-0 p-6 z-10 bg-gradient-to-b from-black/50 to-transparent">
+          <button 
+            (click)="closePhotoGallery()"
+            class="flex items-center gap-2 text-white hover:text-gray-300 transition-colors duration-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span class="font-semibold">Close</span>
+          </button>
+        </div>
+
+        <!-- Image Counter -->
+        <div class="absolute top-6 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-black/70 text-white rounded-full text-sm font-medium z-10">
+          {{ selectedImageIndex + 1 }} / {{ listing.images.length }}
+        </div>
+
+        <!-- Navigation -->
+        <div class="absolute inset-0 flex items-center justify-between px-6">
+          @if (selectedImageIndex > 0) {
+            <button
+              (click)="previousImage()"
+              class="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg hover:scale-110 transition-transform duration-200">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+          }
+          
+          @if (selectedImageIndex < listing.images.length - 1) {
+            <button
+              (click)="nextImage()"
+              class="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg hover:scale-110 transition-transform duration-200">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          }
+        </div>
+
+        <!-- Main Image -->
+        <div class="w-full h-full flex items-center justify-center p-20">
+          <img 
+            [src]="listing.images[selectedImageIndex]?.url"
+            [alt]="listing.title"
+            class="max-w-full max-h-full object-contain">
+        </div>
+      </div>
+    }
+
+    <!-- Share Modal -->
+    @if (showShareModal) {
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        (click)="toggleShare()">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        
+        <div 
+          (click)="$event.stopPropagation()"
+          class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+          
+          <button 
+            (click)="toggleShare()"
+            class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+
+          <h3 class="text-xl font-semibold mb-6">Share this place</h3>
+
+          <!-- Social Share Buttons -->
+          <div class="grid grid-cols-4 gap-4 mb-6">
+            <button (click)="share('facebook')" class="flex flex-col items-center gap-2 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <div class="w-12 h-12 flex items-center justify-center bg-blue-600 text-white rounded-full">
+                <span class="font-bold text-lg">f</span>
+              </div>
+              <span class="text-xs">Facebook</span>
+            </button>
+
+            <button (click)="share('twitter')" class="flex flex-col items-center gap-2 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <div class="w-12 h-12 flex items-center justify-center bg-sky-500 text-white rounded-full">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                </svg>
+              </div>
+              <span class="text-xs">Twitter</span>
+            </button>
+
+            <button (click)="share('whatsapp')" class="flex flex-col items-center gap-2 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <div class="w-12 h-12 flex items-center justify-center bg-green-500 text-white rounded-full">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                </svg>
+              </div>
+              <span class="text-xs">WhatsApp</span>
+            </button>
+
+            <button (click)="share('email')" class="flex flex-col items-center gap-2 p-4 hover:bg-gray-50 rounded-lg transition-colors duration-200">
+              <div class="w-12 h-12 flex items-center justify-center bg-gray-600 text-white rounded-full">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <span class="text-xs">Email</span>
+            </button>
+          </div>
+
+          <!-- Copy Link -->
+          <div class="border-t pt-6">
+            <div class="flex items-center gap-2">
+              <input 
+                type="text"
+                [value]="currentUrl"
+                readonly
+                class="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-sm">
+              <button 
+                (click)="copyLink()"
+                class="px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200 whitespace-nowrap">
+                {{ copied ? 'Copied!' : 'Copy' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
   </div>
 }

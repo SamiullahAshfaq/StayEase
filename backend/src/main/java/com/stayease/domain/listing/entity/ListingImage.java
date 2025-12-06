@@ -1,8 +1,8 @@
 package com.stayease.domain.listing.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
@@ -22,6 +22,7 @@ public class ListingImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "listing_id", nullable = false)
+    @JsonIgnore
     private Listing listing;
 
     @Column(name = "url", nullable = false, length = 1000)
@@ -30,24 +31,19 @@ public class ListingImage {
     @Column(name = "caption")
     private String caption;
 
+    @Column(name = "is_cover")
+    @Builder.Default
+    private Boolean isCover = false;
+
     @Column(name = "sort_order")
     @Builder.Default
     private Integer sortOrder = 0;
 
-    @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ListingImage)) return false;
-        ListingImage that = (ListingImage) o;
-        return id != null && id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
     }
 }

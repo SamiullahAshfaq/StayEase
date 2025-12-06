@@ -1,10 +1,7 @@
-// ListingDTO.java
 package com.stayease.domain.listing.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.stayease.domain.listing.entity.Listing;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -21,15 +18,32 @@ public class ListingDTO {
     private String title;
     private String description;
     private String location;
-    private BigDecimal price;
+    private String city;
+    private String country;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
+    private String address;
+    private BigDecimal pricePerNight;
     private String currency;
-    private Integer guests;
+    private Integer maxGuests;
     private Integer bedrooms;
     private Integer beds;
-    private Integer bathrooms;
+    private BigDecimal bathrooms;
+    private String propertyType;
     private String category;
-    private String rules;
+    private List<String> amenities;
+    private String houseRules;
+    private String cancellationPolicy;
+    private Integer minimumStay;
+    private Integer maximumStay;
+    private Boolean instantBook;
+    private Listing.ListingStatus status;
     private List<ListingImageDTO> images;
     private Instant createdAt;
     private Instant updatedAt;
+    
+    // Computed fields for search results
+    private Double averageRating;
+    private Integer totalReviews;
+    private String coverImageUrl;
 }

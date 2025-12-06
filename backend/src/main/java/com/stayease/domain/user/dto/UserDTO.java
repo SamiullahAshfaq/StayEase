@@ -1,12 +1,10 @@
 package com.stayease.domain.user.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import com.stayease.domain.user.entity.User;
+import lombok.*;
 import java.time.Instant;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,8 +16,16 @@ public class UserDTO {
     private String email;
     private String firstName;
     private String lastName;
-    private String imageUrl;
-    private Boolean verified;
-    private Set<String> authorities;
+    private String phoneNumber;
+    private String profileImageUrl;
+    private LocalDate dateOfBirth;
+    private String bio;
+    private String language;
+    private String currency;
+    private Boolean isEmailVerified;
+    private Boolean isPhoneVerified;
+    private User.AccountStatus accountStatus;
+    private List<String> authorities;
     private Instant createdAt;
+    private Instant lastLoginAt;
 }

@@ -1,13 +1,8 @@
-// UpdateListingDTO.java
 package com.stayease.domain.listing.dto;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.stayease.domain.listing.entity.Listing;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,33 +12,55 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UpdateListingDTO {
-
-    @Size(max = 255)
+    
+    @Size(min = 10, max = 255, message = "Title must be between 10 and 255 characters")
     private String title;
 
+    @Size(min = 50, max = 5000, message = "Description must be between 50 and 5000 characters")
     private String description;
 
-    @Size(max = 255)
     private String location;
+    private String city;
+    private String country;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
+    private String address;
 
-    @DecimalMin(value = "0.0", inclusive = false)
-    private BigDecimal price;
+    @DecimalMin(value = "1.0", message = "Price must be at least 1")
+    @DecimalMax(value = "999999.99", message = "Price cannot exceed 999,999.99")
+    private BigDecimal pricePerNight;
 
-    @Min(value = 1)
-    private Integer guests;
+    private String currency;
 
-    @Min(value = 0)
+    @Min(value = 1, message = "At least 1 guest must be allowed")
+    @Max(value = 50, message = "Maximum 50 guests allowed")
+    private Integer maxGuests;
+
+    @Min(value = 0, message = "Bedrooms cannot be negative")
+    @Max(value = 50, message = "Maximum 50 bedrooms")
     private Integer bedrooms;
 
-    @Min(value = 1)
+    @Min(value = 1, message = "At least 1 bed is required")
+    @Max(value = 100, message = "Maximum 100 beds")
     private Integer beds;
 
-    @Min(value = 1)
-    private Integer bathrooms;
+    @DecimalMin(value = "0.5", message = "At least 0.5 bathrooms required")
+    @DecimalMax(value = "50.0", message = "Maximum 50 bathrooms")
+    private BigDecimal bathrooms;
 
+    private String propertyType;
     private String category;
-
-    private String rules;
-
-    private List<String> imageUrls;
+    private List<String> amenities;
+    private String houseRules;
+    private String cancellationPolicy;
+    
+    @Min(value = 1, message = "Minimum stay must be at least 1 night")
+    private Integer minimumStay;
+    
+    @Max(value = 365, message = "Maximum stay cannot exceed 365 nights")
+    private Integer maximumStay;
+    
+    private Boolean instantBook;
+    private Listing.ListingStatus status;
+    private List<ListingImageDTO> images;
 }

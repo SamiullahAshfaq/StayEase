@@ -1,11 +1,7 @@
-// CreateListingDTO.java
 package com.stayease.domain.listing.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,44 +13,75 @@ import java.util.List;
 public class CreateListingDTO {
     
     @NotBlank(message = "Title is required")
-    @Size(max = 255, message = "Title must not exceed 255 characters")
+    @Size(min = 10, max = 255, message = "Title must be between 10 and 255 characters")
     private String title;
 
     @NotBlank(message = "Description is required")
+    @Size(min = 50, max = 5000, message = "Description must be between 50 and 5000 characters")
     private String description;
 
     @NotBlank(message = "Location is required")
-    @Size(max = 255, message = "Location must not exceed 255 characters")
     private String location;
 
-    @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
-    private BigDecimal price;
+    @NotBlank(message = "City is required")
+    private String city;
 
-    @Size(max = 10)
+    @NotBlank(message = "Country is required")
+    private String country;
+
+    private BigDecimal latitude;
+    private BigDecimal longitude;
+    private String address;
+
+    @NotNull(message = "Price per night is required")
+    @DecimalMin(value = "1.0", message = "Price must be at least 1")
+    @DecimalMax(value = "999999.99", message = "Price cannot exceed 999,999.99")
+    private BigDecimal pricePerNight;
+
     @Builder.Default
     private String currency = "USD";
 
-    @NotNull(message = "Number of guests is required")
-    @Min(value = 1, message = "Must accommodate at least 1 guest")
-    private Integer guests;
+    @NotNull(message = "Maximum guests is required")
+    @Min(value = 1, message = "At least 1 guest must be allowed")
+    @Max(value = 50, message = "Maximum 50 guests allowed")
+    private Integer maxGuests;
 
     @NotNull(message = "Number of bedrooms is required")
     @Min(value = 0, message = "Bedrooms cannot be negative")
+    @Max(value = 50, message = "Maximum 50 bedrooms")
     private Integer bedrooms;
 
     @NotNull(message = "Number of beds is required")
-    @Min(value = 1, message = "Must have at least 1 bed")
+    @Min(value = 1, message = "At least 1 bed is required")
+    @Max(value = 100, message = "Maximum 100 beds")
     private Integer beds;
 
     @NotNull(message = "Number of bathrooms is required")
-    @Min(value = 1, message = "Must have at least 1 bathroom")
-    private Integer bathrooms;
+    @DecimalMin(value = "0.5", message = "At least 0.5 bathrooms required")
+    @DecimalMax(value = "50.0", message = "Maximum 50 bathrooms")
+    private BigDecimal bathrooms;
+
+    @NotBlank(message = "Property type is required")
+    private String propertyType;
 
     @NotBlank(message = "Category is required")
     private String category;
 
-    private String rules;
+    private List<String> amenities;
+    private String houseRules;
+    @Builder.Default
+    private String cancellationPolicy = "FLEXIBLE";
+    
+    @Builder.Default
+    @Min(value = 1, message = "Minimum stay must be at least 1 night")
+    private Integer minimumStay = 1;
+    
+    @Max(value = 365, message = "Maximum stay cannot exceed 365 nights")
+    private Integer maximumStay;
+    
+    @Builder.Default
+    private Boolean instantBook = false;
 
-    private List<String> imageUrls;
+    @NotEmpty(message = "At least one image is required")
+    private List<ListingImageDTO> images;
 }

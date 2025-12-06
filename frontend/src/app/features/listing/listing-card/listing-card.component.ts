@@ -1,27 +1,54 @@
 import { Component, Input } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
 import { Listing } from '../models/listing.model';
 
 @Component({
   selector: 'app-listing-card',
   standalone: true,
-<<<<<<< HEAD
-  imports: [CommonModule, CardModule, ButtonModule, TagModule],
-=======
-  imports: [CardModule, ButtonModule, TagModule],
->>>>>>> 3bd6c1d (removed scss)
+  imports: [CommonModule],
   templateUrl: './listing-card.component.html'
 })
 export class ListingCardComponent {
   @Input() listing!: Listing;
+  
+  currentImageIndex = 0;
+  isHovered = false;
 
   constructor(private router: Router) {}
 
-  viewDetails(): void {
+  navigateToListing(): void {
     this.router.navigate(['/listings', this.listing.publicId]);
+  }
+
+  nextImage(event: Event): void {
+    event.stopPropagation();
+    if (this.listing.images && this.currentImageIndex < this.listing.images.length - 1) {
+      this.currentImageIndex++;
+    }
+  }
+
+  previousImage(event: Event): void {
+    event.stopPropagation();
+    if (this.currentImageIndex > 0) {
+      this.currentImageIndex--;
+    }
+  }
+
+  setImage(index: number, event: Event): void {
+    event.stopPropagation();
+    this.currentImageIndex = index;
+  }
+
+  toggleFavorite(event: Event): void {
+    event.stopPropagation();
+    // TODO: Implement favorite functionality
+  }
+
+  getDisplayImage(): string {
+    if (this.listing.images && this.listing.images.length > 0) {
+      return this.listing.images[this.currentImageIndex]?.url || this.listing.coverImageUrl || '';
+    }
+    return this.listing.coverImageUrl || '/assets/placeholder-listing.jpg';
   }
 }
