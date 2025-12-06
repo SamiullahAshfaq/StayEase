@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -18,7 +18,6 @@ import { DividerModule } from 'primeng/divider';
   selector: 'app-login',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
@@ -29,8 +28,13 @@ import { DividerModule } from 'primeng/divider';
     RippleModule,
     CardModule,
     DividerModule
+<<<<<<< HEAD
   ],
    templateUrl: './login.component.html',
+=======
+],
+   templateUrl: './login.component.html'
+>>>>>>> 3bd6c1d (removed scss)
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);

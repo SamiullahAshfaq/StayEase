@@ -28,7 +28,9 @@
                 </span>
                 <input pInputText id="firstName" formControlName="firstName" placeholder="John" class="w-full pl-10 pr-4 py-3 border-2 rounded-lg transition-all duration-300 focus:border-accent-500 focus:ring-4 focus:ring-accent-100 hover:border-gray-400" [class.border-red-500]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" />
               </div>
-              <small *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="text-red-500 mt-1 block animate-slide-in">First name is required</small>
+              @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
+                <small class="text-red-500 mt-1 block animate-slide-in">First name is required</small>
+              }
             </div>
             <div class="animate-slide-up" style="animation-delay: 0.3s;">
               <label for="lastName" class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
@@ -38,7 +40,9 @@
                 </span>
                 <input pInputText id="lastName" formControlName="lastName" placeholder="Doe" class="w-full pl-10 pr-4 py-3 border-2 rounded-lg transition-all duration-300 focus:border-accent-500 focus:ring-4 focus:ring-accent-100 hover:border-gray-400" [class.border-red-500]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" />
               </div>
-              <small *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="text-red-500 mt-1 block animate-slide-in">Last name is required</small>
+              @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
+                <small class="text-red-500 mt-1 block animate-slide-in">Last name is required</small>
+              }
             </div>
           </div>
           <div class="animate-slide-up" style="animation-delay: 0.4s;">
@@ -49,10 +53,16 @@
               </span>
               <input pInputText id="email" formControlName="email" type="email" placeholder="john.doe@example.com" class="w-full pl-10 pr-4 py-3 border-2 rounded-lg transition-all duration-300 focus:border-accent-500 focus:ring-4 focus:ring-accent-100 hover:border-gray-400" [class.border-red-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" />
             </div>
-            <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-red-500 mt-1 block animate-slide-in">
-              <ng-container *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</ng-container>
-              <ng-container *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email</ng-container>
-            </small>
+            @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+              <small class="text-red-500 mt-1 block animate-slide-in">
+                @if (registerForm.get('email')?.errors?.['required']) {
+                  Email is required
+                }
+                @if (registerForm.get('email')?.errors?.['email']) {
+                  Please enter a valid email
+                }
+              </small>
+            }
           </div>
           <div class="animate-slide-up" style="animation-delay: 0.5s;">
             <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
@@ -62,10 +72,16 @@
               </span>
               <p-password formControlName="password" [toggleMask]="true" placeholder="Create a strong password" [feedback]="true" weakLabel="Weak" mediumLabel="Medium" strongLabel="Strong" styleClass="w-full" inputStyleClass="w-full pl-10 pr-12 py-3 border-2 rounded-lg transition-all duration-300 focus:border-accent-500 focus:ring-4 focus:ring-accent-100 hover:border-gray-400" [class.border-red-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"></p-password>
             </div>
-            <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-red-500 mt-1 block animate-slide-in">
-              <ng-container *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</ng-container>
-              <ng-container *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 8 characters</ng-container>
-            </small>
+            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+              <small class="text-red-500 mt-1 block animate-slide-in">
+                @if (registerForm.get('password')?.errors?.['required']) {
+                  Password is required
+                }
+                @if (registerForm.get('password')?.errors?.['minlength']) {
+                  Password must be at least 8 characters
+                }
+              </small>
+            }
           </div>
           <div class="animate-slide-up" style="animation-delay: 0.6s;">
             <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
@@ -75,16 +91,24 @@
               </span>
               <p-password formControlName="confirmPassword" [toggleMask]="true" [feedback]="false" placeholder="Re-enter your password" styleClass="w-full" inputStyleClass="w-full pl-10 pr-12 py-3 border-2 rounded-lg transition-all duration-300 focus:border-accent-500 focus:ring-4 focus:ring-accent-100 hover:border-gray-400" [class.border-red-500]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched"></p-password>
             </div>
-            <small *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-red-500 mt-1 block animate-slide-in">
-              <ng-container *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</ng-container>
-            </small>
-            <small *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" class="text-red-500 mt-1 block animate-slide-in">Passwords do not match</small>
+            @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
+              <small class="text-red-500 mt-1 block animate-slide-in">
+                @if (registerForm.get('confirmPassword')?.errors?.['required']) {
+                  Please confirm your password
+                }
+              </small>
+            }
+            @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) {
+              <small class="text-red-500 mt-1 block animate-slide-in">Passwords do not match</small>
+            }
           </div>
           <div class="flex items-start animate-slide-up" style="animation-delay: 0.7s;">
             <p-checkbox formControlName="acceptTerms" [binary]="true" inputId="acceptTerms"></p-checkbox>
             <label for="acceptTerms" class="ml-2 text-sm text-gray-600 cursor-pointer">I agree to the <a href="#" class="text-accent-600 hover:text-accent-700 font-medium">Terms of Service</a> and <a href="#" class="text-accent-600 hover:text-accent-700 font-medium">Privacy Policy</a></label>
           </div>
-          <small *ngIf="registerForm.get('acceptTerms')?.invalid && registerForm.get('acceptTerms')?.touched" class="text-red-500 block animate-slide-in">You must accept the terms and conditions</small>
+          @if (registerForm.get('acceptTerms')?.invalid && registerForm.get('acceptTerms')?.touched) {
+            <small class="text-red-500 block animate-slide-in">You must accept the terms and conditions</small>
+          }
           <button pButton pRipple type="submit" label="Create Account" icon="pi pi-user-plus" [loading]="loading()" [disabled]="registerForm.invalid" class="w-full py-3 bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white font-semibold rounded-lg shadow-lg transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none animate-slide-up" style="animation-delay: 0.8s;"></button>
         </form>
         <div class="my-6 animate-fade-in" style="animation-delay: 0.9s;">

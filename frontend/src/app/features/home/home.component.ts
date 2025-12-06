@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { NgFor } from '@angular/common';
+
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonModule, NgFor],
+  imports: [RouterLink, ButtonModule],
   templateUrl: './home.component.html'
 })
 export class HomeComponent {

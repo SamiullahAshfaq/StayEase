@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -19,7 +19,6 @@ import { SelectButtonModule } from 'primeng/selectbutton';
   selector: 'app-register',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
@@ -31,8 +30,13 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     CardModule,
     DividerModule,
     SelectButtonModule
+<<<<<<< HEAD
   ],
   templateUrl: './register.component.html',
+=======
+],
+  templateUrl: './register.component.html'
+>>>>>>> 3bd6c1d (removed scss)
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);

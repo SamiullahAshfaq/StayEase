@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -14,7 +14,6 @@ import { Listing, Page, SearchListing } from '../models/listing.model';
   selector: 'app-listing-search',
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule,
     InputTextModule,
     ButtonModule,
@@ -22,7 +21,11 @@ import { Listing, Page, SearchListing } from '../models/listing.model';
     PaginatorModule,
     SkeletonModule,
     ListingCardComponent
+<<<<<<< HEAD
   ],
+=======
+],
+>>>>>>> 3bd6c1d (removed scss)
   templateUrl: './listing-search.component.html'
 })
 export class ListingSearchComponent implements OnInit {

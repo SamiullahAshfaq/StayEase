@@ -28,10 +28,16 @@
               </span>
               <input pInputText id="email" formControlName="email" type="email" placeholder="Enter your email" class="w-full pl-10 pr-4 py-3 border-2 rounded-lg transition-all duration-300 focus:border-accent-500 focus:ring-4 focus:ring-accent-100 hover:border-gray-400" [class.border-red-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" />
             </div>
-            <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-red-500 mt-1 block animate-slide-in">
-              <ng-container *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</ng-container>
-              <ng-container *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email</ng-container>
-            </small>
+            @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+              <small class="text-red-500 mt-1 block animate-slide-in">
+                @if (loginForm.get('email')?.errors?.['required']) {
+                  Email is required
+                }
+                @if (loginForm.get('email')?.errors?.['email']) {
+                  Please enter a valid email
+                }
+              </small>
+            }
           </div>
           <!-- Password Field -->
           <div class="animate-slide-up" style="animation-delay: 0.2s;">
@@ -42,7 +48,9 @@
               </span>
               <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Enter your password" styleClass="w-full" inputStyleClass="w-full pl-10 pr-12 py-3 border-2 rounded-lg transition-all duration-300 focus:border-accent-500 focus:ring-4 focus:ring-accent-100 hover:border-gray-400" [class.border-red-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"></p-password>
             </div>
-            <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-red-500 mt-1 block animate-slide-in">Password is required</small>
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+              <small class="text-red-500 mt-1 block animate-slide-in">Password is required</small>
+            }
           </div>
           <!-- Remember Me & Forgot Password -->
           <div class="flex items-center justify-between animate-slide-up" style="animation-delay: 0.3s;">
