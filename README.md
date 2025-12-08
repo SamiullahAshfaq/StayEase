@@ -23,7 +23,7 @@ StayEase is a full-stack web application designed to be a comprehensive platform
 - **Payouts**: System for property owners to receive payouts.
 
 ### Communication
-- **Real-time Chat**: A messaging system for users to communicate with property owners.
+- **Real-time Chat**: A messaging system for users to communicate with property owners which can help them to know the owners better and make their decision about the property.
 - **Notifications**: A notification system to keep users updated on bookings and other activities.
 
 ### Reviews and Ratings
