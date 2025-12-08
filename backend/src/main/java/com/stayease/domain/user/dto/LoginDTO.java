@@ -16,5 +16,6 @@ public class LoginDTO {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @Builder.Default
     private Boolean rememberMe = false;
 }

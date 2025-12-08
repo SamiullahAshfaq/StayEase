@@ -85,11 +85,11 @@ export const routes: Routes = [
   //   loadComponent: () => import('./features/profile/profile-edit/profile-edit.component').then(m => m.ProfileEditComponent),
   //   canActivate: [AuthGuard]
   // },
-  {
-    path: 'my-listings',
-    loadComponent: () => import('./features/profile/my-listings/my-listings.component').then(m => m.MyListingsComponent),
-    canActivate: [AuthGuard] // LandlordGuard removed temporarily
-  },
+  // {
+  //   path: 'my-listings',
+  //   loadComponent: () => import('./features/profile/my-listings/my-listings.component').then(m => m.MyListingsComponent),
+  //   canActivate: [AuthGuard] // LandlordGuard removed temporarily
+  // },
 
   // Review Routes
   // {

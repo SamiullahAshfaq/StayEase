@@ -29,7 +29,6 @@ import java.util.UUID;
 public class ListingService {
 
     private final ListingRepository listingRepository;
-    private final ListingImageRepository listingImageRepository;
     private final ListingMapper listingMapper;
 
     public ListingDTO createListing(CreateListingDTO dto, UUID landlordPublicId) {

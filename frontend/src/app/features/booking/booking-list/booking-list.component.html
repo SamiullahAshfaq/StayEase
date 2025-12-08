@@ -1,0 +1,368 @@
+<div class="min-h-screen bg-gray-50 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Header -->
+    <div class="mb-8 animate-fadeInDown">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Your trips</h1>
+      <p class="text-gray-600">Manage your bookings and travel plans</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="error" class="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 animate-shake">
+      <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+      </svg>
+      <div class="flex-1">
+        <h3 class="text-sm font-medium text-red-800">{{ error }}</h3>
+      </div>
+      <button (click)="error = null" class="text-red-500 hover:text-red-700">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="mb-8 border-b border-gray-200 animate-fadeIn">
+      <nav class="flex gap-8 overflow-x-auto scrollbar-hide">
+        <button
+          (click)="selectTab('all')"
+          [class.border-black]="selectedTab === 'all'"
+          [class.text-gray-900]="selectedTab === 'all'"
+          [class.text-gray-500]="selectedTab !== 'all'"
+          class="pb-4 border-b-2 border-transparent font-semibold whitespace-nowrap hover:text-gray-900 transition-colors duration-200">
+          All trips
+        </button>
+        <button
+          (click)="selectTab('upcoming')"
+          [class.border-black]="selectedTab === 'upcoming'"
+          [class.text-gray-900]="selectedTab === 'upcoming'"
+          [class.text-gray-500]="selectedTab !== 'upcoming'"
+          class="pb-4 border-b-2 border-transparent font-semibold whitespace-nowrap hover:text-gray-900 transition-colors duration-200">
+          Upcoming
+        </button>
+        <button
+          (click)="selectTab('past')"
+          [class.border-black]="selectedTab === 'past'"
+          [class.text-gray-900]="selectedTab === 'past'"
+          [class.text-gray-500]="selectedTab !== 'past'"
+          class="pb-4 border-b-2 border-transparent font-semibold whitespace-nowrap hover:text-gray-900 transition-colors duration-200">
+          Past
+        </button>
+        <button
+          (click)="selectTab('cancelled')"
+          [class.border-black]="selectedTab === 'cancelled'"
+          [class.text-gray-900]="selectedTab === 'cancelled'"
+          [class.text-gray-500]="selectedTab !== 'cancelled'"
+          class="pb-4 border-b-2 border-transparent font-semibold whitespace-nowrap hover:text-gray-900 transition-colors duration-200">
+          Cancelled
+        </button>
+      </nav>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+    </div>
+
+    <!-- Bookings List -->
+    <div *ngIf="!loading && filteredBookings.length > 0" class="space-y-6 animate-fadeInUp">
+      <div
+        *ngFor="let booking of filteredBookings"
+        (click)="viewBookingDetails(booking)"
+        class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-[1.01] group">
+        
+        <div class="flex flex-col sm:flex-row">
+          <!-- Image -->
+          <div class="sm:w-64 h-48 sm:h-auto flex-shrink-0 overflow-hidden">
+            <img 
+              [src]="booking.listingCoverImage || '/assets/placeholder-listing.jpg'"
+              [alt]="booking.listingTitle"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          </div>
+
+          <!-- Content -->
+          <div class="flex-1 p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-rose-500 transition-colors duration-200">
+                  {{ booking.listingTitle }}
+                </h3>
+                <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-3">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span>{{ booking.checkInDate | date:'MMM d' }} - {{ booking.checkOutDate | date:'MMM d, y' }}</span>
+                  </div>
+                  <span>·</span>
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span>{{ booking.numberOfGuests }} guest{{ booking.numberOfGuests > 1 ? 's' : '' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Status Badge -->
+              <span
+                [class]="getStatusColor(booking.bookingStatus)"
+                class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
+                {{ getStatusLabel(booking.bookingStatus) }}
+              </span>
+            </div>
+
+            <!-- Details Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Nights</p>
+                <p class="font-semibold text-gray-900">{{ booking.numberOfNights }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Total Price</p>
+                <p class="font-semibold text-gray-900">${{ booking.totalPrice.toFixed(2) }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Payment</p>
+                <p class="font-semibold text-gray-900">{{ booking.paymentStatus }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500 mb-1">Booked</p>
+                <p class="font-semibold text-gray-900">{{ booking.createdAt | date:'MMM d, y' }}</p>
+              </div>
+            </div>
+
+            <!-- Special Requests -->
+            <div *ngIf="booking.specialRequests" class="mb-4 p-3 bg-gray-50 rounded-lg">
+              <p class="text-xs text-gray-500 mb-1">Special requests</p>
+              <p class="text-sm text-gray-700">{{ booking.specialRequests }}</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3 pt-4 border-t">
+              <button
+                (click)="viewBookingDetails(booking)"
+                class="flex-1 sm:flex-none px-6 py-2.5 border-2 border-gray-900 text-gray-900 font-semibold rounded-xl hover:bg-gray-900 hover:text-white transition-all duration-200">
+                View details
+              </button>
+              
+              <button
+                *ngIf="canCancel(booking)"
+                (click)="openCancelModal(booking, $event)"
+                class="px-6 py-2.5 border-2 border-red-500 text-red-500 font-semibold rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200">
+                Cancel booking
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && filteredBookings.length === 0" class="text-center py-20 animate-fadeIn">
+      <div class="w-32 h-32 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+        <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">No bookings found</h3>
+      <p class="text-gray-600 mb-8">Start planning your next adventure!</p>
+      <a
+        [routerLink]="['/']"
+        class="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105 shadow-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        Explore listings
+      </a>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!loading && filteredBookings.length > 0 && totalPages > 1" 
+         class="flex justify-center items-center gap-2 mt-12 animate-fadeIn">
+      <button
+        (click)="changePage(currentPage - 1)"
+        [disabled]="currentPage === 0"
+        [class.opacity-50]="currentPage === 0"
+        [class.cursor-not-allowed]="currentPage === 0"
+        class="px-4 py-2 border-2 border-gray-300 rounded-full hover:border-black transition-colors duration-200 disabled:hover:border-gray-300">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      
+      <span class="px-4 py-2 text-sm font-medium">
+        Page {{ currentPage + 1 }} of {{ totalPages }}
+      </span>
+      
+      <button
+        (click)="changePage(currentPage + 1)"
+        [disabled]="currentPage === totalPages - 1"
+        [class.opacity-50]="currentPage === totalPages - 1"
+        [class.cursor-not-allowed]="currentPage === totalPages - 1"
+        class="px-4 py-2 border-2 border-gray-300 rounded-full hover:border-black transition-colors duration-200 disabled:hover:border-gray-300">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Cancel Modal -->
+  <div
+    *ngIf="showCancelModal"
+    class="fixed inset-0 z-50 overflow-y-auto"
+    (click)="closeCancelModal()">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      
+      <!-- Background overlay -->
+      <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75 animate-fadeIn"></div>
+
+      <!-- Modal panel -->
+      <div
+        (click)="$event.stopPropagation()"
+        class="inline-block w-full max-w-lg my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl animate-scaleIn">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b">
+          <h2 class="text-xl font-bold text-gray-900">Cancel booking</h2>
+          <button 
+            (click)="closeCancelModal()" 
+            class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="px-6 py-6">
+          <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+            <div class="flex gap-3">
+              <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              <div class="flex-1">
+                <h3 class="font-semibold text-amber-900 mb-1">Important</h3>
+                <p class="text-sm text-amber-800">
+                  Cancellation policies may apply. Please review the refund details before proceeding.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                Reason for cancellation (optional)
+              </label>
+              <textarea
+                [(ngModel)]="cancelReason"
+                rows="4"
+                placeholder="Let us know why you're cancelling..."
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 resize-none"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-end gap-3 px-6 py-4 bg-gray-50 border-t">
+          <button
+            (click)="closeCancelModal()"
+            class="px-6 py-2.5 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-100 transition-colors duration-200">
+            Keep booking
+          </button>
+          <button
+            (click)="confirmCancel()"
+            [disabled]="cancelling"
+            class="px-6 py-2.5 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span *ngIf="!cancelling">Cancel booking</span>
+            <span *ngIf="cancelling" class="flex items-center gap-2">
+              <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Cancelling...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+
+  .animate-fadeInDown {
+    animation: fadeInDown 0.6s ease-out;
+  }
+
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-scaleIn {
+    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

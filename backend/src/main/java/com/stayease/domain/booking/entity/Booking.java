@@ -48,14 +48,17 @@ public class Booking {
     private BigDecimal totalPrice;
 
     @Column(name = "currency", nullable = false, length = 10)
+    @Builder.Default
     private String currency = "USD";
 
     @Column(name = "booking_status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private BookingStatus bookingStatus = BookingStatus.PENDING;
 
     @Column(name = "payment_status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
     @Column(name = "special_requests", columnDefinition = "TEXT")
@@ -68,6 +71,7 @@ public class Booking {
     private Instant cancelledAt;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<BookingAddon> addons = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)

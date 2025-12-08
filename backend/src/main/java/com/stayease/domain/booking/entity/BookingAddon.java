@@ -34,5 +34,6 @@ public class BookingAddon {
     private BigDecimal price;
 
     @Column(name = "quantity", nullable = false)
+    @Builder.Default
     private Integer quantity = 1;
 }

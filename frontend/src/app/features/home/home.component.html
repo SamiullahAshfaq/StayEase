@@ -18,7 +18,11 @@
       <div class="w-full max-w-2xl mx-auto">
         <div class="bg-white rounded-full shadow-2xl p-2 flex items-center">
           <input type="text" placeholder="Search for cities, places, or activities" class="flex-grow bg-transparent border-none text-gray-700 placeholder-gray-500 focus:ring-0 px-4 py-2">
-          <button pButton type="button" icon="pi pi-search" class="p-button-rounded p-button-danger" routerLink="/listings"></button>
+          <button type="button" routerLink="/listings" class="bg-red-500 text-white rounded-full p-3 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -49,7 +53,7 @@
       <div class="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
         <h2 class="text-4xl font-bold mb-4">Become a Host</h2>
         <p class="text-lg text-gray-300 mb-6">Join our community of hosts and start earning by sharing your space.</p>
-        <button pButton label="Learn More" class="p-button-lg p-button-danger" routerLink="/become-a-host"></button>
+        <button routerLink="/become-a-host" class="bg-red-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-600 transition duration-300 ease-in-out transform hover:scale-105">Learn More</button>
       </div>
       <div class="md:w-1/2 flex justify-center">
         <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=2070&auto=format=fit=crop" alt="Happy host" class="rounded-lg shadow-xl w-full max-w-md">

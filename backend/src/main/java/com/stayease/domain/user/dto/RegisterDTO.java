@@ -32,5 +32,6 @@ public class RegisterDTO {
     @AssertTrue(message = "You must agree to the terms and conditions")
     private Boolean agreeToTerms;
 
+    @Builder.Default
     private Boolean isLandlord = false;
 }

@@ -50,22 +50,28 @@ public class User {
     private String bio;
 
     @Column(name = "language", length = 10)
+    @Builder.Default
     private String language = "en";
 
     @Column(name = "currency", length = 10)
+    @Builder.Default
     private String currency = "USD";
 
     @Column(name = "is_email_verified")
+    @Builder.Default
     private Boolean isEmailVerified = false;
 
     @Column(name = "is_phone_verified")
+    @Builder.Default
     private Boolean isPhoneVerified = false;
 
     @Column(name = "account_status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Builder.Default
     private List<UserAuthority> authorities = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
