@@ -1,62 +1,147 @@
-<div class="relative h-[500px] md:h-[600px] lg:h-[700px] flex items-center justify-center text-white text-center overflow-hidden">
-  <!-- Background Image -->
-  <div class="absolute inset-0 z-0">
-    <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop"
-      alt="Modern living room"
-      class="w-full h-full object-cover object-center">
-      <div class="absolute inset-0 bg-black/50"></div>
-    </div>
+<!-- Hero Section -->
+<section class="hero-section" [@fadeIn]>
+  <div class="hero-background">
+    <img 
+      src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop"
+      alt="Beautiful modern home interior"
+    >
+    <div class="hero-overlay"></div>
+  </div>
 
-    <!-- Hero Content -->
-    <div class="relative z-10 p-8">
-      <h1 class="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight leading-tight">
-        Find Your Next <span class="text-primary-light">Perfect Stay</span>
-      </h1>
-      <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-gray-200">
-        Discover unique homes and experiences, all curated by StayEase. Your adventure starts here.
-      </p>
-      <div class="w-full max-w-2xl mx-auto">
-        <div class="bg-white rounded-full shadow-2xl p-2 flex items-center">
-          <input type="text" placeholder="Search for cities, places, or activities" class="flex-grow bg-transparent border-none text-gray-700 placeholder-gray-500 focus:ring-0 px-4 py-2">
-          <button type="button" routerLink="/listings" class="bg-red-500 text-white rounded-full p-3 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
+  <div class="hero-content">
+    <h1 class="hero-title">
+      Find Your Next <span style="color: #FF385C;">Perfect Stay</span>
+    </h1>
+    <p class="hero-subtitle">
+      Discover unique homes and experiences around the world, all curated by StayEase. 
+      Your adventure starts here.
+    </p>
+
+    <div class="search-container">
+      <div class="search-box">
+        <input 
+          type="text" 
+          class="search-input"
+          [(ngModel)]="searchQuery"
+          placeholder="Search for cities, places, or experiences..."
+          (keyup.enter)="onSearch()"
+        >
+        <button 
+          type="button" 
+          class="search-button" 
+          (click)="onSearch()"
+          routerLink="/listing/search"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section">
+  <h2 class="section-title">Explore by Category</h2>
+  
+  <div class="categories-grid" [@staggerIn]="categories.length">
+    <div 
+      *ngFor="let category of categories" 
+      class="category-card"
+      [routerLink]="['/listing/search']"
+      [queryParams]="{ category: category.query }"
+    >
+      <img [src]="category.image" [alt]="category.name">
+      <div class="category-overlay">
+        <div class="category-content">
+          <span class="category-icon">{{ category.icon }}</span>
+          <h3 class="category-name">{{ category.name }}</h3>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- Featured Categories -->
-  <div class="bg-white py-16 sm:py-24">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Explore by Category</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        <!-- Category Card -->
-        @for (category of categories; track category) {
-          <div class="group relative rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl">
-            <img [src]="category.image" [alt]="category.name" class="w-full h-64 object-cover">
-            <div class="absolute inset-0 bg-black/40 flex items-end p-6">
-              <h3 class="text-2xl font-semibold text-white">{{ category.name }}</h3>
-            </div>
-            <a [routerLink]="'/listings'" [queryParams]="{ category: category.query }" class="absolute inset-0"></a>
-          </div>
-        }
+<!-- Features Section -->
+<section class="features-section">
+  <h2 class="section-title">Why Choose StayEase?</h2>
+  
+  <div class="features-grid" [@staggerIn]="features.length">
+    <div *ngFor="let feature of features" class="feature-card">
+      <span class="feature-icon">{{ feature.icon }}</span>
+      <h3 class="feature-title">{{ feature.title }}</h3>
+      <p class="feature-description">{{ feature.description }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Become a Host Section -->
+<section class="host-section">
+  <div class="host-container">
+    <div class="host-content">
+      <h2>Become a Host</h2>
+      <p>
+        Join our community of hosts and start earning by sharing your unique space. 
+        We make hosting simple and rewarding.
+      </p>
+      <a routerLink="/profile/my-listings" class="host-button">
+        Start Hosting
+      </a>
+    </div>
+    
+    <div class="host-image">
+      <img 
+        src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=2070&auto=format&fit=crop"
+        alt="Happy host welcoming guests"
+      >
+    </div>
+  </div>
+</section>
+
+<!-- Popular Destinations Section -->
+<section class="categories-section" style="background: white;">
+  <h2 class="section-title">Popular Destinations</h2>
+  
+  <div class="categories-grid" [@staggerIn]="4">
+    <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'paris' }">
+      <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop" alt="Paris">
+      <div class="category-overlay">
+        <div class="category-content">
+          <span class="category-icon">🗼</span>
+          <h3 class="category-name">Paris</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'tokyo' }">
+      <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=2094&auto=format&fit=crop" alt="Tokyo">
+      <div class="category-overlay">
+        <div class="category-content">
+          <span class="category-icon">🗾</span>
+          <h3 class="category-name">Tokyo</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'new-york' }">
+      <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070&auto=format&fit=crop" alt="New York">
+      <div class="category-overlay">
+        <div class="category-content">
+          <span class="category-icon">🗽</span>
+          <h3 class="category-name">New York</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'london' }">
+      <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop" alt="London">
+      <div class="category-overlay">
+        <div class="category-content">
+          <span class="category-icon">🏰</span>
+          <h3 class="category-name">London</h3>
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- "Become a Host" Section -->
-  <div class="bg-gray-800 text-white">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col md:flex-row items-center justify-between">
-      <div class="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
-        <h2 class="text-4xl font-bold mb-4">Become a Host</h2>
-        <p class="text-lg text-gray-300 mb-6">Join our community of hosts and start earning by sharing your space.</p>
-        <button routerLink="/become-a-host" class="bg-red-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-600 transition duration-300 ease-in-out transform hover:scale-105">Learn More</button>
-      </div>
-      <div class="md:w-1/2 flex justify-center">
-        <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=2070&auto=format=fit=crop" alt="Happy host" class="rounded-lg shadow-xl w-full max-w-md">
-      </div>
-    </div>
-  </div>
+</section>

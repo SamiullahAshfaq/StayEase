@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
@@ -21,12 +22,17 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {
     this.loadStoredUser();
   }
 
   private loadStoredUser(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
     const token = this.getToken();
     const userStr = localStorage.getItem('currentUser');
     
@@ -63,8 +69,10 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('currentUser');
+    }
     this.currentUserSubject.next(null);
     this.router.navigate(['/']);
   }
@@ -74,7 +82,9 @@ export class AuthService {
       .pipe(
         tap(response => {
           if (response.success && response.data) {
-            localStorage.setItem('currentUser', JSON.stringify(response.data));
+            if (isPlatformBrowser(this.platformId)) {
+              localStorage.setItem('currentUser', JSON.stringify(response.data));
+            }
             this.currentUserSubject.next(response.data);
           }
         })
@@ -82,12 +92,17 @@ export class AuthService {
   }
 
   private setAuth(authResponse: AuthResponse): void {
-    localStorage.setItem('token', authResponse.token);
-    localStorage.setItem('currentUser', JSON.stringify(authResponse.user));
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('token', authResponse.token);
+      localStorage.setItem('currentUser', JSON.stringify(authResponse.user));
+    }
     this.currentUserSubject.next(authResponse.user);
   }
 
   getToken(): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
     return localStorage.getItem('token');
   }
 

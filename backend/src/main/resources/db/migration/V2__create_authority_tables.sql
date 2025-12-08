@@ -21,6 +21,7 @@ CREATE SEQUENCE user_authority_seq START WITH 1 INCREMENT BY 50;
 
 -- Insert default authorities
 INSERT INTO authority (id, name, description) VALUES 
+    (nextval('authority_seq'), 'ROLE_USER', 'Default user role - basic access'),
     (nextval('authority_seq'), 'ROLE_TENANT', 'Tenant role - can book listings and services'),
     (nextval('authority_seq'), 'ROLE_LANDLORD', 'Landlord role - can create and manage listings'),
     (nextval('authority_seq'), 'ROLE_ADMIN', 'Administrator role - full system access'),
