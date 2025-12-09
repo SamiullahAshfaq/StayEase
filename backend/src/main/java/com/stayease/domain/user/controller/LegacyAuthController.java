@@ -24,9 +24,9 @@ public class LegacyAuthController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponseDTO>> register(@Valid @RequestBody RegisterDTO registerDTO) {
         log.info("Registration request for email: {}", registerDTO.getEmail());
-        
+
         AuthResponseDTO response = authService.register(registerDTO);
-        
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.<AuthResponseDTO>builder()
@@ -39,9 +39,9 @@ public class LegacyAuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponseDTO>> login(@Valid @RequestBody LoginDTO loginDTO) {
         log.info("Login request for email: {}", loginDTO.getEmail());
-        
+
         AuthResponseDTO response = authService.login(loginDTO);
-        
+
         return ResponseEntity.ok(ApiResponse.<AuthResponseDTO>builder()
                 .success(true)
                 .message("Login successful")
@@ -52,9 +52,9 @@ public class LegacyAuthController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserDTO>> getCurrentUser(
             @AuthenticationPrincipal UserPrincipal currentUser) {
-        
+
         UserDTO user = authService.getCurrentUser(currentUser);
-        
+
         return ResponseEntity.ok(ApiResponse.<UserDTO>builder()
                 .success(true)
                 .data(user)

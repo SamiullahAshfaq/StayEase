@@ -2,7 +2,7 @@ package com.stayease.domain.user.controller;
 
 import com.stayease.domain.user.dto.UpdateUserDTO;
 import com.stayease.domain.user.dto.UserDTO;
-import com.stayease.domain.user.service.UserService;
+import com.stayease.domain.user.service.LegacyUserService;
 import com.stayease.security.UserPrincipal;
 import com.stayease.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
@@ -21,14 +21,14 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 
-    private final UserService userService;
+    private final LegacyUserService userService;
 
     @GetMapping("/{publicId}")
     public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable UUID publicId) {
         log.debug("Fetching user: {}", publicId);
-        
+
         UserDTO user = userService.getUserByPublicId(publicId);
-        
+
         return ResponseEntity.ok(ApiResponse.<UserDTO>builder()
                 .success(true)
                 .data(user)
@@ -41,11 +41,11 @@ public class UserController {
             @PathVariable UUID publicId,
             @Valid @RequestBody UpdateUserDTO updateDTO,
             @AuthenticationPrincipal UserPrincipal currentUser) {
-        
+
         log.info("Updating user: {}", publicId);
-        
+
         UserDTO updatedUser = userService.updateUser(publicId, updateDTO, currentUser.getPublicId());
-        
+
         return ResponseEntity.ok(ApiResponse.<UserDTO>builder()
                 .success(true)
                 .message("User updated successfully")
@@ -58,11 +58,11 @@ public class UserController {
     public ResponseEntity<ApiResponse<Void>> deleteUser(
             @PathVariable UUID publicId,
             @AuthenticationPrincipal UserPrincipal currentUser) {
-        
+
         log.info("Deleting user: {}", publicId);
-        
+
         userService.deleteUser(publicId, currentUser.getPublicId());
-        
+
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .success(true)
                 .message("User deleted successfully")

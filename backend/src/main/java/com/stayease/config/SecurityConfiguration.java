@@ -3,6 +3,7 @@ package com.stayease.config;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,46 +27,51 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.stayease.security.CustomAuthenticationEntryPoint;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfiguration {
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
+    public SecurityConfiguration(
+            CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+            @Qualifier("legacyUserService") UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers(HttpMethod.GET, "/api/listings/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/services/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
-                .requestMatchers("/error").permitAll()
-                
-                // Admin endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                
-                // Authenticated endpoints
-                .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                .authenticationEntryPoint(customAuthenticationEntryPoint)
-            )
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(customAuthenticationEntryPoint)
-            );
+                .securityMatcher("/api/legacy/**", "/api/listings/**", "/api/services/**", "/api/reviews/**",
+                        "/api/admin/**", "/actuator/**", "/error")
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/listings/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/services/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
+                        .requestMatchers("/api/legacy/auth/**").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/error").permitAll()
+
+                        // Admin endpoints
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // Authenticated endpoints
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(customAuthenticationEntryPoint));
 
         return http.build();
     }
