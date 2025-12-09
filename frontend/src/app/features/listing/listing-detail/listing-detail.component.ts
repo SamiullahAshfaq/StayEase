@@ -8,7 +8,7 @@ import { Listing } from '../models/listing.model';
 @Component({
   selector: 'app-listing-detail',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './listing-detail.component.html'
 })
 export class ListingDetailComponent implements OnInit {
@@ -42,7 +42,7 @@ export class ListingDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const publicId = this.route.snapshot.paramMap.get('publicId');
+    const publicId = this.route.snapshot.paramMap.get('id');
     if (publicId) {
       this.loadListing(publicId);
     }

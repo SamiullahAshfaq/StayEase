@@ -24,36 +24,36 @@ export const routes: Routes = [
       },
 
       // Listing Routes - COMMENTED OUT - Components not built yet
-      // {
-      //   path: 'listing/search',
-      //   loadComponent: () => import('./features/listing/listing-search/listing-search.component').then(m => m.ListingSearchComponent)
-      // },
-      // {
-      //   path: 'listing/:id',
-      //   loadComponent: () => import('./features/listing/listing-detail/listing-detail.component').then(m => m.ListingDetailComponent)
-      // },
-      // {
-      //   path: 'listing/create',
-      //   loadComponent: () => import('./features/listing/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
-      //   canActivate: [AuthGuard]
-      // },
+      {
+        path: 'listing/search',
+        loadComponent: () => import('./features/listing/listing-search/listing-search.component').then(m => m.ListingSearchComponent)
+      },
+      {
+        path: 'listing/:id',
+        loadComponent: () => import('./features/listing/listing-detail/listing-detail.component').then(m => m.ListingDetailComponent)
+      },
+      {
+        path: 'listing/create',
+        loadComponent: () => import('./features/listing/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
+        canActivate: [AuthGuard]
+      },
 
       // Booking Routes - COMMENTED OUT - Components not built yet
-      // {
-      //   path: 'booking/list',
-      //   loadComponent: () => import('./features/booking/booking-list/booking-list.component').then(m => m.BookingListComponent),
-      //   canActivate: [AuthGuard]
-      // },
-      // {
-      //   path: 'booking/:id',
-      //   loadComponent: () => import('./features/booking/booking-detail/booking-detail.component').then(m => m.BookingDetailComponent),
-      //   canActivate: [AuthGuard]
-      // },
-      // {
-      //   path: 'booking/create/:listingId',
-      //   loadComponent: () => import('./features/booking/booking-create/booking-create.component').then(m => m.BookingCreateComponent),
-      //   canActivate: [AuthGuard]
-      // },
+      {
+        path: 'booking/list',
+        loadComponent: () => import('./features/booking/booking-list/booking-list.component').then(m => m.BookingListComponent),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'booking/:id',
+        loadComponent: () => import('./features/booking/booking-detail/booking-detail.component').then(m => m.BookingDetailComponent),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'booking/create/:listingId',
+        loadComponent: () => import('./features/booking/booking-create/booking-create.component').then(m => m.BookingCreateComponent),
+        canActivate: [AuthGuard]
+      },
 
       // Chat Routes - COMMENTED OUT - Components not built yet
       // {

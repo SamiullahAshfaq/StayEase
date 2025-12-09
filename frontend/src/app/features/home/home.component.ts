@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
+import { ListingService } from '../listing/services/listing.service';
+import { ListingCardComponent } from '../listing/listing-card/listing-card.component';
+import { Listing } from '../listing/models/listing.model';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, ListingCardComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   animations: [
@@ -81,16 +84,46 @@ export class HomeComponent implements OnInit {
   ];
 
   searchQuery: string = '';
+  featuredListings: Listing[] = [];
+  loadingListings = false;
+
+  constructor(
+    private listingService: ListingService,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit(): void {
-    // Add smooth scroll behavior
-    document.documentElement.style.scrollBehavior = 'smooth';
+    // Add smooth scroll behavior only in browser
+    if (isPlatformBrowser(this.platformId)) {
+      document.documentElement.style.scrollBehavior = 'smooth';
+    }
+    this.loadFeaturedListings();
+  }
+
+  loadFeaturedListings(): void {
+    this.loadingListings = true;
+    this.listingService.getAllListings(0, 8).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.featuredListings = response.data.content;
+        }
+        this.loadingListings = false;
+      },
+      error: (error) => {
+        console.error('Error loading featured listings:', error);
+        this.loadingListings = false;
+      }
+    });
   }
 
   onSearch(): void {
     if (this.searchQuery.trim()) {
-      // Navigate to listings with search query
-      console.log('Searching for:', this.searchQuery);
+      this.router.navigate(['/listing/search'], {
+        queryParams: { location: this.searchQuery }
+      });
+    } else {
+      this.router.navigate(['/listing/search']);
     }
   }
 }

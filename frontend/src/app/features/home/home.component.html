@@ -76,6 +76,30 @@
   </div>
 </section>
 
+<!-- Featured Listings Section -->
+<section class="categories-section" style="background: #f7f7f7;">
+  <h2 class="section-title">Featured Stays</h2>
+  
+  <div *ngIf="loadingListings" class="flex justify-center items-center py-20">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+  </div>
+  
+  <div *ngIf="!loadingListings && featuredListings.length > 0" class="max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10 mb-8" [@staggerIn]="featuredListings.length">
+      <app-listing-card *ngFor="let listing of featuredListings" [listing]="listing"></app-listing-card>
+    </div>
+    
+    <div class="text-center">
+      <a 
+        routerLink="/listing/search"
+        class="inline-block px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors duration-200"
+      >
+        View All Listings
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- Become a Host Section -->
 <section class="host-section">
   <div class="host-container">

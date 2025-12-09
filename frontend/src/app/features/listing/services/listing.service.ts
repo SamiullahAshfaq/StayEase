@@ -11,20 +11,28 @@ import {
   ListingStatus
 } from '../models/listing.model';
 import { ApiResponse } from '../../../core/models/api-response.model';
+import { MockListingService } from './mock-listing.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ListingService {
   private apiUrl = `${environment.apiUrl}/listings`;
+  private useMockData = true; // Set to false when backend is ready
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private mockService: MockListingService
+  ) {}
 
   createListing(listing: CreateListing): Observable<ApiResponse<Listing>> {
     return this.http.post<ApiResponse<Listing>>(this.apiUrl, listing);
   }
 
   getListingById(publicId: string): Observable<ApiResponse<Listing>> {
+    if (this.useMockData) {
+      return this.mockService.getListingById(publicId);
+    }
     return this.http.get<ApiResponse<Listing>>(`${this.apiUrl}/${publicId}`);
   }
 
@@ -34,6 +42,9 @@ export class ListingService {
     sortBy: string = 'createdAt',
     sortDirection: string = 'DESC'
   ): Observable<ApiResponse<ListingPage>> {
+    if (this.useMockData) {
+      return this.mockService.getAllListings(page, size, sortBy, sortDirection);
+    }
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
@@ -44,6 +55,9 @@ export class ListingService {
   }
 
   searchListings(searchParams: SearchListingParams): Observable<ApiResponse<ListingPage>> {
+    if (this.useMockData) {
+      return this.mockService.searchListings(searchParams);
+    }
     return this.http.post<ApiResponse<ListingPage>>(`${this.apiUrl}/search`, searchParams);
   }
 
@@ -52,6 +66,9 @@ export class ListingService {
     page: number = 0,
     size: number = 20
   ): Observable<ApiResponse<ListingPage>> {
+    if (this.useMockData) {
+      return this.mockService.getListingsByCategory(category, page, size);
+    }
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
