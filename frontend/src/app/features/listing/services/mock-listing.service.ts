@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Listing, ListingPage, ListingStatus, SearchListingParams } from '../models/listing.model';
 import { ApiResponse } from '../../../core/models/api-response.model';
 
@@ -35,13 +35,13 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&h=800&fit=crop', caption: 'Ocean View Living Room', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&h=800&fit=crop', caption: 'Master Bedroom', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop', caption: 'Infinity Pool', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop', caption: 'Modern Kitchen', isCover: false, sortOrder: 4 },
-        { url: 'https://images.unsplash.com/photo-1615529182904-14819c35db37?w=1200&h=800&fit=crop', caption: 'Sunset Terrace', isCover: false, sortOrder: 5 }
+        { url: 'images/listings/listing-1.jpg', caption: 'Ocean View Living Room', isCover: true, sortOrder: 1 },
+        { url: 'images/listings/listing-2.jpg', caption: 'Master Bedroom', isCover: false, sortOrder: 2 },
+        { url: 'images/listings/listing-3.jpg', caption: 'Infinity Pool', isCover: false, sortOrder: 3 },
+        { url: 'images/listings/listing-4.jpg', caption: 'Modern Kitchen', isCover: false, sortOrder: 4 },
+        { url: 'images/listings/listing-5.jpg', caption: 'Sunset Terrace', isCover: false, sortOrder: 5 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&h=800&fit=crop',
+      coverImageUrl: 'images/listings/listing-1.jpg',
       averageRating: 4.9,
       totalReviews: 127,
       createdAt: '2024-01-15T10:00:00Z',
@@ -74,12 +74,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1200&h=800&fit=crop', caption: 'Mountain Cabin Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop', caption: 'Cozy Living Room', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&h=800&fit=crop', caption: 'Bedroom with Mountain View', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=1200&h=800&fit=crop', caption: 'Rustic Kitchen', isCover: false, sortOrder: 4 }
+        { url: 'images/listings/listing-6.jpg', caption: 'Mountain Cabin Exterior', isCover: true, sortOrder: 1 },
+        { url: 'images/listings/listing-7.jpg', caption: 'Cozy Living Room', isCover: false, sortOrder: 2 },
+        { url: 'images/listings/listing-8.jpg', caption: 'Bedroom with Mountain View', isCover: false, sortOrder: 3 },
+        { url: 'images/listings/listing-9.jpg', caption: 'Rustic Kitchen', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1200&h=800&fit=crop',
+      coverImageUrl: 'images/listings/listing-6.jpg',
       averageRating: 4.8,
       totalReviews: 89,
       createdAt: '2024-02-20T14:00:00Z',
@@ -112,12 +112,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=1200&h=800&fit=crop', caption: 'Modern Loft Interior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop', caption: 'Open Kitchen', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&h=800&fit=crop', caption: 'Master Suite', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'City View', isCover: false, sortOrder: 4 }
+        { url: 'images/listings/listing-4.jpg', caption: 'Modern Loft Interior', isCover: true, sortOrder: 1 },
+        { url: 'images/listings/listing-4.jpg', caption: 'Open Kitchen', isCover: false, sortOrder: 2 },
+        { url: 'images/listings/listing-11.jpg', caption: 'Master Suite', isCover: false, sortOrder: 3 },
+        { url: 'images/listings/listing-12.jpg', caption: 'City View', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=1200&h=800&fit=crop',
+      coverImageUrl: 'images/listings/listing-4.jpg',
       averageRating: 4.7,
       totalReviews: 213,
       createdAt: '2024-03-10T11:00:00Z',
@@ -150,13 +150,13 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=1200&h=800&fit=crop', caption: 'Tropical Villa Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1615874959474-d609969a20ed?w=1200&h=800&fit=crop', caption: 'Private Pool', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop', caption: 'Luxurious Bedroom', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Open-air Bathroom', isCover: false, sortOrder: 4 },
-        { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop', caption: 'Rice Paddy View', isCover: false, sortOrder: 5 }
+        { url: 'images/listings/listing-13.jpg', caption: 'Tropical Villa Exterior', isCover: true, sortOrder: 1 },
+        { url: 'images/listings/listing-14.jpg', caption: 'Private Pool', isCover: false, sortOrder: 2 },
+        { url: 'images/listings/listing-3.jpg', caption: 'Luxurious Bedroom', isCover: false, sortOrder: 3 },
+        { url: 'images/listings/listing-12.jpg', caption: 'Open-air Bathroom', isCover: false, sortOrder: 4 },
+        { url: 'images/listings/listing-7.jpg', caption: 'Rice Paddy View', isCover: false, sortOrder: 5 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=1200&h=800&fit=crop',
+      coverImageUrl: 'images/listings/listing-13.jpg',
       averageRating: 4.9,
       totalReviews: 156,
       createdAt: '2024-04-05T08:00:00Z',
@@ -189,12 +189,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=1200&h=800&fit=crop', caption: 'Parisian Living Room', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Eiffel Tower View', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=1200&h=800&fit=crop', caption: 'Classic Bedroom', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=1200&h=800&fit=crop', caption: 'French Kitchen', isCover: false, sortOrder: 4 }
+        { url: 'images/listings/listing-15.jpg', caption: 'Parisian Living Room', isCover: true, sortOrder: 1 },
+        { url: 'images/listings/listing-12.jpg', caption: 'Eiffel Tower View', isCover: false, sortOrder: 2 },
+        { url: 'images/listings/listing-16.jpg', caption: 'Classic Bedroom', isCover: false, sortOrder: 3 },
+        { url: 'images/listings/listing-9.jpg', caption: 'French Kitchen', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=1200&h=800&fit=crop',
+      coverImageUrl: 'images/listings/listing-15.jpg',
       averageRating: 4.8,
       totalReviews: 94,
       createdAt: '2024-05-12T13:00:00Z',
@@ -227,12 +227,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600011689032-8b628b8a8747?w=1200&h=800&fit=crop', caption: 'Santorini Sunset View', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop', caption: 'Cozy Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop', caption: 'Private Terrace', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop', caption: 'Cycladic Kitchen', isCover: false, sortOrder: 4 }
+        { url: 'images/listings/listing-17.jpg', caption: 'Santorini Sunset View', isCover: true, sortOrder: 1 },
+        { url: 'images/listings/listing-7.jpg', caption: 'Cozy Interior', isCover: false, sortOrder: 2 },
+        { url: 'images/listings/listing-3.jpg', caption: 'Private Terrace', isCover: false, sortOrder: 3 },
+        { url: 'images/listings/listing-4.jpg', caption: 'Cycladic Kitchen', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600011689032-8b628b8a8747?w=1200&h=800&fit=crop',
+      coverImageUrl: 'images/listings/listing-17.jpg',
       averageRating: 5.0,
       totalReviews: 78,
       createdAt: '2024-06-18T09:00:00Z',
@@ -265,12 +265,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&h=800&fit=crop', caption: 'Safari Lodge Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop', caption: 'Luxury Tent Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Serengeti View', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&h=800&fit=crop', caption: 'Sunset Deck', isCover: false, sortOrder: 4 }
+        { url: 'images/listings/listing-18.jpg', caption: 'Safari Lodge Exterior', isCover: true, sortOrder: 1 },
+        { url: 'images/listings/listing-7.jpg', caption: 'Luxury Tent Interior', isCover: false, sortOrder: 2 },
+        { url: 'images/listings/listing-12.jpg', caption: 'Serengeti View', isCover: false, sortOrder: 3 },
+        { url: 'images/listings/listing-8.jpg', caption: 'Sunset Deck', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&h=800&fit=crop',
+      coverImageUrl: 'images/listings/listing-18.jpg',
       averageRating: 4.9,
       totalReviews: 45,
       createdAt: '2024-07-22T07:00:00Z',
@@ -303,13 +303,13 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&h=800&fit=crop', caption: 'Lake Como Villa', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687644-aac4c3eac7f4?w=1200&h=800&fit=crop', caption: 'Elegant Living Room', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop', caption: 'Lakefront Terrace', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=1200&h=800&fit=crop', caption: 'Master Suite', isCover: false, sortOrder: 4 },
-        { url: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=1200&h=800&fit=crop', caption: 'Gourmet Kitchen', isCover: false, sortOrder: 5 }
+        { url: 'images/listings/listing-11.jpg', caption: 'Lake Como Villa', isCover: true, sortOrder: 1 },
+        { url: 'images/listings/listing-4.jpg', caption: 'Elegant Living Room', isCover: false, sortOrder: 2 },
+        { url: 'images/listings/listing-4.jpg', caption: 'Lakefront Terrace', isCover: false, sortOrder: 3 },
+        { url: 'images/listings/listing-16.jpg', caption: 'Master Suite', isCover: false, sortOrder: 4 },
+        { url: 'images/listings/listing-9.jpg', caption: 'Gourmet Kitchen', isCover: false, sortOrder: 5 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'images/listings/listing-11.jpg',
       averageRating: 4.9,
       totalReviews: 112,
       createdAt: '2024-08-14T12:00:00Z',
@@ -402,7 +402,7 @@ export class MockListingService {
       }
     };
 
-    return of(response).pipe(delay(500)); // Simulate network delay
+    return of(response); // No delay for local images
   }
 
   // Mock implementation of get listing by ID
@@ -416,7 +416,7 @@ export class MockListingService {
       data: listing || null as any
     };
 
-    return of(response).pipe(delay(300));
+    return of(response); // No delay for local images
   }
 
   // Mock implementation of get all listings

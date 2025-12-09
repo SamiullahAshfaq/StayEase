@@ -2,6 +2,7 @@
 import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
 import { customAuthInterceptor } from './core/auth/custom-auth.interceptor';
 
@@ -10,6 +11,7 @@ export const appConfig: ApplicationConfig = {
     // Use the stable provider
     provideZonelessChangeDetection(),
     provideRouter(routes, withComponentInputBinding()),
+    provideAnimationsAsync(),
     provideHttpClient(
       withFetch(),
       withInterceptors([customAuthInterceptor])

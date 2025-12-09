@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ListingService } from '../services/listing.service';
@@ -8,7 +8,7 @@ import { Listing } from '../models/listing.model';
 @Component({
   selector: 'app-listing-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './listing-detail.component.html'
 })
 export class ListingDetailComponent implements OnInit {

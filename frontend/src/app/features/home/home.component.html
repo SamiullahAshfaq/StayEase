@@ -1,171 +1,179 @@
 <!-- Hero Section -->
 <section class="hero-section" [@fadeIn]>
   <div class="hero-background">
-    <img 
+    <img
       src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop"
       alt="Beautiful modern home interior"
-    >
-    <div class="hero-overlay"></div>
-  </div>
-
-  <div class="hero-content">
-    <h1 class="hero-title">
-      Find Your Next <span style="color: #FF385C;">Perfect Stay</span>
-    </h1>
-    <p class="hero-subtitle">
-      Discover unique homes and experiences around the world, all curated by StayEase. 
-      Your adventure starts here.
-    </p>
-
-    <div class="search-container">
-      <div class="search-box">
-        <input 
-          type="text" 
-          class="search-input"
-          [(ngModel)]="searchQuery"
-          placeholder="Search for cities, places, or experiences..."
-          (keyup.enter)="onSearch()"
-        >
-        <button 
-          type="button" 
-          class="search-button" 
-          (click)="onSearch()"
-          routerLink="/listing/search"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Categories Section -->
-<section class="categories-section">
-  <h2 class="section-title">Explore by Category</h2>
-  
-  <div class="categories-grid" [@staggerIn]="categories.length">
-    <div 
-      *ngFor="let category of categories" 
-      class="category-card"
-      [routerLink]="['/listing/search']"
-      [queryParams]="{ category: category.query }"
-    >
-      <img [src]="category.image" [alt]="category.name">
-      <div class="category-overlay">
-        <div class="category-content">
-          <span class="category-icon">{{ category.icon }}</span>
-          <h3 class="category-name">{{ category.name }}</h3>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Features Section -->
-<section class="features-section">
-  <h2 class="section-title">Why Choose StayEase?</h2>
-  
-  <div class="features-grid" [@staggerIn]="features.length">
-    <div *ngFor="let feature of features" class="feature-card">
-      <span class="feature-icon">{{ feature.icon }}</span>
-      <h3 class="feature-title">{{ feature.title }}</h3>
-      <p class="feature-description">{{ feature.description }}</p>
-    </div>
-  </div>
-</section>
-
-<!-- Featured Listings Section -->
-<section class="categories-section" style="background: #f7f7f7;">
-  <h2 class="section-title">Featured Stays</h2>
-  
-  <div *ngIf="loadingListings" class="flex justify-center items-center py-20">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-  </div>
-  
-  <div *ngIf="!loadingListings && featuredListings.length > 0" class="max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10 mb-8" [@staggerIn]="featuredListings.length">
-      <app-listing-card *ngFor="let listing of featuredListings" [listing]="listing"></app-listing-card>
-    </div>
-    
-    <div class="text-center">
-      <a 
-        routerLink="/listing/search"
-        class="inline-block px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors duration-200"
       >
-        View All Listings
-      </a>
+      <div class="hero-overlay"></div>
     </div>
-  </div>
-</section>
 
-<!-- Become a Host Section -->
-<section class="host-section">
-  <div class="host-container">
-    <div class="host-content">
-      <h2>Become a Host</h2>
-      <p>
-        Join our community of hosts and start earning by sharing your unique space. 
-        We make hosting simple and rewarding.
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Find Your Next <span style="color: #FF385C;">Perfect Stay</span>
+      </h1>
+      <p class="hero-subtitle">
+        Discover unique homes and experiences around the world, all curated by StayEase.
+        Your adventure starts here.
       </p>
-      <a routerLink="/profile/my-listings" class="host-button">
-        Start Hosting
-      </a>
-    </div>
-    
-    <div class="host-image">
-      <img 
-        src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=2070&auto=format&fit=crop"
-        alt="Happy host welcoming guests"
-      >
-    </div>
-  </div>
-</section>
 
-<!-- Popular Destinations Section -->
-<section class="categories-section" style="background: white;">
-  <h2 class="section-title">Popular Destinations</h2>
-  
-  <div class="categories-grid" [@staggerIn]="4">
-    <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'paris' }">
-      <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop" alt="Paris">
-      <div class="category-overlay">
-        <div class="category-content">
-          <span class="category-icon">🗼</span>
-          <h3 class="category-name">Paris</h3>
+      <div class="search-container">
+        <div class="search-box">
+          <input
+            type="text"
+            class="search-input"
+            [(ngModel)]="searchQuery"
+            placeholder="Search for cities, places, or experiences..."
+            (keyup.enter)="onSearch()"
+            >
+            <button
+              type="button"
+              class="search-button"
+              (click)="onSearch()"
+              routerLink="/listing/search"
+              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'tokyo' }">
-      <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=2094&auto=format&fit=crop" alt="Tokyo">
-      <div class="category-overlay">
-        <div class="category-content">
-          <span class="category-icon">🗾</span>
-          <h3 class="category-name">Tokyo</h3>
-        </div>
-      </div>
-    </div>
+    <!-- Categories Section -->
+    <section class="categories-section">
+      <h2 class="section-title">Explore by Category</h2>
 
-    <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'new-york' }">
-      <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070&auto=format&fit=crop" alt="New York">
-      <div class="category-overlay">
-        <div class="category-content">
-          <span class="category-icon">🗽</span>
-          <h3 class="category-name">New York</h3>
-        </div>
+      <div class="categories-grid" [@staggerIn]="categories.length">
+        @for (category of categories; track category) {
+          <div
+            class="category-card"
+            [routerLink]="['/listing/search']"
+            [queryParams]="{ category: category.query }"
+            >
+            <img [src]="category.image" [alt]="category.name">
+            <div class="category-overlay">
+              <div class="category-content">
+                <span class="category-icon">{{ category.icon }}</span>
+                <h3 class="category-name">{{ category.name }}</h3>
+              </div>
+            </div>
+          </div>
+        }
       </div>
-    </div>
+    </section>
 
-    <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'london' }">
-      <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop" alt="London">
-      <div class="category-overlay">
-        <div class="category-content">
-          <span class="category-icon">🏰</span>
-          <h3 class="category-name">London</h3>
-        </div>
+    <!-- Features Section -->
+    <section class="features-section">
+      <h2 class="section-title">Why Choose StayEase?</h2>
+
+      <div class="features-grid" [@staggerIn]="features.length">
+        @for (feature of features; track feature) {
+          <div class="feature-card">
+            <span class="feature-icon">{{ feature.icon }}</span>
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-description">{{ feature.description }}</p>
+          </div>
+        }
       </div>
-    </div>
-  </div>
-</section>
+    </section>
+
+    <!-- Featured Listings Section -->
+    <section class="categories-section" style="background: #f7f7f7;">
+      <h2 class="section-title">Featured Stays</h2>
+
+      @if (loadingListings) {
+        <div class="flex justify-center items-center py-20">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+        </div>
+      }
+
+      @if (!loadingListings && featuredListings.length > 0) {
+        <div class="max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10 mb-8" [@staggerIn]="featuredListings.length">
+            @for (listing of featuredListings; track listing) {
+              <app-listing-card [listing]="listing"></app-listing-card>
+            }
+          </div>
+          <div class="text-center">
+            <a
+              routerLink="/listing/search"
+              class="inline-block px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors duration-200"
+              >
+              View All Listings
+            </a>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Become a Host Section -->
+    <section class="host-section">
+      <div class="host-container">
+        <div class="host-content">
+          <h2>Become a Host</h2>
+          <p>
+            Join our community of hosts and start earning by sharing your unique space.
+            We make hosting simple and rewarding.
+          </p>
+          <a routerLink="/profile/my-listings" class="host-button">
+            Start Hosting
+          </a>
+        </div>
+
+        <div class="host-image">
+          <img
+            src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=2070&auto=format&fit=crop"
+            alt="Happy host welcoming guests"
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- Popular Destinations Section -->
+      <section class="categories-section" style="background: white;">
+        <h2 class="section-title">Popular Destinations</h2>
+
+        <div class="categories-grid" [@staggerIn]="4">
+          <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'paris' }">
+            <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop" alt="Paris">
+            <div class="category-overlay">
+              <div class="category-content">
+                <span class="category-icon">🗼</span>
+                <h3 class="category-name">Paris</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'tokyo' }">
+            <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=2094&auto=format&fit=crop" alt="Tokyo">
+            <div class="category-overlay">
+              <div class="category-content">
+                <span class="category-icon">🗾</span>
+                <h3 class="category-name">Tokyo</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'new-york' }">
+            <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070&auto=format&fit=crop" alt="New York">
+            <div class="category-overlay">
+              <div class="category-content">
+                <span class="category-icon">🗽</span>
+                <h3 class="category-name">New York</h3>
+              </div>
+            </div>
+          </div>
+
+          <div class="category-card" [routerLink]="['/listing/search']" [queryParams]="{ city: 'london' }">
+            <img src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop" alt="London">
+            <div class="category-overlay">
+              <div class="category-content">
+                <span class="category-icon">🏰</span>
+                <h3 class="category-name">London</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>

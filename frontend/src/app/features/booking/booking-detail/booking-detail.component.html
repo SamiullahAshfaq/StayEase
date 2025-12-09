@@ -1,375 +1,368 @@
-<div *ngIf="loading" class="flex justify-center items-center min-h-screen">
-  <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
-</div>
-
-<div *ngIf="error" class="max-w-7xl mx-auto px-8 py-20">
-  <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-red-800">
-    {{ error }}
+@if (loading) {
+  <div class="flex justify-center items-center min-h-screen">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
   </div>
-</div>
+}
 
-<div *ngIf="booking && !loading" class="min-h-screen bg-gray-50 py-12">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    
-    <!-- Header -->
-    <div class="mb-8 animate-fadeInDown">
-      <button 
-        [routerLink]="['/bookings']"
-        class="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors duration-200">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-        </svg>
-        <span class="font-semibold">Back to bookings</span>
-      </button>
-      
-      <div class="flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 class="text-4xl font-bold text-gray-900 mb-2">Booking confirmation</h1>
-          <p class="text-gray-600">Reference: {{ booking.publicId }}</p>
-        </div>
-        
-        <div class="flex items-center gap-3">
-          <button
-            (click)="toggleShare()"
-            class="px-4 py-2.5 border-2 border-gray-300 rounded-xl hover:border-black transition-colors duration-200 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-            </svg>
-            <span class="font-semibold">Share</span>
-          </button>
-          
-          <button
-            (click)="downloadConfirmation()"
-            class="px-4 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-200 flex items-center gap-2 shadow-lg">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            <span class="font-semibold">Download</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
-      <!-- Main Content -->
-      <div class="lg:col-span-2 space-y-6">
-        
-        <!-- Status Card -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 animate-fadeInLeft">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">Booking status</h2>
-            <span
-              [class]="getStatusColor(booking.bookingStatus)"
-              class="px-4 py-2 rounded-full text-sm font-semibold border-2">
-              {{ getStatusLabel(booking.bookingStatus) }}
-            </span>
-          </div>
-
-          <!-- Timeline -->
-          <div class="space-y-4">
-            <div class="flex items-start gap-4">
-              <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-              </div>
-              <div class="flex-1">
-                <h3 class="font-semibold text-gray-900">Booking created</h3>
-                <p class="text-sm text-gray-600">{{ booking.createdAt | date:'MMMM d, y \'at\' h:mm a' }}</p>
-              </div>
-            </div>
-
-            <div *ngIf="booking.bookingStatus === 'CONFIRMED'" class="flex items-start gap-4">
-              <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
-              </div>
-              <div class="flex-1">
-                <h3 class="font-semibold text-gray-900">Confirmed by host</h3>
-                <p class="text-sm text-gray-600">Your booking has been approved</p>
-              </div>
-            </div>
-
-            <div *ngIf="booking.bookingStatus === 'CANCELLED'" class="flex items-start gap-4">
-              <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-              </div>
-              <div class="flex-1">
-                <h3 class="font-semibold text-gray-900">Booking cancelled</h3>
-                <p class="text-sm text-gray-600">{{ booking.cancelledAt | date:'MMMM d, y \'at\' h:mm a' }}</p>
-                <p *ngIf="booking.cancellationReason" class="text-sm text-gray-600 mt-2 italic">
-                  Reason: {{ booking.cancellationReason }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Trip Details -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 animate-fadeInLeft">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Trip details</h2>
-          
-          <div class="space-y-6">
-            <!-- Dates -->
-            <div class="grid grid-cols-2 gap-6">
-              <div class="space-y-2">
-                <p class="text-sm font-semibold text-gray-500 uppercase">Check-in</p>
-                <div class="flex items-center gap-2">
-                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                  </svg>
-                  <div>
-                    <p class="font-semibold text-gray-900">{{ booking.checkInDate | date:'EEEE' }}</p>
-                    <p class="text-sm text-gray-600">{{ booking.checkInDate | date:'MMMM d, y' }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="space-y-2">
-                <p class="text-sm font-semibold text-gray-500 uppercase">Check-out</p>
-                <div class="flex items-center gap-2">
-                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                  </svg>
-                  <div>
-                    <p class="font-semibold text-gray-900">{{ booking.checkOutDate | date:'EEEE' }}</p>
-                    <p class="text-sm text-gray-600">{{ booking.checkOutDate | date:'MMMM d, y' }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Info Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t">
-              <div>
-                <p class="text-sm text-gray-500 mb-1">Nights</p>
-                <p class="text-lg font-semibold text-gray-900">{{ booking.numberOfNights }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500 mb-1">Guests</p>
-                <p class="text-lg font-semibold text-gray-900">{{ booking.numberOfGuests }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500 mb-1">Total price</p>
-                <p class="text-lg font-semibold text-gray-900">${{ booking.totalPrice.toFixed(2) }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500 mb-1">Payment</p>
-                <p class="text-lg font-semibold text-gray-900">{{ booking.paymentStatus }}</p>
-              </div>
-            </div>
-
-            <!-- Special Requests -->
-            <div *ngIf="booking.specialRequests" class="pt-4 border-t">
-              <p class="text-sm font-semibold text-gray-500 uppercase mb-2">Special requests</p>
-              <p class="text-gray-700">{{ booking.specialRequests }}</p>
-            </div>
-
-            <!-- Addons -->
-            <div *ngIf="booking.addons && booking.addons.length > 0" class="pt-4 border-t">
-              <p class="text-sm font-semibold text-gray-500 uppercase mb-3">Add-ons</p>
-              <div class="space-y-2">
-                <div *ngFor="let addon of booking.addons" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p class="font-semibold text-gray-900">{{ addon.name }}</p>
-                    <p *ngIf="addon.description" class="text-sm text-gray-600">{{ addon.description }}</p>
-                  </div>
-                  <p class="font-semibold text-gray-900">${{ addon.price.toFixed(2) }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Need Help -->
-        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100 p-6 animate-fadeInLeft">
-          <h2 class="text-xl font-bold text-gray-900 mb-4">Need help with your booking?</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button
-              (click)="contactHost()"
-              class="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-200">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-              </svg>
-              <span class="font-semibold">Contact host</span>
-            </button>
-            
-            <button
-              (click)="reportIssue()"
-              class="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-200">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>
-              </svg>
-              <span class="font-semibold">Report issue</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sidebar -->
-      <div class="lg:sticky lg:top-24 h-fit space-y-6 animate-fadeInRight">
-        
-        <!-- Property Card -->
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-          <img 
-            [src]="booking.listingCoverImage || '/assets/placeholder-listing.jpg'"
-            [alt]="booking.listingTitle"
-            class="w-full h-48 object-cover">
-          
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ booking.listingTitle }}</h3>
-            
-            <button
-              (click)="viewListing()"
-              class="w-full mt-4 py-3 border-2 border-gray-900 text-gray-900 font-semibold rounded-xl hover:bg-gray-900 hover:text-white transition-all duration-200">
-              View listing
-            </button>
-          </div>
-        </div>
-
-        <!-- Price Breakdown -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h3 class="text-lg font-bold text-gray-900 mb-4">Price breakdown</h3>
-          
-          <div class="space-y-3 text-sm">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Base price</span>
-              <span class="font-medium text-gray-900">${{ (booking.totalPrice / 1.14).toFixed(2) }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Service fee</span>
-              <span class="font-medium text-gray-900">${{ (booking.totalPrice * 0.14).toFixed(2) }}</span>
-            </div>
-            <div class="pt-3 border-t flex justify-between items-center">
-              <span class="font-bold text-gray-900">Total paid</span>
-              <span class="text-xl font-bold text-gray-900">${{ booking.totalPrice.toFixed(2) }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Cancellation -->
-        <div *ngIf="canCancel()" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Need to cancel?</h3>
-          <p class="text-sm text-gray-600 mb-4">Free cancellation available before check-in.</p>
-          <button
-            [routerLink]="['/bookings']"
-            class="w-full py-3 border-2 border-red-500 text-red-500 font-semibold rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200">
-            Cancel booking
-          </button>
-        </div>
-      </div>
+@if (error) {
+  <div class="max-w-7xl mx-auto px-8 py-20">
+    <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-red-800">
+      {{ error }}
     </div>
   </div>
+}
 
-  <!-- Share Modal -->
-  <div
-    *ngIf="showShareModal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4"
-    (click)="toggleShare()">
-    <div class="absolute inset-0 bg-black bg-opacity-50 animate-fadeIn"></div>
-    
-    <div 
-      (click)="$event.stopPropagation()"
-      class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scaleIn">
-      
-      <button 
-        (click)="toggleShare()"
-        class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-
-      <h3 class="text-xl font-semibold mb-6">Share booking</h3>
-
-      <!-- Copy Link -->
-      <div class="flex items-center gap-2">
-        <input 
-          type="text"
-          [value]="booking ? currentUrl : ''"
-          readonly
-          class="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-sm">
-        <button 
-          (click)="copyLink()"
-          class="px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200 whitespace-nowrap">
-          {{ copied ? 'Copied!' : 'Copy' }}
+@if (booking && !loading) {
+  <div class="min-h-screen bg-gray-50 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Header -->
+      <div class="mb-8 animate-fadeInDown">
+        <button
+          [routerLink]="['/bookings']"
+          class="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors duration-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span class="font-semibold">Back to bookings</span>
         </button>
+        <div class="flex items-start justify-between flex-wrap gap-4">
+          <div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">Booking confirmation</h1>
+            <p class="text-gray-600">Reference: {{ booking.publicId }}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button
+              (click)="toggleShare()"
+              class="px-4 py-2.5 border-2 border-gray-300 rounded-xl hover:border-black transition-colors duration-200 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+              </svg>
+              <span class="font-semibold">Share</span>
+            </button>
+            <button
+              (click)="downloadConfirmation()"
+              class="px-4 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-200 flex items-center gap-2 shadow-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              <span class="font-semibold">Download</span>
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Status Card -->
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 animate-fadeInLeft">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-bold text-gray-900">Booking status</h2>
+              <span
+                [class]="getStatusColor(booking.bookingStatus)"
+                class="px-4 py-2 rounded-full text-sm font-semibold border-2">
+                {{ getStatusLabel(booking.bookingStatus) }}
+              </span>
+            </div>
+            <!-- Timeline -->
+            <div class="space-y-4">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <h3 class="font-semibold text-gray-900">Booking created</h3>
+                  <p class="text-sm text-gray-600">{{ booking.createdAt | date:'MMMM d, y \'at\' h:mm a' }}</p>
+                </div>
+              </div>
+              @if (booking.bookingStatus === 'CONFIRMED') {
+                <div class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900">Confirmed by host</h3>
+                    <p class="text-sm text-gray-600">Your booking has been approved</p>
+                  </div>
+                </div>
+              }
+              @if (booking.bookingStatus === 'CANCELLED') {
+                <div class="flex items-start gap-4">
+                  <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-gray-900">Booking cancelled</h3>
+                    <p class="text-sm text-gray-600">{{ booking.cancelledAt | date:'MMMM d, y \'at\' h:mm a' }}</p>
+                    @if (booking.cancellationReason) {
+                      <p class="text-sm text-gray-600 mt-2 italic">
+                        Reason: {{ booking.cancellationReason }}
+                      </p>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+          <!-- Trip Details -->
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 animate-fadeInLeft">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Trip details</h2>
+            <div class="space-y-6">
+              <!-- Dates -->
+              <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <p class="text-sm font-semibold text-gray-500 uppercase">Check-in</p>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <div>
+                      <p class="font-semibold text-gray-900">{{ booking.checkInDate | date:'EEEE' }}</p>
+                      <p class="text-sm text-gray-600">{{ booking.checkInDate | date:'MMMM d, y' }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-sm font-semibold text-gray-500 uppercase">Check-out</p>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <div>
+                      <p class="font-semibold text-gray-900">{{ booking.checkOutDate | date:'EEEE' }}</p>
+                      <p class="text-sm text-gray-600">{{ booking.checkOutDate | date:'MMMM d, y' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Info Grid -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t">
+                <div>
+                  <p class="text-sm text-gray-500 mb-1">Nights</p>
+                  <p class="text-lg font-semibold text-gray-900">{{ booking.numberOfNights }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 mb-1">Guests</p>
+                  <p class="text-lg font-semibold text-gray-900">{{ booking.numberOfGuests }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 mb-1">Total price</p>
+                  <p class="text-lg font-semibold text-gray-900">${{ booking.totalPrice.toFixed(2) }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500 mb-1">Payment</p>
+                  <p class="text-lg font-semibold text-gray-900">{{ booking.paymentStatus }}</p>
+                </div>
+              </div>
+              <!-- Special Requests -->
+              @if (booking.specialRequests) {
+                <div class="pt-4 border-t">
+                  <p class="text-sm font-semibold text-gray-500 uppercase mb-2">Special requests</p>
+                  <p class="text-gray-700">{{ booking.specialRequests }}</p>
+                </div>
+              }
+              <!-- Addons -->
+              @if (booking.addons && booking.addons.length > 0) {
+                <div class="pt-4 border-t">
+                  <p class="text-sm font-semibold text-gray-500 uppercase mb-3">Add-ons</p>
+                  <div class="space-y-2">
+                    @for (addon of booking.addons; track addon) {
+                      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <p class="font-semibold text-gray-900">{{ addon.name }}</p>
+                          @if (addon.description) {
+                            <p class="text-sm text-gray-600">{{ addon.description }}</p>
+                          }
+                        </div>
+                        <p class="font-semibold text-gray-900">${{ addon.price.toFixed(2) }}</p>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+          <!-- Need Help -->
+          <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100 p-6 animate-fadeInLeft">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Need help with your booking?</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                (click)="contactHost()"
+                class="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                <span class="font-semibold">Contact host</span>
+              </button>
+              <button
+                (click)="reportIssue()"
+                class="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/>
+                </svg>
+                <span class="font-semibold">Report issue</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Sidebar -->
+        <div class="lg:sticky lg:top-24 h-fit space-y-6 animate-fadeInRight">
+          <!-- Property Card -->
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <img
+              [src]="booking.listingCoverImage || '/assets/placeholder-listing.jpg'"
+              [alt]="booking.listingTitle"
+              class="w-full h-48 object-cover">
+              <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ booking.listingTitle }}</h3>
+                <button
+                  (click)="viewListing()"
+                  class="w-full mt-4 py-3 border-2 border-gray-900 text-gray-900 font-semibold rounded-xl hover:bg-gray-900 hover:text-white transition-all duration-200">
+                  View listing
+                </button>
+              </div>
+            </div>
+            <!-- Price Breakdown -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+              <h3 class="text-lg font-bold text-gray-900 mb-4">Price breakdown</h3>
+              <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Base price</span>
+                  <span class="font-medium text-gray-900">${{ (booking.totalPrice / 1.14).toFixed(2) }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Service fee</span>
+                  <span class="font-medium text-gray-900">${{ (booking.totalPrice * 0.14).toFixed(2) }}</span>
+                </div>
+                <div class="pt-3 border-t flex justify-between items-center">
+                  <span class="font-bold text-gray-900">Total paid</span>
+                  <span class="text-xl font-bold text-gray-900">${{ booking.totalPrice.toFixed(2) }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- Cancellation -->
+            @if (canCancel()) {
+              <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Need to cancel?</h3>
+                <p class="text-sm text-gray-600 mb-4">Free cancellation available before check-in.</p>
+                <button
+                  [routerLink]="['/bookings']"
+                  class="w-full py-3 border-2 border-red-500 text-red-500 font-semibold rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200">
+                  Cancel booking
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      <!-- Share Modal -->
+      @if (showShareModal) {
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          (click)="toggleShare()">
+          <div class="absolute inset-0 bg-black bg-opacity-50 animate-fadeIn"></div>
+          <div
+            (click)="$event.stopPropagation()"
+            class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scaleIn">
+            <button
+              (click)="toggleShare()"
+              class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+            <h3 class="text-xl font-semibold mb-6">Share booking</h3>
+            <!-- Copy Link -->
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                [value]="booking ? currentUrl : ''"
+                readonly
+                class="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-sm">
+                <button
+                  (click)="copyLink()"
+                  class="px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200 whitespace-nowrap">
+                  {{ copied ? 'Copied!' : 'Copy' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
 
-<style>
-  @keyframes fadeInDown {
-    from {
+    <style>
+      @keyframes fadeInDown {
+      from {
       opacity: 0;
       transform: translateY(-20px);
     }
     to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  @keyframes fadeInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
+@keyframes fadeInLeft {
+from {
+opacity: 0;
+transform: translateX(-20px);
+}
+to {
+opacity: 1;
+transform: translateX(0);
+}
+}
 
-  @keyframes fadeInRight {
-    from {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
+@keyframes fadeInRight {
+from {
+opacity: 0;
+transform: translateX(20px);
+}
+to {
+opacity: 1;
+transform: translateX(0);
+}
+}
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
 
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
+@keyframes scaleIn {
+from {
+opacity: 0;
+transform: scale(0.9);
+}
+to {
+opacity: 1;
+transform: scale(1);
+}
+}
 
-  .animate-fadeInDown {
-    animation: fadeInDown 0.6s ease-out;
-  }
+.animate-fadeInDown {
+animation: fadeInDown 0.6s ease-out;
+}
 
-  .animate-fadeInLeft {
-    animation: fadeInLeft 0.6s ease-out;
-  }
+.animate-fadeInLeft {
+animation: fadeInLeft 0.6s ease-out;
+}
 
-  .animate-fadeInRight {
-    animation: fadeInRight 0.6s ease-out;
-  }
+.animate-fadeInRight {
+animation: fadeInRight 0.6s ease-out;
+}
 
-  .animate-fadeIn {
-    animation: fadeIn 0.3s ease-out;
-  }
+.animate-fadeIn {
+animation: fadeIn 0.3s ease-out;
+}
 
-  .animate-scaleIn {
-    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
+.animate-scaleIn {
+animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 </style>

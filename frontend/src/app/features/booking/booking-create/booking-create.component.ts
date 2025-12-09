@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../services/booking.service';
@@ -10,7 +10,7 @@ import { BookingAddon } from '../models/booking.model';
 @Component({
   selector: 'app-booking-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './booking-create.component.html'
 })
 export class BookingCreateComponent implements OnInit {

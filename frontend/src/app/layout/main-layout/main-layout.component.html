@@ -26,12 +26,16 @@
 
     <!-- Navigation Actions -->
     <nav class="nav-actions">
-      <a *ngIf="authService.isLandlord() || authService.isAdmin()" routerLink="/profile/my-listings" class="host-link">
-        Manage Listings
-      </a>
-      <a *ngIf="!authService.isAuthenticated()" routerLink="/profile/my-listings" class="host-link">
-        Become a Host
-      </a>
+      @if (authService.isLandlord() || authService.isAdmin()) {
+        <a routerLink="/profile/my-listings" class="host-link">
+          Manage Listings
+        </a>
+      }
+      @if (!authService.isAuthenticated()) {
+        <a routerLink="/profile/my-listings" class="host-link">
+          Become a Host
+        </a>
+      }
 
       <button class="globe-button" type="button">
         <svg class="globe-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -45,37 +49,36 @@
           <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          
-          <ng-container *ngIf="currentUser$ | async as user; else guestIcon">
+
+          @if (currentUser$ | async; as user) {
             <div class="user-avatar">
               {{ user.firstName.charAt(0) || 'U' }}{{ user.lastName.charAt(0) || '' }}
             </div>
-          </ng-container>
-          <ng-template #guestIcon>
+          } @else {
             <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-          </ng-template>
+          }
         </button>
 
         <!-- Dropdown Menu -->
         <div class="dropdown-menu" [class.show]="showUserMenu">
-          <ng-container *ngIf="currentUser$ | async as user; else guestMenu">
+          @if (currentUser$ | async; as user) {
             <a routerLink="/profile/view" (click)="showUserMenu = false">
               <div class="font-semibold">Profile</div>
             </a>
             <a routerLink="/booking/list" (click)="showUserMenu = false">My Bookings</a>
-            <a *ngIf="authService.isLandlord() || authService.isAdmin()" routerLink="/profile/my-listings" (click)="showUserMenu = false">
-              My Listings
-            </a>
+            @if (authService.isLandlord() || authService.isAdmin()) {
+              <a routerLink="/profile/my-listings" (click)="showUserMenu = false">
+                My Listings
+              </a>
+            }
             <div class="menu-divider"></div>
             <a routerLink="/service-offering/list" (click)="showUserMenu = false">Services</a>
             <a routerLink="/chat" (click)="showUserMenu = false">Messages</a>
             <div class="menu-divider"></div>
             <button (click)="logout()">Logout</button>
-          </ng-container>
-
-          <ng-template #guestMenu>
+          } @else {
             <a routerLink="/auth/login" (click)="showUserMenu = false">
               <div class="font-semibold">Log in</div>
             </a>
@@ -83,7 +86,8 @@
             <div class="menu-divider"></div>
             <a routerLink="/listing/search" (click)="showUserMenu = false">Browse Listings</a>
             <a routerLink="/service-offering/list" (click)="showUserMenu = false">Services</a>
-          </ng-template>
+          }
+
         </div>
       </div>
     </nav>

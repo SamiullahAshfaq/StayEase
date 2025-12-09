@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListingService } from '../services/listing.service';
@@ -15,7 +15,7 @@ import {
 @Component({
   selector: 'app-listing-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, ListingCardComponent],
+  imports: [FormsModule, ListingCardComponent],
   templateUrl: './listing-search.component.html'
 })
 export class ListingSearchComponent implements OnInit {

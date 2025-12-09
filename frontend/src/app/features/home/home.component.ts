@@ -1,5 +1,5 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
@@ -10,7 +10,7 @@ import { Listing } from '../listing/models/listing.model';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, ListingCardComponent],
+  imports: [RouterLink, FormsModule, ListingCardComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   animations: [
