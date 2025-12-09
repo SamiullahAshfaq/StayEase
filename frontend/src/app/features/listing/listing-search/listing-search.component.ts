@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +8,7 @@ import {
   Listing, 
   SearchListingParams, 
   CATEGORIES, 
+  CATEGORY_ICONS,
   PROPERTY_TYPES, 
   AMENITIES 
 } from '../models/listing.model';
@@ -41,6 +42,7 @@ export class ListingSearchComponent implements OnInit {
   showFiltersModal = false;
   selectedCategory: string | null = null;
   categories = CATEGORIES;
+  categoryIcons = CATEGORY_ICONS;
   propertyTypes = PROPERTY_TYPES;
   amenities = AMENITIES;
   
@@ -53,13 +55,26 @@ export class ListingSearchComponent implements OnInit {
     minBedrooms: undefined as number | undefined,
     minBeds: undefined as number | undefined,
     minBathrooms: undefined as number | undefined,
+    minGuests: undefined as number | undefined,
     instantBook: false
   };
+
+  // Price presets
+  pricePresets = [
+    { label: 'Any price', min: undefined, max: undefined },
+    { label: 'Under $100', min: undefined, max: 100 },
+    { label: '$100 - $200', min: 100, max: 200 },
+    { label: '$200 - $400', min: 200, max: 400 },
+    { label: '$400+', min: 400, max: undefined }
+  ];
+
+  selectedPricePreset: string | null = null;
 
   constructor(
     private listingService: ListingService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -84,19 +99,23 @@ export class ListingSearchComponent implements OnInit {
     
     this.listingService.searchListings(this.searchParams).subscribe({
       next: (response) => {
-        if (response.success && response.data) {
-          this.listings = response.data.content;
-          this.currentPage = response.data.number;
-          this.pageSize = response.data.size;
-          this.totalPages = response.data.totalPages;
-          this.totalElements = response.data.totalElements;
-        }
-        this.loading = false;
+        this.ngZone.run(() => {
+          if (response.success && response.data) {
+            this.listings = response.data.content;
+            this.currentPage = response.data.number;
+            this.pageSize = response.data.size;
+            this.totalPages = response.data.totalPages;
+            this.totalElements = response.data.totalElements;
+          }
+          this.loading = false;
+        });
       },
       error: (error) => {
-        this.error = 'Failed to load listings. Please try again.';
-        this.loading = false;
-        console.error('Error loading listings:', error);
+        this.ngZone.run(() => {
+          this.error = 'Failed to load listings. Please try again.';
+          this.loading = false;
+          console.error('Error loading listings:', error);
+        });
       }
     });
   }
@@ -110,7 +129,7 @@ export class ListingSearchComponent implements OnInit {
       this.searchParams.categories = [category];
     }
     this.searchParams.page = 0;
-    this.loadListings();
+    // Only update query params - the subscription will trigger loadListings
     this.updateQueryParams();
   }
 
@@ -124,8 +143,13 @@ export class ListingSearchComponent implements OnInit {
       minBedrooms: this.searchParams.minBedrooms,
       minBeds: this.searchParams.minBeds,
       minBathrooms: this.searchParams.minBathrooms,
+      minGuests: this.searchParams.guests,
       instantBook: this.searchParams.instantBook || false
     };
+    
+    // Determine selected price preset
+    this.updateSelectedPricePreset();
+    
     this.showFiltersModal = true;
     document.body.style.overflow = 'hidden';
   }
@@ -139,6 +163,7 @@ export class ListingSearchComponent implements OnInit {
     this.searchParams = {
       ...this.searchParams,
       ...this.tempFilters,
+      guests: this.tempFilters.minGuests,
       page: 0
     };
     this.loadListings();
@@ -155,8 +180,10 @@ export class ListingSearchComponent implements OnInit {
       minBedrooms: undefined,
       minBeds: undefined,
       minBathrooms: undefined,
+      minGuests: undefined,
       instantBook: false
     };
+    this.selectedPricePreset = null;
   }
 
   clearAllFilters(): void {
@@ -189,6 +216,51 @@ export class ListingSearchComponent implements OnInit {
     }
   }
 
+  setPricePreset(preset: { label: string, min: number | undefined, max: number | undefined }): void {
+    this.tempFilters.minPrice = preset.min;
+    this.tempFilters.maxPrice = preset.max;
+    this.selectedPricePreset = preset.label;
+  }
+
+  updateSelectedPricePreset(): void {
+    const matchingPreset = this.pricePresets.find(p => 
+      p.min === this.tempFilters.minPrice && p.max === this.tempFilters.maxPrice
+    );
+    this.selectedPricePreset = matchingPreset ? matchingPreset.label : null;
+  }
+
+  onPriceInputChange(): void {
+    // Clear preset selection when manually changing prices
+    this.selectedPricePreset = null;
+  }
+
+  incrementCounter(field: 'minBedrooms' | 'minBeds' | 'minBathrooms' | 'minGuests'): void {
+    const current = this.tempFilters[field] || 0;
+    this.tempFilters[field] = current + 1;
+  }
+
+  decrementCounter(field: 'minBedrooms' | 'minBeds' | 'minBathrooms' | 'minGuests'): void {
+    const current = this.tempFilters[field] || 0;
+    if (current > 0) {
+      this.tempFilters[field] = current - 1;
+      if (this.tempFilters[field] === 0) {
+        this.tempFilters[field] = undefined;
+      }
+    }
+  }
+
+  resetCounter(field: 'minBedrooms' | 'minBeds' | 'minBathrooms' | 'minGuests'): void {
+    this.tempFilters[field] = undefined;
+  }
+
+  isPropertyTypeSelected(type: string): boolean {
+    return this.tempFilters.propertyTypes.includes(type);
+  }
+
+  isAmenitySelected(amenity: string): boolean {
+    return this.tempFilters.amenities.includes(amenity);
+  }
+
   changePage(page: number): void {
     this.searchParams.page = page;
     this.loadListings();
@@ -215,6 +287,7 @@ export class ListingSearchComponent implements OnInit {
       this.searchParams.minBedrooms ||
       this.searchParams.minBeds ||
       this.searchParams.minBathrooms ||
+      this.searchParams.guests ||
       this.searchParams.instantBook
     );
   }
@@ -222,12 +295,57 @@ export class ListingSearchComponent implements OnInit {
   getActiveFiltersCount(): number {
     let count = 0;
     if (this.searchParams.minPrice || this.searchParams.maxPrice) count++;
-    if (this.searchParams.propertyTypes && this.searchParams.propertyTypes.length > 0) count++;
-    if (this.searchParams.amenities && this.searchParams.amenities.length > 0) count++;
+    if (this.searchParams.propertyTypes && this.searchParams.propertyTypes.length > 0) count += this.searchParams.propertyTypes.length;
+    if (this.searchParams.amenities && this.searchParams.amenities.length > 0) count += this.searchParams.amenities.length;
     if (this.searchParams.minBedrooms) count++;
     if (this.searchParams.minBeds) count++;
     if (this.searchParams.minBathrooms) count++;
+    if (this.searchParams.guests) count++;
     if (this.searchParams.instantBook) count++;
     return count;
+  }
+
+  getFilterSummary(): string[] {
+    const summary: string[] = [];
+    
+    if (this.searchParams.minPrice || this.searchParams.maxPrice) {
+      const min = this.searchParams.minPrice || 0;
+      const max = this.searchParams.maxPrice || '∞';
+      summary.push(`$${min} - $${max}`);
+    }
+    
+    if (this.searchParams.propertyTypes && this.searchParams.propertyTypes.length > 0) {
+      summary.push(...this.searchParams.propertyTypes);
+    }
+    
+    if (this.searchParams.minBedrooms) {
+      summary.push(`${this.searchParams.minBedrooms}+ bedrooms`);
+    }
+    
+    if (this.searchParams.minBeds) {
+      summary.push(`${this.searchParams.minBeds}+ beds`);
+    }
+    
+    if (this.searchParams.minBathrooms) {
+      summary.push(`${this.searchParams.minBathrooms}+ bathrooms`);
+    }
+    
+    if (this.searchParams.guests) {
+      summary.push(`${this.searchParams.guests}+ guests`);
+    }
+    
+    if (this.searchParams.amenities && this.searchParams.amenities.length > 0) {
+      if (this.searchParams.amenities.length <= 2) {
+        summary.push(...this.searchParams.amenities);
+      } else {
+        summary.push(`${this.searchParams.amenities.length} amenities`);
+      }
+    }
+    
+    if (this.searchParams.instantBook) {
+      summary.push('Instant Book');
+    }
+    
+    return summary;
   }
 }

@@ -163,6 +163,29 @@ export const CATEGORIES = [
   'Historical homes'
 ];
 
+export const CATEGORY_ICONS: { [key: string]: string } = {
+  'Amazing views': '🏔️',
+  'Beachfront': '🏖️',
+  'Trending': '🔥',
+  'Cabins': '🏕️',
+  'Lakefront': '🌊',
+  'Mansions': '🏰',
+  'Countryside': '🌾',
+  'Design': '✨',
+  'Pools': '🏊',
+  'Tropical': '🌴',
+  'Islands': '🏝️',
+  'Caves': '⛰️',
+  'Castles': '🏰',
+  'Skiing': '⛷️',
+  'Camping': '⛺',
+  'Luxe': '💎',
+  'Tiny homes': '🏡',
+  'Treehouses': '🌳',
+  'Farms': '🚜',
+  'Historical homes': '🏛️'
+};
+
 export const AMENITIES = [
   'WiFi',
   'Kitchen',

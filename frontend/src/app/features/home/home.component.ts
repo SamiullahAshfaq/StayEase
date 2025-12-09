@@ -1,8 +1,8 @@
-import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, Inject, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { ListingService } from '../listing/services/listing.service';
 import { ListingCardComponent } from '../listing/listing-card/listing-card.component';
 import { Listing } from '../listing/models/listing.model';
@@ -19,16 +19,6 @@ import { Listing } from '../listing/models/listing.model';
         style({ opacity: 0, transform: 'translateY(20px)' }),
         animate('600ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
       ])
-    ]),
-    trigger('staggerIn', [
-      transition('* => *', [
-        query(':enter', [
-          style({ opacity: 0, transform: 'translateY(30px)' }),
-          stagger(150, [
-            animate('500ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-          ])
-        ], { optional: true })
-      ])
     ])
   ]
 })
@@ -36,25 +26,25 @@ export class HomeComponent implements OnInit {
   categories = [
     { 
       name: 'Entire Homes', 
-      image: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1974&auto=format&fit=crop', 
+      image: 'images/category-entire-homes.jpg', 
       query: 'home',
       icon: '🏠'
     },
     { 
       name: 'Unique Stays', 
-      image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=1974&auto=format=fit=crop', 
+      image: 'images/category-unique-stays.jpg', 
       query: 'unique',
       icon: '✨'
     },
     { 
       name: 'Apartments', 
-      image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1980&auto=format=fit=crop', 
+      image: 'images/category-apartments.jpg', 
       query: 'apartment',
       icon: '🏢'
     },
     { 
       name: 'Villas', 
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format=fit=crop', 
+      image: 'images/category-villas.jpg', 
       query: 'villa',
       icon: '🏖️'
     }
@@ -90,6 +80,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private listingService: ListingService,
     private router: Router,
+    private ngZone: NgZone,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -105,14 +96,18 @@ export class HomeComponent implements OnInit {
     this.loadingListings = true;
     this.listingService.getAllListings(0, 8).subscribe({
       next: (response) => {
-        if (response.success && response.data) {
-          this.featuredListings = response.data.content;
-        }
-        this.loadingListings = false;
+        this.ngZone.run(() => {
+          if (response.success && response.data) {
+            this.featuredListings = response.data.content;
+          }
+          this.loadingListings = false;
+        });
       },
       error: (error) => {
-        console.error('Error loading featured listings:', error);
-        this.loadingListings = false;
+        this.ngZone.run(() => {
+          console.error('Error loading featured listings:', error);
+          this.loadingListings = false;
+        });
       }
     });
   }
