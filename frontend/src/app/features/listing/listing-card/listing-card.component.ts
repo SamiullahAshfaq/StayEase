@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Listing } from '../models/listing.model';
 
 @Component({
   selector: 'app-listing-card',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './listing-card.component.html'
 })
 export class ListingCardComponent {
@@ -18,6 +18,7 @@ export class ListingCardComponent {
   constructor(private router: Router) {}
 
   navigateToListing(): void {
+    console.log('Navigating to listing:', this.listing.publicId);
     this.router.navigate(['/listings', this.listing.publicId]);
   }
 

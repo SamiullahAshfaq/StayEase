@@ -26,12 +26,12 @@
 
     <!-- Navigation Actions -->
     <nav class="nav-actions">
-      @if (authService.isLandlord() || authService.isAdmin()) {
+      @if (isLandlord() || isAdmin()) {
         <a routerLink="/profile/my-listings" class="host-link">
           Manage Listings
         </a>
       }
-      @if (!authService.isAuthenticated()) {
+      @if (!isAuthenticated()) {
         <a routerLink="/profile/my-listings" class="host-link">
           Become a Host
         </a>
@@ -52,7 +52,7 @@
 
           @if (currentUser$ | async; as user) {
             <div class="user-avatar">
-              {{ user.firstName.charAt(0) || 'U' }}{{ user.lastName.charAt(0) || '' }}
+              {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
             </div>
           } @else {
             <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,7 +68,7 @@
               <div class="font-semibold">Profile</div>
             </a>
             <a routerLink="/booking/list" (click)="showUserMenu = false">My Bookings</a>
-            @if (authService.isLandlord() || authService.isAdmin()) {
+            @if (isLandlord() || isAdmin()) {
               <a routerLink="/profile/my-listings" (click)="showUserMenu = false">
                 My Listings
               </a>

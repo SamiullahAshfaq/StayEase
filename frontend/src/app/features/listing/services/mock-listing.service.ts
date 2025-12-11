@@ -153,7 +153,7 @@ export class MockListingService {
         { url: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=1200&h=800&fit=crop', caption: 'Tropical Villa Exterior', isCover: true, sortOrder: 1 },
         { url: 'https://images.unsplash.com/photo-1615874959474-d609969a20ed?w=1200&h=800&fit=crop', caption: 'Private Pool', isCover: false, sortOrder: 2 },
         { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop', caption: 'Luxurious Bedroom', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Open-air Bathroom', isCover: false, sortOrder: 4 },
+        { url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&h=800&fit=crop', caption: 'Open-air Bathroom', isCover: false, sortOrder: 4 },
         { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop', caption: 'Rice Paddy View', isCover: false, sortOrder: 5 }
       ],
       coverImageUrl: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=1200&h=800&fit=crop',
@@ -190,7 +190,7 @@ export class MockListingService {
       status: ListingStatus.ACTIVE,
       images: [
         { url: 'https://images.unsplash.com/photo-1600585154363-67eb9e2e2099?w=1200&h=800&fit=crop', caption: 'Parisian Living Room', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Eiffel Tower View', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=1200&h=800&fit=crop', caption: 'Eiffel Tower View', isCover: false, sortOrder: 2 },
         { url: 'https://images.unsplash.com/photo-1600566753151-384129cf4e3e?w=1200&h=800&fit=crop', caption: 'Classic Bedroom', isCover: false, sortOrder: 3 },
         { url: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=1200&h=800&fit=crop', caption: 'French Kitchen', isCover: false, sortOrder: 4 }
       ],
@@ -267,7 +267,7 @@ export class MockListingService {
       images: [
         { url: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&h=800&fit=crop', caption: 'Safari Lodge Exterior', isCover: true, sortOrder: 1 },
         { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop', caption: 'Luxury Tent Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Serengeti View', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1200&h=800&fit=crop', caption: 'Serengeti View', isCover: false, sortOrder: 3 },
         { url: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&h=800&fit=crop', caption: 'Sunset Deck', isCover: false, sortOrder: 4 }
       ],
       coverImageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1200&h=800&fit=crop',
@@ -420,12 +420,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Dome Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Aurora View', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cozy Interior', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Hot Tub', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1200&h=800&fit=crop', caption: 'Dome Exterior', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1579033461380-adb47c3eb938?w=1200&h=800&fit=crop', caption: 'Aurora View', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1200&h=800&fit=crop', caption: 'Cozy Interior', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1200&h=800&fit=crop', caption: 'Hot Tub', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 142,
       createdAt: '2024-09-20T09:00:00Z',
@@ -458,12 +458,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Overwater Villa', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Private Pool', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Glass Floor', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Sunset View', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&h=800&fit=crop', caption: 'Overwater Villa', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=1200&h=800&fit=crop', caption: 'Private Pool', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&h=800&fit=crop', caption: 'Glass Floor', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1540202404-d0c7fe46a087?w=1200&h=800&fit=crop', caption: 'Sunset View', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 198,
       createdAt: '2024-10-01T08:00:00Z',
@@ -497,12 +497,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Log Cabin Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cozy Living Room', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Rustic Bedroom', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Porch View', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=1200&h=800&fit=crop', caption: 'Log Cabin Exterior', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1475855581690-80accde3ae2b?w=1200&h=800&fit=crop', caption: 'Cozy Living Room', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop', caption: 'Rustic Bedroom', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1464146072230-91cabc968266?w=1200&h=800&fit=crop', caption: 'Porch View', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=1200&h=800&fit=crop',
       averageRating: 4.8,
       totalReviews: 156,
       createdAt: '2024-10-05T10:00:00Z',
@@ -535,12 +535,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Mountain Cabin', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Modern Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Luxury Bedroom', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Rocky View', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1200&h=800&fit=crop', caption: 'Mountain Cabin', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=800&fit=crop', caption: 'Modern Interior', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=800&fit=crop', caption: 'Luxury Bedroom', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop', caption: 'Rocky View', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 91,
       createdAt: '2024-10-10T09:00:00Z',
@@ -574,13 +574,13 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Mansion Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Grand Foyer', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Infinity Pool', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Master Suite', isCover: false, sortOrder: 4 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Home Theater', isCover: false, sortOrder: 5 }
+        { url: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&h=800&fit=crop', caption: 'Mansion Exterior', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&h=800&fit=crop', caption: 'Grand Foyer', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&h=800&fit=crop', caption: 'Infinity Pool', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1200&h=800&fit=crop', caption: 'Master Suite', isCover: false, sortOrder: 4 },
+        { url: 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1200&h=800&fit=crop', caption: 'Home Theater', isCover: false, sortOrder: 5 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 43,
       createdAt: '2024-10-12T13:00:00Z',
@@ -613,12 +613,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Chateau Facade', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Grand Salon', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Formal Gardens', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Library', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1200&h=800&fit=crop', caption: 'Chateau Facade', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=1200&h=800&fit=crop', caption: 'Grand Salon', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&h=800&fit=crop', caption: 'Formal Gardens', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1618945524163-32451704c25e?w=1200&h=800&fit=crop', caption: 'Library', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 28,
       createdAt: '2024-10-15T14:00:00Z',
@@ -652,12 +652,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Minimalist Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Zen Living Space', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Japanese Garden', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Clean Bedroom', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&h=800&fit=crop', caption: 'Minimalist Exterior', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&h=800&fit=crop', caption: 'Zen Living Space', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=1200&h=800&fit=crop', caption: 'Japanese Garden', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1200&h=800&fit=crop', caption: 'Clean Bedroom', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 74,
       createdAt: '2024-10-18T11:00:00Z',
@@ -690,12 +690,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Desert Architecture', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Geometric Design', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Pool Area', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Interior Space', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=800&fit=crop', caption: 'Desert Architecture', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop', caption: 'Geometric Design', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=1200&h=800&fit=crop', caption: 'Pool Area', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&h=800&fit=crop', caption: 'Interior Space', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&h=800&fit=crop',
       averageRating: 4.8,
       totalReviews: 62,
       createdAt: '2024-10-20T10:00:00Z',
@@ -729,12 +729,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Olympic Pool', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Villa Exterior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Pool Terrace', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Outdoor Living', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=1200&h=800&fit=crop', caption: 'Olympic Pool', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=1200&h=800&fit=crop', caption: 'Villa Exterior', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=800&fit=crop', caption: 'Pool Terrace', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop', caption: 'Outdoor Living', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 118,
       createdAt: '2024-10-22T12:00:00Z',
@@ -767,12 +767,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Waterfall Pool', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Infinity Edge', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Tropical Setting', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Pool Bar', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&h=800&fit=crop', caption: 'Waterfall Pool', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1602216056808-f638a9611a8e?w=1200&h=800&fit=crop', caption: 'Infinity Edge', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&h=800&fit=crop', caption: 'Tropical Setting', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=1200&h=800&fit=crop', caption: 'Pool Bar', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 134,
       createdAt: '2024-10-25T09:00:00Z',
@@ -806,12 +806,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Private Island', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Villa Beachfront', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Ocean View', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Private Beach', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&h=800&fit=crop', caption: 'Private Island', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1540202404-a2f29016b523?w=1200&h=800&fit=crop', caption: 'Villa Beachfront', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop', caption: 'Ocean View', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&h=800&fit=crop', caption: 'Private Beach', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 15,
       createdAt: '2024-10-28T10:00:00Z',
@@ -844,12 +844,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Beach House', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Pristine Beach', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Ocean Living', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Island Paradise', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=1200&h=800&fit=crop', caption: 'Beach House', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&h=800&fit=crop', caption: 'Pristine Beach', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?w=1200&h=800&fit=crop', caption: 'Ocean Living', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=1200&h=800&fit=crop', caption: 'Island Paradise', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 37,
       createdAt: '2024-11-01T11:00:00Z',
@@ -883,12 +883,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cave Hotel', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Stone Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Balloon View', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cave Bedroom', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&h=800&fit=crop', caption: 'Cave Hotel', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1559628376-f3fe5f782a2f?w=1200&h=800&fit=crop', caption: 'Stone Interior', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1609219123196-c38b68fdea0c?w=1200&h=800&fit=crop', caption: 'Balloon View', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=800&fit=crop', caption: 'Cave Bedroom', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 203,
       createdAt: '2024-11-03T09:00:00Z',
@@ -921,12 +921,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cave Entrance', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cave Living Room', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Courtyard', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cave Kitchen', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=1200&h=800&fit=crop', caption: 'Cave Entrance', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&h=800&fit=crop', caption: 'Cave Living Room', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?w=1200&h=800&fit=crop', caption: 'Courtyard', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1556912173-3bb406ef7e77?w=1200&h=800&fit=crop', caption: 'Cave Kitchen', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=1200&h=800&fit=crop',
       averageRating: 4.8,
       totalReviews: 156,
       createdAt: '2024-11-05T10:00:00Z',
@@ -960,12 +960,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Castle Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Great Hall', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Highland Views', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Tower Room', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=1200&h=800&fit=crop', caption: 'Castle Exterior', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1563622825-5f9aa97ee1ba?w=1200&h=800&fit=crop', caption: 'Great Hall', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=1200&h=800&fit=crop', caption: 'Highland Views', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=1200&h=800&fit=crop', caption: 'Tower Room', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 41,
       createdAt: '2024-11-08T12:00:00Z',
@@ -998,12 +998,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Castle Tower', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Rhine View', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Medieval Bedroom', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Wine Cellar', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1565130838609-c3a86655db61?w=1200&h=800&fit=crop', caption: 'Castle Tower', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=1200&h=800&fit=crop', caption: 'Rhine View', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1543489822-c49534f3271f?w=1200&h=800&fit=crop', caption: 'Medieval Bedroom', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&h=800&fit=crop', caption: 'Wine Cellar', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1565130838609-c3a86655db61?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 88,
       createdAt: '2024-11-10T13:00:00Z',
@@ -1037,12 +1037,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Ski Chalet', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Slope Access', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Mountain View', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Hot Tub', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1605538399941-c88b6500e09a?w=1200&h=800&fit=crop', caption: 'Ski Chalet', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1551524481-93dc270c2d82?w=1200&h=800&fit=crop', caption: 'Slope Access', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=1200&h=800&fit=crop', caption: 'Mountain View', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1573052905904-34ad8c27f0cc?w=1200&h=800&fit=crop', caption: 'Hot Tub', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1605538399941-c88b6500e09a?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 124,
       createdAt: '2024-11-12T09:00:00Z',
@@ -1075,12 +1075,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Alpine Lodge', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Mont Blanc View', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Rustic Interior', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cozy Fireplace', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=800&fit=crop', caption: 'Alpine Lodge', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop', caption: 'Mont Blanc View', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?w=1200&h=800&fit=crop', caption: 'Rustic Interior', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=1200&h=800&fit=crop', caption: 'Cozy Fireplace', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=800&fit=crop',
       averageRating: 4.8,
       totalReviews: 97,
       createdAt: '2024-11-15T10:00:00Z',
@@ -1114,12 +1114,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Safari Tent', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Tent Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Valley View', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Private Deck', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=1200&h=800&fit=crop', caption: 'Safari Tent', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&h=800&fit=crop', caption: 'Tent Interior', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&h=800&fit=crop', caption: 'Valley View', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=1200&h=800&fit=crop', caption: 'Private Deck', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 167,
       createdAt: '2024-11-18T11:00:00Z',
@@ -1152,12 +1152,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Glamping Dome', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Starry Night', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Dome Interior', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Wilderness View', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&h=800&fit=crop', caption: 'Glamping Dome', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1200&h=800&fit=crop', caption: 'Starry Night', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1537905569824-f89f14cceb68?w=1200&h=800&fit=crop', caption: 'Dome Interior', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop', caption: 'Wilderness View', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 189,
       createdAt: '2024-11-20T12:00:00Z',
@@ -1191,12 +1191,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Penthouse View', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Burj Khalifa', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Luxury Interior', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Infinity Pool', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&h=800&fit=crop', caption: 'Penthouse View', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?w=1200&h=800&fit=crop', caption: 'Burj Khalifa', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&h=800&fit=crop', caption: 'Luxury Interior', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1605346434674-a440ca4dc4c0?w=1200&h=800&fit=crop', caption: 'Infinity Pool', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 52,
       createdAt: '2024-11-22T13:00:00Z',
@@ -1229,12 +1229,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Monaco View', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Yacht Club', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Luxury Living', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Terrace', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=800&fit=crop', caption: 'Monaco View', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1567225591450-4b6e7d188ea6?w=1200&h=800&fit=crop', caption: 'Yacht Club', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&h=800&fit=crop', caption: 'Luxury Living', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=1200&h=800&fit=crop', caption: 'Terrace', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 36,
       createdAt: '2024-11-25T14:00:00Z',
@@ -1268,12 +1268,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Tiny House', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Efficient Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Loft Bedroom', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Compact Kitchen', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1566304463940-3e9dd7d8c65d?w=1200&h=800&fit=crop', caption: 'Tiny House', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&h=800&fit=crop', caption: 'Efficient Interior', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&h=800&fit=crop', caption: 'Loft Bedroom', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?w=1200&h=800&fit=crop', caption: 'Compact Kitchen', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1566304463940-3e9dd7d8c65d?w=1200&h=800&fit=crop',
       averageRating: 4.8,
       totalReviews: 214,
       createdAt: '2024-11-28T10:00:00Z',
@@ -1306,12 +1306,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Forest Cabin', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Tiny Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Wood Stove', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Forest Deck', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=1200&h=800&fit=crop', caption: 'Forest Cabin', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=1200&h=800&fit=crop', caption: 'Tiny Interior', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=1200&h=800&fit=crop', caption: 'Wood Stove', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=800&fit=crop', caption: 'Forest Deck', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 178,
       createdAt: '2024-11-30T11:00:00Z',
@@ -1345,12 +1345,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Treehouse Exterior', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Canopy View', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Interior Living', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Rope Bridge', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1503652601-557d07733ddc?w=1200&h=800&fit=crop', caption: 'Treehouse Exterior', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1542401886-65d6c61db217?w=1200&h=800&fit=crop', caption: 'Canopy View', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=1200&h=800&fit=crop', caption: 'Interior Living', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1200&h=800&fit=crop', caption: 'Rope Bridge', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1503652601-557d07733ddc?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 241,
       createdAt: '2024-12-01T10:00:00Z',
@@ -1383,12 +1383,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Modern Treehouse', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Forest Canopy', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Suspended Walkway', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Interior Design', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1200&h=800&fit=crop', caption: 'Modern Treehouse', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&h=800&fit=crop', caption: 'Forest Canopy', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=800&fit=crop', caption: 'Suspended Walkway', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&h=800&fit=crop', caption: 'Interior Design', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 187,
       createdAt: '2024-12-03T11:00:00Z',
@@ -1422,12 +1422,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Tuscan Farmhouse', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Vineyard Views', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Wine Cellar', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Farmhouse Interior', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?w=1200&h=800&fit=crop', caption: 'Tuscan Farmhouse', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=1200&h=800&fit=crop', caption: 'Vineyard Views', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=1200&h=800&fit=crop', caption: 'Wine Cellar', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&h=800&fit=crop', caption: 'Farmhouse Interior', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1523531294919-4bcd7c65e216?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 156,
       createdAt: '2024-12-04T12:00:00Z',
@@ -1460,12 +1460,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Farm Cottage', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Pastoral View', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Farm Animals', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Cozy Interior', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&h=800&fit=crop', caption: 'Farm Cottage', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=1200&h=800&fit=crop', caption: 'Pastoral View', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=1200&h=800&fit=crop', caption: 'Farm Animals', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop', caption: 'Cozy Interior', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 198,
       createdAt: '2024-12-05T10:00:00Z',
@@ -1499,12 +1499,12 @@ export class MockListingService {
       instantBook: false,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Colonial Mansion', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Historic Interior', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Formal Garden', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Period Details', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop', caption: 'Colonial Mansion', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=1200&h=800&fit=crop', caption: 'Historic Interior', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1200&h=800&fit=crop', caption: 'Formal Garden', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop', caption: 'Period Details', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop',
       averageRating: 5.0,
       totalReviews: 89,
       createdAt: '2024-12-06T13:00:00Z',
@@ -1537,12 +1537,12 @@ export class MockListingService {
       instantBook: true,
       status: ListingStatus.ACTIVE,
       images: [
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Victorian Facade', isCover: true, sortOrder: 1 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Stained Glass', isCover: false, sortOrder: 2 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Grand Parlor', isCover: false, sortOrder: 3 },
-        { url: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop', caption: 'Turret Room', isCover: false, sortOrder: 4 }
+        { url: 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=1200&h=800&fit=crop', caption: 'Victorian Facade', isCover: true, sortOrder: 1 },
+        { url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&h=800&fit=crop', caption: 'Stained Glass', isCover: false, sortOrder: 2 },
+        { url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&h=800&fit=crop', caption: 'Grand Parlor', isCover: false, sortOrder: 3 },
+        { url: 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&h=800&fit=crop', caption: 'Turret Room', isCover: false, sortOrder: 4 }
       ],
-      coverImageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop',
+      coverImageUrl: 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=1200&h=800&fit=crop',
       averageRating: 4.9,
       totalReviews: 112,
       createdAt: '2024-12-07T14:00:00Z',

@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { BookingService } from '../services/booking.service';
+import { MockBookingService } from '../services/mock-booking.service';
 import { Booking, BookingStatus } from '../models/booking.model';
 import { FormsModule } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-booking-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './booking-list.component.html'
+  templateUrl: './booking-list.component.html',
+  providers: [
+    { provide: BookingService, useClass: MockBookingService }
+  ]
 })
 export class BookingListComponent implements OnInit {
   bookings: Booking[] = [];
@@ -20,7 +25,7 @@ export class BookingListComponent implements OnInit {
   // Pagination
   currentPage = 0;
   pageSize = 10;
-  totalPages = 0;
+  totalPages = 1; // Initialize to 1 instead of 0 to avoid -1 calculations
   totalElements = 0;
 
   // Filters
@@ -34,47 +39,78 @@ export class BookingListComponent implements OnInit {
 
   constructor(
     private bookingService: BookingService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {
+    // Subscribe to route changes to reload bookings
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        // Reload bookings when navigating to this page
+        if (this.router.url.includes('/booking/list')) {
+          console.log('Reloading bookings due to navigation');
+          this.loadBookings();
+        }
+      });
+  }
 
   ngOnInit(): void {
+    console.log('BookingListComponent initialized');
     this.loadBookings();
   }
 
   loadBookings(): void {
+    console.log('loadBookings() called');
     this.loading = true;
     this.error = null;
+    this.cdr.detectChanges(); // Force update to show spinner
 
     this.bookingService.getMyBookings(this.currentPage, this.pageSize).subscribe({
       next: (response) => {
+        console.log('Bookings response received:', response);
         if (response.success && response.data) {
           this.bookings = response.data.content;
+          console.log('Loaded bookings:', this.bookings.length);
           this.currentPage = response.data.number;
           this.pageSize = response.data.size;
           this.totalPages = response.data.totalPages;
           this.totalElements = response.data.totalElements;
           this.filterBookings();
+          console.log('Filtered bookings:', this.filteredBookings.length);
+          
+          // Force loading to false and trigger change detection
+          this.loading = false;
+          console.log('Loading set to false, triggering change detection');
+          this.cdr.detectChanges();
+        } else {
+          this.loading = false;
+          this.cdr.detectChanges();
+          console.log('Loading set to false (no data)');
         }
-        this.loading = false;
       },
       error: (error) => {
+        console.error('Error loading bookings:', error);
         this.error = 'Failed to load bookings. Please try again.';
         this.loading = false;
-        console.error('Error loading bookings:', error);
+        this.cdr.detectChanges();
       }
     });
   }
 
   filterBookings(): void {
     const now = new Date();
+    console.log('filterBookings() called, selectedTab:', this.selectedTab);
+    console.log('Current date:', now);
     
     switch (this.selectedTab) {
       case 'upcoming':
-        this.filteredBookings = this.bookings.filter(b => 
-          new Date(b.checkInDate) > now && 
-          b.bookingStatus !== BookingStatus.CANCELLED && 
-          b.bookingStatus !== BookingStatus.REJECTED
-        );
+        this.filteredBookings = this.bookings.filter(b => {
+          const checkInDate = new Date(b.checkInDate);
+          console.log('Checking booking:', b.listingTitle, 'checkInDate:', checkInDate, 'isAfterNow:', checkInDate > now);
+          return checkInDate > now && 
+            b.bookingStatus !== BookingStatus.CANCELLED && 
+            b.bookingStatus !== BookingStatus.REJECTED;
+        });
         break;
       case 'past':
         this.filteredBookings = this.bookings.filter(b => 
@@ -88,8 +124,13 @@ export class BookingListComponent implements OnInit {
           b.bookingStatus === BookingStatus.REJECTED
         );
         break;
+      case 'all':
       default:
-        this.filteredBookings = [...this.bookings];
+        // All trips should exclude cancelled bookings (like Airbnb)
+        this.filteredBookings = this.bookings.filter(b => 
+          b.bookingStatus !== BookingStatus.CANCELLED && 
+          b.bookingStatus !== BookingStatus.REJECTED
+        );
     }
   }
 
@@ -98,8 +139,14 @@ export class BookingListComponent implements OnInit {
     this.filterBookings();
   }
 
-  viewBookingDetails(booking: Booking): void {
-    this.router.navigate(['/bookings', booking.publicId]);
+  viewBookingDetails(booking: Booking, event?: Event): void {
+    // Prevent event propagation if event is provided
+    if (event) {
+      event.stopPropagation();
+    }
+    console.log('Navigating to booking detail:', booking.publicId);
+    // Navigate to booking detail page with correct route
+    this.router.navigate(['/booking', booking.publicId]);
   }
 
   openCancelModal(booking: Booking, event: Event): void {

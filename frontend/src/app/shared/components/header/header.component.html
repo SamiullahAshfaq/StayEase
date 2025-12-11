@@ -10,23 +10,32 @@
 
       <nav class="hidden items-center space-x-8 md:flex">
         <a routerLink="/listings" class="text-gray-600 hover:text-blue-600">Explore</a>
-        @if (auth.isAuthenticated$ | async) {
+        @if (isAuthenticated) {
           <a routerLink="/create-listing" class="text-gray-600 hover:text-blue-600">Become a Host</a>
         }
       </nav>
 
       <div class="flex items-center gap-4">
-        @if (auth.isAuthenticated$ | async) {
+        @if (isAuthenticated) {
           <div class="relative">
-            <button (click)="toggleMenu()" class="flex items-center focus:outline-none">
-              <img [src]="(auth.user$ | async)?.picture" alt="User Avatar" class="h-10 w-10 rounded-full object-cover">
+            <button (click)="toggleMenu()" class="flex items-center gap-2 focus:outline-none">
+              @if (currentUser && currentUser.imageUrl) {
+                <img [src]="currentUser.imageUrl" alt="User Avatar" class="h-10 w-10 rounded-full object-cover">
+              } @else {
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-semibold">
+                  {{ (currentUser?.name || 'U').charAt(0).toUpperCase() }}
+                </div>
+              }
             </button>
 
             @if (isMenuOpen) {
               <div class="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5">
+                <div class="px-4 py-2 text-sm text-gray-900 font-semibold border-b border-gray-100">
+                  {{ currentUser?.name || currentUser?.email }}
+                </div>
                 <a routerLink="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                 <a routerLink="/my-listings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Listings</a>
-                <a (click)="logout()" class="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Log Out</a>
+                <button (click)="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Log Out</button>
               </div>
             }
           </div>

@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
+import { OAuthService, User } from '../../../core/services/oauth.service';
 
 @Component({
   selector: 'app-header',
@@ -9,31 +9,56 @@ import { AuthService } from '@auth0/auth0-angular';
   imports: [CommonModule, RouterLink],
   templateUrl: './header.component.html'
 })
-export class HeaderComponent {
-  auth = inject(AuthService);
+export class HeaderComponent implements OnInit {
+  private platformId = inject(PLATFORM_ID);
+  oauthService = inject(OAuthService);
+  router = inject(Router);
   isMenuOpen = false;
+  
+  // Reactive properties
+  currentUser: User | null = null;
+  isAuthenticated = false;
+
+  ngOnInit() {
+    console.log('Header Component ngOnInit called');
+    console.log('Is Browser?', isPlatformBrowser(this.platformId));
+    
+    // Only initialize auth state in browser
+    if (isPlatformBrowser(this.platformId)) {
+      // Small delay to ensure localStorage is accessible
+      setTimeout(() => {
+        this.updateAuthState();
+        
+        // Subscribe to user changes
+        this.oauthService.currentUser$.subscribe(user => {
+          console.log('Header - User changed:', user);
+          this.updateAuthState();
+        });
+      }, 0);
+    }
+  }
+  
+  private updateAuthState() {
+    this.currentUser = this.oauthService.getCurrentUser();
+    this.isAuthenticated = this.oauthService.isAuthenticated();
+    console.log('Header - Auth state updated');
+    console.log('Header - isAuthenticated:', this.isAuthenticated);
+    console.log('Header - currentUser:', this.currentUser);
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
   login() {
-    this.auth.loginWithRedirect();
+    this.router.navigate(['/auth/login']);
   }
 
   signup() {
-    this.auth.loginWithRedirect({
-      authorizationParams: {
-        screen_hint: 'signup',
-      },
-    });
+    this.router.navigate(['/auth/register']);
   }
 
   logout() {
-    this.auth.logout({ 
-      logoutParams: { 
-        returnTo: document.location.origin 
-      } 
-    });
+    this.oauthService.logout();
   }
 }

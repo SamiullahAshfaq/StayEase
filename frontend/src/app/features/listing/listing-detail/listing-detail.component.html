@@ -153,18 +153,20 @@
           <div class="pb-8 border-b">
             <h3 class="text-xl font-semibold mb-6">What this place offers</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              @for (amenity of listing.amenities.slice(0, 10); track amenity) {
+              @for (amenity of (showAllAmenities ? listing.amenities : listing.amenities.slice(0, 10)); track amenity) {
                 <div class="flex items-center gap-4">
                   <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getAmenityIcon(amenity)"/>
                   </svg>
                   <span>{{ amenity }}</span>
                 </div>
               }
             </div>
             @if (listing.amenities.length > 10) {
-              <button class="mt-6 px-6 py-3 border border-black rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200">
-                Show all {{ listing.amenities.length }} amenities
+              <button 
+                (click)="toggleAllAmenities()"
+                class="mt-6 px-6 py-3 border border-black rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200">
+                {{ showAllAmenities ? 'Show less' : 'Show all ' + listing.amenities.length + ' amenities' }}
               </button>
             }
           </div>
@@ -182,6 +184,185 @@
             <h3 class="text-xl font-semibold mb-4">Cancellation policy</h3>
             <p class="text-gray-700">{{ listing.cancellationPolicy }} cancellation policy</p>
             <button class="mt-2 font-semibold underline hover:text-gray-700">Learn more</button>
+          </div>
+
+          <!-- Host Section -->
+          <div class="pb-8 border-b">
+            <div class="flex items-center gap-6 mb-6">
+              <img 
+                [src]="host.avatar" 
+                [alt]="host.name"
+                class="w-16 h-16 rounded-full">
+              <div>
+                <h3 class="text-xl font-semibold mb-1">Hosted by {{ host.name }}</h3>
+                <p class="text-gray-600 text-sm">Joined in {{ host.joinedDate }}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="flex items-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                </svg>
+                <span class="text-sm">{{ listing.totalReviews || 0 }} Reviews</span>
+              </div>
+
+              @if (host.verified) {
+                <div class="flex items-center gap-3">
+                  <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                  </svg>
+                  <span class="text-sm">Identity verified</span>
+                </div>
+              }
+
+              <div class="flex items-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="text-sm">Response time: {{ host.responseTime }}</span>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                </svg>
+                <span class="text-sm">Response rate: {{ host.responseRate }}%</span>
+              </div>
+            </div>
+
+            <button class="px-6 py-3 border border-black rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200">
+              Contact Host
+            </button>
+          </div>
+
+          <!-- Reviews Section -->
+          @if (listing.totalReviews && listing.totalReviews > 0) {
+            <div class="pb-8 border-b">
+              <div class="flex items-center gap-2 mb-6">
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <h3 class="text-2xl font-semibold">{{ listing.averageRating?.toFixed(2) }} · {{ listing.totalReviews }} reviews</h3>
+              </div>
+
+              <!-- Rating Breakdown -->
+              @if (ratingBreakdown) {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 mb-8">
+                  <div class="flex items-center justify-between">
+                    <span>Cleanliness</span>
+                    <div class="flex items-center gap-2">
+                      <div class="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-black rounded-full" [style.width.%]="ratingBreakdown.cleanliness * 20"></div>
+                      </div>
+                      <span class="text-sm font-semibold w-8">{{ formatRating(ratingBreakdown.cleanliness) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span>Communication</span>
+                    <div class="flex items-center gap-2">
+                      <div class="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-black rounded-full" [style.width.%]="ratingBreakdown.communication * 20"></div>
+                      </div>
+                      <span class="text-sm font-semibold w-8">{{ formatRating(ratingBreakdown.communication) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span>Check-in</span>
+                    <div class="flex items-center gap-2">
+                      <div class="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-black rounded-full" [style.width.%]="ratingBreakdown.checkIn * 20"></div>
+                      </div>
+                      <span class="text-sm font-semibold w-8">{{ formatRating(ratingBreakdown.checkIn) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span>Accuracy</span>
+                    <div class="flex items-center gap-2">
+                      <div class="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-black rounded-full" [style.width.%]="ratingBreakdown.accuracy * 20"></div>
+                      </div>
+                      <span class="text-sm font-semibold w-8">{{ formatRating(ratingBreakdown.accuracy) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span>Location</span>
+                    <div class="flex items-center gap-2">
+                      <div class="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-black rounded-full" [style.width.%]="ratingBreakdown.location * 20"></div>
+                      </div>
+                      <span class="text-sm font-semibold w-8">{{ formatRating(ratingBreakdown.location) }}</span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span>Value</span>
+                    <div class="flex items-center gap-2">
+                      <div class="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-black rounded-full" [style.width.%]="ratingBreakdown.value * 20"></div>
+                      </div>
+                      <span class="text-sm font-semibold w-8">{{ formatRating(ratingBreakdown.value) }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Individual Reviews -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                @for (review of (showAllReviews ? reviews : reviews.slice(0, 6)); track review.id) {
+                  <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                      <img 
+                        [src]="review.guestAvatar" 
+                        [alt]="review.guestName"
+                        class="w-12 h-12 rounded-full">
+                      <div>
+                        <p class="font-semibold">{{ review.guestName }}</p>
+                        <p class="text-sm text-gray-600">{{ review.date }}</p>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      @for (star of getRatingStars(review.rating); track $index) {
+                        <svg class="w-4 h-4 fill-current" [class.text-black]="star === 1" [class.text-gray-300]="star === 0" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                      }
+                    </div>
+                    <p class="text-gray-700 leading-relaxed">{{ review.comment }}</p>
+                  </div>
+                }
+              </div>
+
+              @if (reviews.length > 6) {
+                <button 
+                  (click)="toggleAllReviews()"
+                  class="px-6 py-3 border border-black rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200">
+                  {{ showAllReviews ? 'Show less' : 'Show all ' + reviews.length + ' reviews' }}
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Location -->
+          <div class="pb-8 border-b">
+            <h3 class="text-xl font-semibold mb-4">Where you'll be</h3>
+            <p class="text-gray-700 mb-6">{{ listing.city }}, {{ listing.country }}</p>
+            
+            <!-- Map placeholder -->
+            <div class="w-full h-96 bg-gray-200 rounded-xl flex items-center justify-center">
+              <div class="text-center">
+                <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <p class="text-gray-600 font-semibold">{{ listing.city }}, {{ listing.country }}</p>
+                <p class="text-sm text-gray-500 mt-2">Exact location provided after booking</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -267,6 +448,57 @@
         </div>
       </div>
     </div>
+
+    <!-- Similar Listings -->
+    @if (similarListings.length > 0) {
+      <div class="max-w-[1120px] mx-auto px-8 mt-16 pt-12 border-t">
+        <h2 class="text-2xl font-semibold mb-8">Similar listings you might like</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          @for (similar of similarListings; track similar.publicId) {
+            <div 
+              (click)="navigateToListing(similar.publicId)"
+              class="cursor-pointer group">
+              <div class="relative aspect-square rounded-xl overflow-hidden mb-3">
+                <img 
+                  [src]="similar.images[0]?.url" 
+                  [alt]="similar.title"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                
+                @if (similar.averageRating) {
+                  <div class="absolute top-3 right-3 bg-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span class="text-sm font-semibold">{{ similar.averageRating.toFixed(2) }}</span>
+                  </div>
+                }
+              </div>
+
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-semibold">{{ similar.city }}, {{ similar.country }}</h3>
+                  @if (similar.averageRating) {
+                    <div class="flex items-center gap-1">
+                      <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                      </svg>
+                      <span class="text-sm">{{ similar.averageRating.toFixed(2) }}</span>
+                    </div>
+                  }
+                </div>
+                <p class="text-gray-600 text-sm">{{ similar.propertyType }}</p>
+                <p class="text-gray-600 text-sm">{{ similar.maxGuests }} guests · {{ similar.bedrooms }} bedrooms</p>
+                <div class="flex items-baseline gap-1 mt-2">
+                  <span class="font-semibold">${{ similar.pricePerNight }}</span>
+                  <span class="text-gray-600 text-sm">night</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
 
     <!-- Photo Gallery Modal -->
     @if (showAllPhotos) {

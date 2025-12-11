@@ -1,16 +1,18 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { AuthGuard } from './core/auth/auth.guard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: MainLayoutComponent,
     children: [
-      // Home Route
+      // Home Route - Requires authentication
       {
         path: '',
         loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
+        canActivate: [authGuard]
       },
 
       // Auth Routes
@@ -22,14 +24,22 @@ export const routes: Routes = [
         path: 'auth/register',
         loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
       },
+      {
+        path: 'oauth2/redirect',
+        loadComponent: () => import('./features/auth/oauth-redirect/oauth-redirect.component').then(m => m.OAuthRedirectComponent)
+      },
 
-      // Listing Routes - COMMENTED OUT - Components not built yet
+      // Listing Routes
       {
         path: 'listing/search',
         loadComponent: () => import('./features/listing/listing-search/listing-search.component').then(m => m.ListingSearchComponent)
       },
       {
         path: 'listing/:id',
+        loadComponent: () => import('./features/listing/listing-detail/listing-detail.component').then(m => m.ListingDetailComponent)
+      },
+      {
+        path: 'listings/:id', // Plural alias for consistency
         loadComponent: () => import('./features/listing/listing-detail/listing-detail.component').then(m => m.ListingDetailComponent)
       },
       {

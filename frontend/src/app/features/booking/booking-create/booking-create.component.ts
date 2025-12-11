@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../services/booking.service';
+import { MockBookingService } from '../services/mock-booking.service';
 import { ListingService } from '../../listing/services/listing.service';
 import { Listing } from '../../listing/models/listing.model';
 import { BookingAddon } from '../models/booking.model';
@@ -10,14 +11,18 @@ import { BookingAddon } from '../models/booking.model';
 @Component({
   selector: 'app-booking-create',
   standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './booking-create.component.html'
+  imports: [ReactiveFormsModule, CommonModule],
+  templateUrl: './booking-create.component.html',
+  providers: [
+    { provide: BookingService, useClass: MockBookingService }
+  ]
 })
 export class BookingCreateComponent implements OnInit {
   bookingForm!: FormGroup;
   listing: Listing | null = null;
   loading = false;
   error: string | null = null;
+  successMessage: string | null = null;
 
   // Booking details
   numberOfNights = 0;
@@ -169,12 +174,19 @@ export class BookingCreateComponent implements OnInit {
     this.bookingService.createBooking(bookingData).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.router.navigate(['/bookings', response.data.publicId]);
+          this.successMessage = '🎉 Booking created successfully! Redirecting to your bookings...';
+          this.error = null;
+          
+          // Wait 2 seconds to show success message, then redirect
+          setTimeout(() => {
+            this.router.navigate(['/booking/list']);
+          }, 2000);
         }
         this.loading = false;
       },
       error: (error) => {
         this.error = error.error?.message || 'Failed to create booking. Please try again.';
+        this.successMessage = null;
         this.loading = false;
         console.error('Error creating booking:', error);
       }

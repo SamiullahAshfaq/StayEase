@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -74,7 +74,7 @@ export class ListingSearchComponent implements OnInit {
     private listingService: ListingService,
     private route: ActivatedRoute,
     private router: Router,
-    private ngZone: NgZone
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -99,23 +99,21 @@ export class ListingSearchComponent implements OnInit {
     
     this.listingService.searchListings(this.searchParams).subscribe({
       next: (response) => {
-        this.ngZone.run(() => {
-          if (response.success && response.data) {
-            this.listings = response.data.content;
-            this.currentPage = response.data.number;
-            this.pageSize = response.data.size;
-            this.totalPages = response.data.totalPages;
-            this.totalElements = response.data.totalElements;
-          }
-          this.loading = false;
-        });
+        if (response.success && response.data) {
+          this.listings = response.data.content;
+          this.currentPage = response.data.number;
+          this.pageSize = response.data.size;
+          this.totalPages = response.data.totalPages;
+          this.totalElements = response.data.totalElements;
+        }
+        this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        this.ngZone.run(() => {
-          this.error = 'Failed to load listings. Please try again.';
-          this.loading = false;
-          console.error('Error loading listings:', error);
-        });
+        this.error = 'Failed to load listings. Please try again.';
+        this.loading = false;
+        console.error('Error loading listings:', error);
+        this.cdr.detectChanges();
       }
     });
   }

@@ -18,7 +18,7 @@
       <!-- Header -->
       <div class="mb-8 animate-fadeInDown">
         <button
-          [routerLink]="['/bookings']"
+          [routerLink]="['/booking/list']"
           class="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 transition-colors duration-200">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -111,7 +111,19 @@
           </div>
           <!-- Trip Details -->
           <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 animate-fadeInLeft">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Trip details</h2>
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-bold text-gray-900">Trip details</h2>
+              @if (canEdit()) {
+                <button
+                  (click)="openEditModal()"
+                  class="px-4 py-2 border-2 border-gray-300 rounded-xl hover:border-black transition-colors duration-200 flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                  <span class="font-semibold text-sm">Edit dates</span>
+                </button>
+              }
+            </div>
             <div class="space-y-6">
               <!-- Dates -->
               <div class="grid grid-cols-2 gap-6">
@@ -119,7 +131,7 @@
                   <p class="text-sm font-semibold text-gray-500 uppercase">Check-in</p>
                   <div class="flex items-center gap-2">
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                     <div>
                       <p class="font-semibold text-gray-900">{{ booking.checkInDate | date:'EEEE' }}</p>
@@ -218,116 +230,252 @@
               [src]="booking.listingCoverImage || '/assets/placeholder-listing.jpg'"
               [alt]="booking.listingTitle"
               class="w-full h-48 object-cover">
-              <div class="p-6">
-                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ booking.listingTitle }}</h3>
-                <button
-                  (click)="viewListing()"
-                  class="w-full mt-4 py-3 border-2 border-gray-900 text-gray-900 font-semibold rounded-xl hover:bg-gray-900 hover:text-white transition-all duration-200">
-                  View listing
-                </button>
-              </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-gray-900 mb-2">{{ booking.listingTitle }}</h3>
+              <button
+                (click)="viewListing()"
+                class="w-full mt-4 py-3 border-2 border-gray-900 text-gray-900 font-semibold rounded-xl hover:bg-gray-900 hover:text-white transition-all duration-200">
+                View listing
+              </button>
             </div>
-            <!-- Price Breakdown -->
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <h3 class="text-lg font-bold text-gray-900 mb-4">Price breakdown</h3>
-              <div class="space-y-3 text-sm">
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Base price</span>
-                  <span class="font-medium text-gray-900">${{ (booking.totalPrice / 1.14).toFixed(2) }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-600">Service fee</span>
-                  <span class="font-medium text-gray-900">${{ (booking.totalPrice * 0.14).toFixed(2) }}</span>
-                </div>
-                <div class="pt-3 border-t flex justify-between items-center">
-                  <span class="font-bold text-gray-900">Total paid</span>
-                  <span class="text-xl font-bold text-gray-900">${{ booking.totalPrice.toFixed(2) }}</span>
-                </div>
-              </div>
-            </div>
-            <!-- Cancellation -->
-            @if (canCancel()) {
-              <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Need to cancel?</h3>
-                <p class="text-sm text-gray-600 mb-4">Free cancellation available before check-in.</p>
-                <button
-                  [routerLink]="['/bookings']"
-                  class="w-full py-3 border-2 border-red-500 text-red-500 font-semibold rounded-xl hover:bg-red-500 hover:text-white transition-all duration-200">
-                  Cancel booking
-                </button>
-              </div>
-            }
           </div>
+          <!-- Price Breakdown -->
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Price breakdown</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Base price</span>
+                <span class="font-medium text-gray-900">${{ (booking.totalPrice / 1.14).toFixed(2) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600">Service fee</span>
+                <span class="font-medium text-gray-900">${{ (booking.totalPrice * 0.14).toFixed(2) }}</span>
+              </div>
+              <div class="pt-3 border-t flex justify-between items-center">
+                <span class="font-bold text-gray-900">Total paid</span>
+                <span class="text-xl font-bold text-gray-900">${{ booking.totalPrice.toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+          <!-- Cancellation -->
+          @if (canCancel()) {
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+              <h3 class="text-lg font-bold text-gray-900 mb-2">Need to cancel?</h3>
+              <p class="text-sm text-gray-600 mb-4">Free cancellation available before check-in.</p>
+              <button
+                (click)="openCancelModal()"
+                class="w-full py-3 border-2 border-red-500 text-red-500 font-semibold rounded-xl hover:bg-red-50 transition-all duration-200">
+                Cancel booking
+              </button>
+            </div>
+          }
         </div>
       </div>
-      <!-- Share Modal -->
-      @if (showShareModal) {
-        <div
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          (click)="toggleShare()">
-          <div class="absolute inset-0 bg-black bg-opacity-50 animate-fadeIn"></div>
-          <div
-            (click)="$event.stopPropagation()"
-            class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scaleIn">
-            <button
-              (click)="toggleShare()"
-              class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-            <h3 class="text-xl font-semibold mb-6">Share booking</h3>
-            <!-- Copy Link -->
-            <div class="flex items-center gap-2">
-              <input
-                type="text"
-                [value]="booking ? currentUrl : ''"
-                readonly
-                class="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-sm">
-                <button
-                  (click)="copyLink()"
-                  class="px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200 whitespace-nowrap">
-                  {{ copied ? 'Copied!' : 'Copy' }}
-                </button>
-              </div>
-            </div>
+    </div>
+  </div>
+}
+
+<!-- Share Modal -->
+@if (showShareModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div 
+      class="absolute inset-0 bg-black bg-opacity-50 animate-fadeIn"
+      (click)="toggleShare()"></div>
+    
+    <!-- Modal Content -->
+    <div
+      (click)="$event.stopPropagation()"
+      class="relative z-10 bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scaleIn">
+      <button
+        (click)="toggleShare()"
+        class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <h3 class="text-xl font-semibold mb-6">Share booking</h3>
+      <!-- Copy Link -->
+      <div class="flex items-center gap-2">
+        <input
+          type="text"
+          [value]="booking ? currentUrl : ''"
+          readonly
+          class="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-sm">
+        <button
+          (click)="copyLink()"
+          class="px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200 whitespace-nowrap">
+          {{ copied ? 'Copied!' : 'Copy' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Cancel Modal -->
+@if (showCancelModal) {
+  <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div 
+      class="absolute inset-0 bg-black bg-opacity-50 animate-fadeIn"
+      (click)="closeCancelModal()"></div>
+    
+    <!-- Modal Content -->
+    <div
+      (click)="$event.stopPropagation()"
+      class="relative z-[10000] bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scaleIn">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-2xl font-bold text-gray-900">Cancel booking?</h3>
+        <button
+          (click)="closeCancelModal()"
+          class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="mb-6">
+        <p class="text-gray-600 mb-4">Are you sure you want to cancel this booking? This action cannot be undone.</p>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Reason for cancellation (optional)</label>
+        <textarea
+          [(ngModel)]="cancelReason"
+          rows="3"
+          placeholder="Let us know why you're cancelling..."
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"></textarea>
+      </div>
+      <div class="flex gap-3">
+        <button
+          (click)="closeCancelModal()"
+          [disabled]="cancelling"
+          class="flex-1 py-3 border-2 border-gray-300 rounded-xl font-semibold hover:border-black transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          Keep booking
+        </button>
+        <button
+          (click)="confirmCancel()"
+          [disabled]="cancelling"
+          class="flex-1 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+          @if (cancelling) {
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            <span>Cancelling...</span>
+          } @else {
+            <span>Cancel booking</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Edit Booking Modal -->
+@if (showEditModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div 
+      class="absolute inset-0 bg-black bg-opacity-50 animate-fadeIn"
+      (click)="closeEditModal()"></div>
+    
+    <!-- Modal Content -->
+    <div
+      (click)="$event.stopPropagation()"
+      class="relative z-10 bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scaleIn">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-2xl font-bold text-gray-900">Edit dates & guests</h3>
+        <button
+          (click)="closeEditModal()"
+          class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="space-y-4 mb-6">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Check-in date</label>
+          <input
+            type="date"
+            [(ngModel)]="editCheckIn"
+            [min]="minCheckInDate"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Check-out date</label>
+          <input
+            type="date"
+            [(ngModel)]="editCheckOut"
+            [min]="editCheckIn"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Number of guests</label>
+          <input
+            type="number"
+            [(ngModel)]="editGuests"
+            min="1"
+            max="10"
+            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+        </div>
+        @if (error) {
+          <div class="bg-red-50 border border-red-200 rounded-xl p-3 text-red-800 text-sm">
+            {{ error }}
           </div>
         }
       </div>
-    }
+      <div class="flex gap-3">
+        <button
+          (click)="closeEditModal()"
+          [disabled]="editing"
+          class="flex-1 py-3 border-2 border-gray-300 rounded-xl font-semibold hover:border-black transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          Cancel
+        </button>
+        <button
+          (click)="confirmEdit()"
+          [disabled]="editing"
+          class="flex-1 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+          @if (editing) {
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+            <span>Saving...</span>
+          } @else {
+            <span>Save changes</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
 
-    <style>
-      @keyframes fadeInDown {
-      from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
+<!-- Animations -->
+<style>
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes fadeInLeft {
-from {
-opacity: 0;
-transform: translateX(-20px);
-}
-to {
-opacity: 1;
-transform: translateX(0);
-}
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes fadeInRight {
-from {
-opacity: 0;
-transform: translateX(20px);
-}
-to {
-opacity: 1;
-transform: translateX(0);
-}
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes fadeIn {
