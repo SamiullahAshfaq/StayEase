@@ -19,11 +19,11 @@
         @if (isAuthenticated) {
           <div class="relative">
             <button (click)="toggleMenu()" class="flex items-center gap-2 focus:outline-none">
-              @if (currentUser && currentUser.imageUrl) {
-                <img [src]="currentUser.imageUrl" alt="User Avatar" class="h-10 w-10 rounded-full object-cover">
+              @if (currentUser && currentUser.profileImageUrl) {
+                <img [src]="currentUser.profileImageUrl" alt="User Avatar" class="h-10 w-10 rounded-full object-cover">
               } @else {
                 <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-semibold">
-                  {{ (currentUser?.name || 'U').charAt(0).toUpperCase() }}
+                  {{ (currentUser?.firstName || 'U').charAt(0).toUpperCase() }}
                 </div>
               }
             </button>
@@ -31,7 +31,7 @@
             @if (isMenuOpen) {
               <div class="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5">
                 <div class="px-4 py-2 text-sm text-gray-900 font-semibold border-b border-gray-100">
-                  {{ currentUser?.name || currentUser?.email }}
+                  {{ (currentUser?.firstName && currentUser?.lastName) ? (currentUser?.firstName + ' ' + currentUser?.lastName) : currentUser?.email }}
                 </div>
                 <a routerLink="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                 <a routerLink="/my-listings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Listings</a>

@@ -1,24 +1,17 @@
+// src/app/core/guards/auth.guard.ts
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
-import { OAuthService } from '../services/oauth.service';
+import { Router, CanActivateFn } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
-  const oauthService = inject(OAuthService);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (oauthService.isAuthenticated()) {
+  if (authService.isAuthenticated()) {
     return true;
   }
 
   // Store the attempted URL for redirecting
-  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-    localStorage.setItem('redirectUrl', state.url);
-  }
-  
-  // Redirect to login
-  router.navigate(['/auth/login'], { 
-    queryParams: { returnUrl: state.url }
-  });
-  
+  router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
   return false;
 };

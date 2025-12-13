@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { OAuthService, User } from '../../../core/services/oauth.service';
+import { AuthService, User } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -11,10 +11,10 @@ import { OAuthService, User } from '../../../core/services/oauth.service';
 })
 export class HeaderComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
-  oauthService = inject(OAuthService);
+  authService = inject(AuthService);
   router = inject(Router);
   isMenuOpen = false;
-  
+
   // Reactive properties
   currentUser: User | null = null;
   isAuthenticated = false;
@@ -22,25 +22,25 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     console.log('Header Component ngOnInit called');
     console.log('Is Browser?', isPlatformBrowser(this.platformId));
-    
+
     // Only initialize auth state in browser
     if (isPlatformBrowser(this.platformId)) {
       // Small delay to ensure localStorage is accessible
       setTimeout(() => {
         this.updateAuthState();
-        
+
         // Subscribe to user changes
-        this.oauthService.currentUser$.subscribe(user => {
+        this.authService.currentUser$.subscribe(user => {
           console.log('Header - User changed:', user);
           this.updateAuthState();
         });
       }, 0);
     }
   }
-  
+
   private updateAuthState() {
-    this.currentUser = this.oauthService.getCurrentUser();
-    this.isAuthenticated = this.oauthService.isAuthenticated();
+    this.currentUser = this.authService.getCurrentUser();
+    this.isAuthenticated = this.authService.isAuthenticated();
     console.log('Header - Auth state updated');
     console.log('Header - isAuthenticated:', this.isAuthenticated);
     console.log('Header - currentUser:', this.currentUser);
@@ -59,6 +59,6 @@ export class HeaderComponent implements OnInit {
   }
 
   logout() {
-    this.oauthService.logout();
+    this.authService.logout();
   }
 }

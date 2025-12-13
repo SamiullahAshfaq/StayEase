@@ -1,31 +1,20 @@
-// Change the import to the stable version
+// src/app/app.config.ts
 import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withViewTransitions, InMemoryScrollingOptions, withInMemoryScrolling } from '@angular/router';
-import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { routes } from './app.routes';
-import { customAuthInterceptor } from './core/auth/custom-auth.interceptor';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
-const scrollConfig: InMemoryScrollingOptions = {
-  scrollPositionRestoration: 'top',
-  anchorScrolling: 'enabled'
-};
+import { routes } from './app.routes';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    // Use the stable provider
     provideZonelessChangeDetection(),
-    provideRouter(
-      routes, 
-      withComponentInputBinding(),
-      withInMemoryScrolling(scrollConfig),
-      withViewTransitions()
-    ),
-    provideAnimationsAsync(),
+    provideRouter(routes),
     provideHttpClient(
-      withFetch(),
-      withInterceptors([customAuthInterceptor, authInterceptor])
+      withInterceptors([authInterceptor, loadingInterceptor])
     ),
+    provideAnimations()
   ]
 };

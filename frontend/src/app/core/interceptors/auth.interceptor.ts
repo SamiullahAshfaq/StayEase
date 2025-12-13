@@ -1,10 +1,14 @@
+// src/app/core/interceptors/auth.interceptor.ts
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { OAuthService } from '../services/oauth.service';
+import { AuthService } from '../auth/auth.service';
+import { catchError, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const oauthService = inject(OAuthService);
-  const token = oauthService.getToken();
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const token = authService.getToken();
 
   // Clone request and add authorization header if token exists
   if (token) {
@@ -15,5 +19,22 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  return next(req);
+  return next(req).pipe(
+    catchError((error) => {
+      // Handle 401 Unauthorized errors
+      if (error.status === 401) {
+        authService.logout();
+        router.navigate(['/auth/login'], {
+          queryParams: { returnUrl: router.url, error: 'Session expired' }
+        });
+      }
+
+      // Handle 403 Forbidden errors
+      if (error.status === 403) {
+        router.navigate(['/unauthorized']);
+      }
+
+      return throwError(() => error);
+    })
+  );
 };

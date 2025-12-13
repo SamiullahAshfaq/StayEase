@@ -1,9 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink } from '@angular/router';
-import { OAuthService } from '../../core/services/oauth.service';
+import { AuthService, User } from '../../core/auth/auth.service';
 import { Observable } from 'rxjs';
-import { User } from '../../core/services/oauth.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -13,23 +12,23 @@ import { User } from '../../core/services/oauth.service';
   imports: [CommonModule, RouterOutlet, RouterLink]
 })
 export class MainLayoutComponent implements OnInit {
+  authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+
   currentUser$: Observable<User | null>;
   showUserMenu = false;
   showMobileMenu = false;
 
-  constructor(
-    public authService: OAuthService,
-    private cdr: ChangeDetectorRef
-  ) {
+  constructor() {
     this.currentUser$ = this.authService.currentUser$;
-    console.log('MainLayoutComponent initialized with OAuthService');
+    console.log('MainLayoutComponent initialized with AuthService');
   }
 
   ngOnInit(): void {
     console.log('MainLayoutComponent ngOnInit');
     console.log('Is Authenticated:', this.authService.isAuthenticated());
     console.log('Current User:', this.authService.getCurrentUser());
-    
+
     // Subscribe to user changes and trigger change detection
     this.currentUser$.subscribe(() => {
       // Use arrow function to maintain 'this' context
@@ -68,6 +67,6 @@ export class MainLayoutComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.authService.isAdmin();
+    return this.authService.hasRole('ROLE_ADMIN');
   }
 }
