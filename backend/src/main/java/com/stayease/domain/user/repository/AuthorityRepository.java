@@ -1,12 +1,16 @@
 package com.stayease.domain.user.repository;
 
-import com.stayease.domain.user.entity.Authority;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.Optional;
+
+import com.stayease.domain.user.entity.Authority;
 
 @Repository
 public interface AuthorityRepository extends JpaRepository<Authority, Long> {
+
     Optional<Authority> findByName(String name);
+
     boolean existsByName(String name);
 }

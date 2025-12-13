@@ -1,0 +1,136 @@
+<div class="min-h-screen p-6" style="background: var(--admin-bg)">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold mb-2" style="color: var(--admin-text-primary)">
+        Admin Dashboard
+      </h1>
+      <p class="text-sm" style="color: var(--admin-text-secondary)">
+        Welcome back! Here's what's happening today.
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <button
+        mat-raised-button
+        class="admin-button-primary"
+        (click)="loadDashboard()">
+        <mat-icon>refresh</mat-icon>
+        <span class="ml-2">Refresh</span>
+      </button>
+      <button mat-raised-button class="admin-button-primary">
+        <mat-icon>download</mat-icon>
+        <span class="ml-2">Export</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="flex justify-center items-center h-96">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-2"
+           style="border-color: var(--admin-primary)"></div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @else if (error()) {
+    <mat-card class="admin-card p-6 text-center">
+      <mat-icon class="text-6xl mb-4" style="color: var(--admin-error)">
+        error_outline
+      </mat-icon>
+      <h3 class="text-xl font-semibold mb-2">Failed to Load Dashboard</h3>
+      <p style="color: var(--admin-text-secondary)">{{ error() }}</p>
+      <button
+        mat-raised-button
+        class="admin-button-primary mt-4"
+        (click)="loadDashboard()">
+        Retry
+      </button>
+    </mat-card>
+  }
+
+  <!-- Main Content -->
+  @else if (stats()) {
+    <!-- KPI Cards -->
+    <app-kpi-cards [stats]="stats()!" class="block mb-6"></app-kpi-cards>
+
+    <!-- Charts Section -->
+    <mat-tab-group class="mb-6" backgroundColor="primary">
+      <mat-tab label="Revenue Analytics">
+        <div class="p-4">
+          <app-revenue-chart></app-revenue-chart>
+        </div>
+      </mat-tab>
+      <mat-tab label="Booking Analytics">
+        <div class="p-4">
+          <app-booking-chart></app-booking-chart>
+        </div>
+      </mat-tab>
+      <mat-tab label="User Analytics">
+        <div class="p-4">
+          <app-user-chart></app-user-chart>
+        </div>
+      </mat-tab>
+      <mat-tab label="Listing Analytics">
+        <div class="p-4">
+          <app-listing-chart></app-listing-chart>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- Recent Activity Card -->
+    <mat-card class="admin-card p-6">
+      <h3 class="text-xl font-semibold mb-4">Recent Activity</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="text-center p-3 rounded transition-transform hover:scale-105"
+             style="background: var(--admin-cloud-grey)">
+          <mat-icon class="text-3xl mb-2" style="color: var(--admin-info)">
+            login
+          </mat-icon>
+          <p class="text-2xl font-bold">{{ stats()!.recentActivity.recentLogins }}</p>
+          <p class="text-xs" style="color: var(--admin-text-secondary)">Recent Logins</p>
+        </div>
+        <div class="text-center p-3 rounded transition-transform hover:scale-105"
+             style="background: var(--admin-cloud-grey)">
+          <mat-icon class="text-3xl mb-2" style="color: var(--admin-success)">
+            event
+          </mat-icon>
+          <p class="text-2xl font-bold">{{ stats()!.recentActivity.recentBookings }}</p>
+          <p class="text-xs" style="color: var(--admin-text-secondary)">New Bookings</p>
+        </div>
+        <div class="text-center p-3 rounded transition-transform hover:scale-105"
+             style="background: var(--admin-cloud-grey)">
+          <mat-icon class="text-3xl mb-2" style="color: var(--admin-error)">
+            cancel
+          </mat-icon>
+          <p class="text-2xl font-bold">{{ stats()!.recentActivity.recentCancellations }}</p>
+          <p class="text-xs" style="color: var(--admin-text-secondary)">Cancellations</p>
+        </div>
+        <div class="text-center p-3 rounded transition-transform hover:scale-105"
+             style="background: var(--admin-cloud-grey)">
+          <mat-icon class="text-3xl mb-2" style="color: var(--admin-success)">
+            payments
+          </mat-icon>
+          <p class="text-2xl font-bold">{{ stats()!.recentActivity.recentPayments }}</p>
+          <p class="text-xs" style="color: var(--admin-text-secondary)">Payments</p>
+        </div>
+        <div class="text-center p-3 rounded transition-transform hover:scale-105"
+             style="background: var(--admin-cloud-grey)">
+          <mat-icon class="text-3xl mb-2" style="color: var(--admin-warning)">
+            pending
+          </mat-icon>
+          <p class="text-2xl font-bold">{{ stats()!.recentActivity.pendingApprovals }}</p>
+          <p class="text-xs" style="color: var(--admin-text-secondary)">Pending Approvals</p>
+        </div>
+        <div class="text-center p-3 rounded transition-transform hover:scale-105"
+             style="background: var(--admin-cloud-grey)">
+          <mat-icon class="text-3xl mb-2" style="color: var(--admin-info)">
+            star
+          </mat-icon>
+          <p class="text-2xl font-bold">{{ stats()!.recentActivity.recentReviews }}</p>
+          <p class="text-xs" style="color: var(--admin-text-secondary)">New Reviews</p>
+        </div>
+      </div>
+    </mat-card>
+  }
+</div>

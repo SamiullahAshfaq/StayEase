@@ -1,6 +1,10 @@
+// AuthResponseDTO.java
 package com.stayease.domain.user.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -8,8 +12,7 @@ import lombok.*;
 @Builder
 public class AuthResponseDTO {
     private String token;
-    @Builder.Default
-    private String tokenType = "Bearer";
+    private String tokenType;
     private Long expiresIn;
     private UserDTO user;
 }

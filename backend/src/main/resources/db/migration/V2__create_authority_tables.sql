@@ -1,3 +1,5 @@
+-- V2__create_authority_tables.sql
+
 -- Create authority table
 CREATE TABLE authority (
     id BIGSERIAL PRIMARY KEY,
@@ -12,8 +14,13 @@ CREATE TABLE user_authority (
     authority_id BIGINT NOT NULL,
     granted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_authority_user FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
-    CONSTRAINT fk_user_authority_authority FOREIGN KEY (authority_id) REFERENCES authority(id) ON DELETE CASCADE
+    CONSTRAINT fk_user_authority_authority FOREIGN KEY (authority_id) REFERENCES authority(id) ON DELETE CASCADE,
+    CONSTRAINT uk_user_authority UNIQUE (user_id, authority_id)
 );
+
+-- Create indexes
+CREATE INDEX idx_user_authority_user ON user_authority(user_id);
+CREATE INDEX idx_user_authority_authority ON user_authority(authority_id);
 
 -- Create sequences
 CREATE SEQUENCE authority_seq START WITH 1 INCREMENT BY 50;

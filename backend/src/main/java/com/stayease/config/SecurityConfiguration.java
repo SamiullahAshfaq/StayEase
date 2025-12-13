@@ -3,7 +3,6 @@ package com.stayease.config;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -38,7 +37,7 @@ public class SecurityConfiguration {
 
     public SecurityConfiguration(
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
-            @Qualifier("legacyUserService") UserDetailsService userDetailsService,
+            UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
         this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
         this.userDetailsService = userDetailsService;
@@ -48,7 +47,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/legacy/**", "/api/listings/**", "/api/services/**", "/api/reviews/**",
+                .securityMatcher("/api/user/**", "/api/listings/**", "/api/services/**", "/api/reviews/**",
                         "/api/admin/**", "/actuator/**", "/error")
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))

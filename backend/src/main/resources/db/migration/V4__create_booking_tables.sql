@@ -9,7 +9,7 @@ CREATE TABLE booking (
     check_out_date DATE NOT NULL,
     number_of_guests INT NOT NULL,
     number_of_nights INT NOT NULL,
-    total_price DECIMAL(12,2) NOT NULL,
+    total_price DECIMAL(12, 2) NOT NULL,
     currency VARCHAR(10) NOT NULL DEFAULT 'USD',
     booking_status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     payment_status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
@@ -28,7 +28,7 @@ CREATE TABLE booking_addon (
     booking_id BIGINT NOT NULL,
     name VARCHAR(100) NOT NULL,
     description TEXT,
-    price DECIMAL(12,2) NOT NULL,
+    price DECIMAL(12, 2) NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
     CONSTRAINT fk_booking_addon_booking FOREIGN KEY (booking_id) REFERENCES booking(id) ON DELETE CASCADE
 );
@@ -48,8 +48,16 @@ CREATE INDEX idx_booking_addon_booking ON booking_addon(booking_id);
 CREATE SEQUENCE booking_seq START WITH 1 INCREMENT BY 50;
 CREATE SEQUENCE booking_addon_seq START WITH 1 INCREMENT BY 50;
 
--- Update trigger
+-- Create update timestamp trigger
+CREATE OR REPLACE FUNCTION update_booking_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER trigger_update_booking_timestamp
     BEFORE UPDATE ON booking
     FOR EACH ROW
-    EXECUTE FUNCTION update_user_timestamp();
+    EXECUTE FUNCTION update_booking_timestamp();

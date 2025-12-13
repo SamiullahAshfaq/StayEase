@@ -1,3 +1,5 @@
+-- V9__create_notification_tables.sql
+
 -- Create notification table
 CREATE TABLE notification (
     id BIGSERIAL PRIMARY KEY,
@@ -13,6 +15,7 @@ CREATE TABLE notification (
 CREATE INDEX idx_notification_user ON notification(user_public_id);
 CREATE INDEX idx_notification_read ON notification(read);
 CREATE INDEX idx_notification_type ON notification(type);
+CREATE INDEX idx_notification_created_at ON notification(created_at);
 
 -- Create notification sequence
 CREATE SEQUENCE notification_seq START WITH 1 INCREMENT BY 50;

@@ -1,116 +1,115 @@
 package com.stayease.domain.user.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
-@Entity(name = "LegacyUser")
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
 @Table(name = "\"user\"")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 50)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "public_id", nullable = false, unique = true, updatable = false)
+    @Column(name = "public_id", nullable = false, unique = true)
     private UUID publicId;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", unique = true, nullable = false, length = 255)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", length = 255)
     private String password;
 
-    @Column(name = "first_name", nullable = false, length = 100)
+    @Column(name = "first_name", length = 100)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 100)
+    @Column(name = "last_name", length = 100)
     private String lastName;
 
     @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 
-    @Column(name = "profile_image_url", length = 1000)
+    @Column(name = "profile_image_url", length = 500)
     private String profileImageUrl;
-
-    @Column(name = "date_of_birth")
-    private LocalDate dateOfBirth;
 
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
-    @Column(name = "language", length = 10)
-    @Builder.Default
-    private String language = "en";
-
-    @Column(name = "currency", length = 10)
-    @Builder.Default
-    private String currency = "USD";
-
-    @Column(name = "is_email_verified")
+    @Column(name = "is_email_verified", nullable = false)
     @Builder.Default
     private Boolean isEmailVerified = false;
 
-    @Column(name = "is_phone_verified")
+    @Column(name = "is_phone_verified", nullable = false)
     @Builder.Default
     private Boolean isPhoneVerified = false;
 
-    @Column(name = "account_status", nullable = false, length = 20)
-    @Enumerated(EnumType.STRING)
+    @Column(name = "is_active", nullable = false)
     @Builder.Default
-    private AccountStatus accountStatus = AccountStatus.ACTIVE;
+    private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<UserAuthority> authorities = new ArrayList<>();
+    @Column(name = "oauth_provider", length = 50)
+    private String oauthProvider;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+    @Column(name = "oauth_provider_id", length = 255)
+    private String oauthProviderId;
 
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
+    @Column(name = "stripe_customer_id", length = 255)
+    private String stripeCustomerId;
+
+    @Column(name = "stripe_account_id", length = 255)
+    private String stripeAccountId;
 
     @Column(name = "last_login_at")
-    private Instant lastLoginAt;
+    private LocalDateTime lastLoginAt;
 
-    @PrePersist
-    protected void onCreate() {
-        if (publicId == null) {
-            publicId = UUID.randomUUID();
-        }
-        createdAt = Instant.now();
-        updatedAt = Instant.now();
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @lombok.ToString.Exclude
+    @lombok.EqualsAndHashCode.Exclude
+    @Builder.Default
+    private Set<UserAuthority> userAuthorities = new HashSet<>();
+
+
+    public void addAuthority(Authority authority) {
+        UserAuthority userAuthority = UserAuthority.builder()
+                .user(this)
+                .authority(authority)
+                .build();
+        userAuthorities.add(userAuthority);
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = Instant.now();
-    }
-
-    public void addAuthority(UserAuthority authority) {
-        authorities.add(authority);
-        authority.setUser(this);
-    }
-
-    public void removeAuthority(UserAuthority authority) {
-        authorities.remove(authority);
-        authority.setUser(null);
-    }
-
-    public enum AccountStatus {
-        ACTIVE,
-        SUSPENDED,
-        DEACTIVATED,
-        PENDING_VERIFICATION
+    public void removeAuthority(Authority authority) {
+        userAuthorities.removeIf(ua -> ua.getAuthority().equals(authority));
     }
 }

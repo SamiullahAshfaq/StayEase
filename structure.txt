@@ -1,83 +1,108 @@
-stayease/
-├── backend/
-│   ├── .env
-│   ├── .gitignore
-│   ├── pom.xml
-│   ├── mvnw
-│   ├── mvnw.cmd
-│   ├── README.md
-│   ├── docker-compose.yml
-│   │
-│   └── src/
-│       ├── main/
-│       │   ├── java/
-│       │   │   └── com/stayease/
-│       │   │       ├── StayEaseApplication.java
-│       │   │       │
-│       │   │       ├── config/
-│       │   │       │   ├── DatabaseConfiguration.java
-│       │   │       │   ├── SecurityConfiguration.java
-│       │   │       │   ├── OAuth2Configuration.java
-│       │   │       │   ├── WebMvcConfiguration.java
-│       │   │       │   ├── LiquibaseConfiguration.java
-│       │   │       │   └── CorsConfiguration.java
-│       │   │       │
-│       │   │       ├── domain/
-│       │   │       │   ├── user/
-│       │   │       │   │   ├── entity/
-│       │   │       │   │   │   ├── User.java
-│       │   │       │   │   │   ├── Authority.java
-│       │   │       │   │   │   └── UserAuthority.java
-│       │   │       │   │   ├── repository/
-│       │   │       │   │   │   ├── UserRepository.java
-│       │   │       │   │   │   ├── AuthorityRepository.java
-│       │   │       │   │   │   └── UserAuthorityRepository.java
-│       │   │       │   │   ├── service/
-│       │   │       │   │   │   ├── UserService.java
-│       │   │       │   │   │   └── AuthService.java
-│       │   │       │   │   ├── controller/
-│       │   │       │   │   │   ├── UserController.java
-│       │   │       │   │   │   └── AuthController.java
-│       │   │       │   │   └── dto/
-│       │   │       │   │       ├── UserDTO.java
-│       │   │       │   │       ├── CreateUserDTO.java
-│       │   │       │   │       ├── UpdateUserDTO.java
-│       │   │       │   │       └── AuthResponseDTO.java
-│       │   │       │   │
-│       │   │       │   ├── listing/
-│       │   │       │   │   ├── entity/
-│       │   │       │   │   │   ├── Listing.java
-│       │   │       │   │   │   └── ListingImage.java
-│       │   │       │   │   ├── repository/
-│       │   │       │   │   │   ├── ListingRepository.java
-│       │   │       │   │   │   └── ListingImageRepository.java
-│       │   │       │   │   ├── service/
-│       │   │       │   │   │   └── ListingService.java
-│       │   │       │   │   ├── controller/
-│       │   │       │   │   │   └── ListingController.java
-│       │   │       │   │   └── dto/
-│       │   │       │   │       ├── ListingDTO.java
-│       │   │       │   │       ├── CreateListingDTO.java
-│       │   │       │   │       ├── UpdateListingDTO.java
-│       │   │       │   │       ├── ListingImageDTO.java
-│       │   │       │   │       └── SearchListingDTO.java
-│       │   │       │   │
-│       │   │       │   ├── booking/
-│       │   │       │   │   ├── entity/
-│       │   │       │   │   │   ├── Booking.java
-│       │   │       │   │   │   └── BookingAddon.java
-│       │   │       │   │   ├── repository/
-│       │   │       │   │   │   ├── BookingRepository.java
-│       │   │       │   │   │   └── BookingAddonRepository.java
-│       │   │       │   │   ├── service/
-│       │   │       │   │   │   └── BookingService.java
-│       │   │       │   │   ├── controller/
-│       │   │       │   │   │   └── BookingController.java
-│       │   │       │   │   └── dto/
-│       │   │       │   │       ├── BookingDTO.java
-│       │   │       │   │       ├── CreateBookingDTO.java
-│       │   │       │   │       ├── UpdateBookingDTO.java
-│       │   │       │   │       └── BookingAddonDTO.java
+backend/
+├── .env.template
+├── .gitattributes
+├── .gitignore
+├── CONFIGURATION_GUIDE.md
+├── docker-compose.yml
+├── env.bat
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+├── README.md
+├── setup-oauth.ps1
+├── .mvn/
+│   └── wrapper/
+│       └── maven-wrapper.properties
+├── .vscode/
+│   └── NEWLY_CREATED_BY_SPRING_INITIALIZR
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── stayease/
+│   │   │           ├── StayeaseApplication.java
+│   │   │           ├── config/
+│   │   │           ├── domain/
+│   │   │           ├── exception/
+│   │   │           ├── security/
+│   │   │           └── shared/
+│   │   └── resources/
+│   │       ├── application-dev.yml
+│   │       ├── application-dev.yml.template
+│   │       ├── application-prod.yml
+│   │       ├── application.properties
+│   │       ├── application.yml
+│   │       ├── db/
+│   │       │   └── migration/
+│   │       │       ├── .gitkeep
+│   │       │       ├── V1__create_user_tables.sql
+│   │       │       ├── V10__create_admin_tables.sql
+│   │       │       ├── V11__add_indexes.sql
+│   │       │       ├── V2__create_authority_tables.sql
+│   │       │       ├── V3__create_listing_tables.sql
+│   │       │       ├── V4__create_booking_tables.sql
+│   │       │       ├── V5__create_service_offering_tables.sql
+│   │       │       ├── V5__create_users_and_auth_tables.sql
+│   │       │       └── ...
+│   │       ├── static/
+│   │       │   └── .gitkeep
+│   │       └── templates/
+│   │           ├── .gitkeep
+│   │           ├── reset-password-email.html
+│   │           └── verification-email.html
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── stayease/
+├── target/
+│   ├── classes/
+│   │   ├── application-dev.yml
+│   │   ├── application-dev.yml.template
+│   │   ├── application-prod.yml
+│   │   ├── application.properties
+│   │   ├── application.yml
+│   │   ├── com/
+│   │   │   └── stayease/
+│   │   │       ├── config/
+│   │   │       ├── domain/
+│   │   │       ├── exception/
+│   │   │       ├── security/
+│   │   │       └── shared/
+│   │   ├── db/
+│   │   │   └── migration/
+│   │   │       ├── .gitkeep
+│   │   │       ├── V1__create_user_tables.sql
+│   │   │       ├── V10__create_admin_tables.sql
+│   │   │       ├── V11__add_indexes.sql
+│   │   │       ├── V2__create_authority_tables.sql
+│   │   │       ├── V3__create_listing_tables.sql
+│   │   │       ├── V4__create_booking_tables.sql
+│   │   │       ├── V5__create_service_offering_tables.sql
+│   │   │       ├── V5__create_users_and_auth_tables.sql
+│   │   │       ├── V6__create_payment_tables.sql
+│   │   │       ├── V7__create_review_tables.sql
+│   │   │       ├── V8__create_chat_tables.sql
+│   │   │       └── V9__create_notification_tables.sql
+│   │   ├── static/
+│   │   │   └── .gitkeep
+│   │   └── templates/
+│   │       ├── .gitkeep
+│   │       ├── reset-password-email.html
+│   │       └── verification-email.html
+│   ├── generated-sources/
+│   │   └── annotations/
+│   ├── generated-test-sources/
+│   │   └── test-annotations/
+│   ├── maven-status/
+│   │   └── maven-compiler-plugin/
+│   │       ├── compile/
+│   │       │   └── default-compile/
+│   │       └── testCompile/
+│   │           └── default-testCompile/
+│   └── test-classes/
+│       └── com/
+│           └── stayease/
+│               └── domain/
 │       │   │       │   │
 │       │   │       │   ├── serviceoffering/
 │       │   │       │   │   ├── entity/

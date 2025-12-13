@@ -1,86 +1,78 @@
 package com.stayease.security;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
-
-import java.util.Optional;
-import java.util.Set;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public final class SecurityUtils {
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+public class SecurityUtils {
 
     private SecurityUtils() {
-        // Utility class
+        // Private constructor to prevent instantiation
     }
 
-    public static Optional<String> getCurrentUserLogin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return Optional.empty();
-        }
-
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return Optional.ofNullable(jwt.getClaimAsString("email"));
-        }
-
-        return Optional.ofNullable(authentication.getName());
+    public static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    public static Optional<UUID> getCurrentUserPublicId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return Optional.empty();
+    public static UUID getCurrentUserId() {
+        Authentication authentication = getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return ((UserPrincipal) authentication.getPrincipal()).getId();
         }
-
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            String publicIdStr = jwt.getClaimAsString("sub");
-            try {
-                return Optional.of(UUID.fromString(publicIdStr));
-            } catch (IllegalArgumentException e) {
-                return Optional.empty();
-            }
-        }
-
-        return Optional.empty();
+        return null;
     }
 
-    public static Optional<Jwt> getCurrentJwt() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return Optional.empty();
+    public static String getCurrentUserEmail() {
+        Authentication authentication = getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return ((UserPrincipal) authentication.getPrincipal()).getEmail();
         }
-
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return Optional.of(jwt);
-        }
-
-        return Optional.empty();
+        return null;
     }
 
-    public static Set<String> getCurrentUserAuthorities() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication == null) {
-            return Set.of();
+    public static UserPrincipal getCurrentUserPrincipal() {
+        Authentication authentication = getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return (UserPrincipal) authentication.getPrincipal();
         }
+        return null;
+    }
 
-        return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
+    public static Collection<String> getCurrentUserAuthorities() {
+        Authentication authentication = getAuthentication();
+        if (authentication != null) {
+            return authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+        }
+        return null;
     }
 
     public static boolean hasAuthority(String authority) {
-        return getCurrentUserAuthorities().contains(authority);
+        Collection<String> authorities = getCurrentUserAuthorities();
+        return authorities != null && authorities.contains(authority);
+    }
+
+    public static boolean hasAnyAuthority(String... authorities) {
+        Collection<String> userAuthorities = getCurrentUserAuthorities();
+        if (userAuthorities == null) {
+            return false;
+        }
+        for (String authority : authorities) {
+            if (userAuthorities.contains(authority)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isAuthenticated() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null && authentication.isAuthenticated();
+        Authentication authentication = getAuthentication();
+        return authentication != null && authentication.isAuthenticated()
+                && !(authentication.getPrincipal() instanceof String);
     }
 }

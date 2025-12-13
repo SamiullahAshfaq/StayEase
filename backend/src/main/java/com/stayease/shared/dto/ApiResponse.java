@@ -1,3 +1,4 @@
+// ApiResponse.java
 package com.stayease.shared.dto;
 
 import lombok.AllArgsConstructor;
@@ -5,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -15,14 +16,14 @@ public class ApiResponse<T> {
     private boolean success;
     private String message;
     private T data;
-    private Instant timestamp;
+    private LocalDateTime timestamp;
 
     public static <T> ApiResponse<T> success(T data, String message) {
         return ApiResponse.<T>builder()
                 .success(true)
                 .message(message)
                 .data(data)
-                .timestamp(Instant.now())
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 
@@ -31,7 +32,7 @@ public class ApiResponse<T> {
                 .success(false)
                 .message(message)
                 .data(null)
-                .timestamp(Instant.now())
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 }

@@ -1,22 +1,37 @@
 package com.stayease.domain.listing.controller;
 
-import com.stayease.domain.listing.dto.*;
-import com.stayease.domain.listing.entity.Listing;
-import com.stayease.domain.listing.service.ListingService;
-import com.stayease.security.UserPrincipal;
-import com.stayease.shared.dto.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.UUID;
+import com.stayease.domain.listing.dto.CreateListingDTO;
+import com.stayease.domain.listing.dto.ListingDTO;
+import com.stayease.domain.listing.dto.SearchListingDTO;
+import com.stayease.domain.listing.dto.UpdateListingDTO;
+import com.stayease.domain.listing.entity.Listing;
+import com.stayease.domain.listing.service.ListingService;
+import com.stayease.security.UserPrincipal;
+import com.stayease.shared.dto.ApiResponse;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/listings")
@@ -33,9 +48,9 @@ public class ListingController {
             @Valid @RequestBody CreateListingDTO dto,
             @AuthenticationPrincipal UserPrincipal currentUser) {
         
-        log.info("Creating listing for user: {}", currentUser.getPublicId());
+        log.info("Creating listing for user: {}", currentUser.getId());
         
-        ListingDTO createdListing = listingService.createListing(dto, currentUser.getPublicId());
+        ListingDTO createdListing = listingService.createListing(dto, currentUser.getId());
         
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -124,9 +139,9 @@ public class ListingController {
     public ResponseEntity<ApiResponse<List<ListingDTO>>> getMyListings(
             @AuthenticationPrincipal UserPrincipal currentUser) {
         
-        log.debug("Fetching listings for current user: {}", currentUser.getPublicId());
+        log.debug("Fetching listings for current user: {}", currentUser.getId());
         
-        List<ListingDTO> listings = listingService.getListingsByLandlord(currentUser.getPublicId());
+        List<ListingDTO> listings = listingService.getListingsByLandlord(currentUser.getId());
         
         return ResponseEntity.ok(ApiResponse.<List<ListingDTO>>builder()
                 .success(true)
@@ -143,7 +158,7 @@ public class ListingController {
         
         log.info("Updating listing: {}", publicId);
         
-        ListingDTO updatedListing = listingService.updateListing(publicId, dto, currentUser.getPublicId());
+        ListingDTO updatedListing = listingService.updateListing(publicId, dto, currentUser.getId());
         
         return ResponseEntity.ok(ApiResponse.<ListingDTO>builder()
                 .success(true)
@@ -161,7 +176,7 @@ public class ListingController {
         
         log.info("Updating listing status: {} to {}", publicId, status);
         
-        ListingDTO updatedListing = listingService.updateListingStatus(publicId, status, currentUser.getPublicId());
+        ListingDTO updatedListing = listingService.updateListingStatus(publicId, status, currentUser.getId());
         
         return ResponseEntity.ok(ApiResponse.<ListingDTO>builder()
                 .success(true)
@@ -178,7 +193,7 @@ public class ListingController {
         
         log.info("Deleting listing: {}", publicId);
         
-        listingService.deleteListing(publicId, currentUser.getPublicId());
+        listingService.deleteListing(publicId, currentUser.getId());
         
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .success(true)

@@ -1,4 +1,4 @@
-import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -20,11 +20,14 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    @Inject(PLATFORM_ID) private platformId: object
-  ) {
+
+  private platformId = inject(PLATFORM_ID);
+
+
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
+  constructor() {
     this.loadStoredUser();
   }
 
@@ -40,7 +43,7 @@ export class AuthService {
       try {
         const user = JSON.parse(userStr);
         this.currentUserSubject.next(user);
-      } catch (e) {
+      } catch {
         this.logout();
       }
     }
@@ -66,6 +69,14 @@ export class AuthService {
           }
         })
       );
+  }
+
+  forgotPassword(email: string): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(password: string, token: string): Observable<ApiResponse<void>> {
+    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/reset-password`, { password, token });
   }
 
   logout(): void {

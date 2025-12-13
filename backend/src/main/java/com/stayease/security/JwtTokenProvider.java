@@ -1,67 +1,77 @@
 package com.stayease.security;
 
+import com.stayease.domain.user.entity.User;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
-
-import javax.crypto.SecretKey;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
-import lombok.extern.slf4j.Slf4j;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
-    private final SecretKey secretKey;
-    private final JwtProperties jwtProperties;
-    private final JwtParser jwtParser;
+    @Value("${app.jwt.secret}")
+    private String jwtSecret;
 
-    public JwtTokenProvider(JwtProperties jwtProperties) {
-        this.jwtProperties = jwtProperties;
-        this.secretKey = Keys.hmacShaKeyFor(jwtProperties.secret().getBytes(StandardCharsets.UTF_8));
-        this.jwtParser = Jwts.parserBuilder().setSigningKey(secretKey).build();
+    @Value("${app.jwt.expiration}")
+    private long jwtExpirationInMs;
+
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(Authentication authentication) {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        return generateTokenFromPrincipal(userPrincipal);
-    }
-
-    public String generateTokenFromPrincipal(UserPrincipal userPrincipal) {
+    public String generateToken(User user) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtProperties.expiration());
+        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+
+        String authorities = user.getUserAuthorities().stream()
+                .map(ua -> ua.getAuthority().getName())
+                .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getPublicId().toString())
+                .setSubject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("authorities", authorities)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .claim("email", userPrincipal.getEmail())
-                .signWith(secretKey)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    public UUID getPublicIdFromToken(String token) {
-        Claims claims = jwtParser.parseClaimsJws(token).getBody();
+    public UUID getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
         return UUID.fromString(claims.getSubject());
+    }
+
+    public String getEmailFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("email", String.class);
     }
 
     public boolean validateToken(String token) {
         try {
-            jwtParser.parseClaimsJws(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
             return true;
-        } catch (SecurityException ex) {
-            log.error("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
@@ -72,5 +82,9 @@ public class JwtTokenProvider {
             log.error("JWT claims string is empty");
         }
         return false;
+    }
+
+    public long getExpirationTime() {
+        return jwtExpirationInMs / 1000; // Return in seconds
     }
 }

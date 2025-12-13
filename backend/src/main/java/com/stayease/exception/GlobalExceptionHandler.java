@@ -1,7 +1,6 @@
 package com.stayease.exception;
 
 import com.stayease.shared.dto.ErrorDTO;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,140 +9,147 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorDTO> handleNotFoundException(NotFoundException ex, HttpServletRequest request) {
-        log.error("Not found exception: {}", ex.getMessage());
-        
+    public ResponseEntity<ErrorDTO> handleNotFoundException(
+            NotFoundException ex, WebRequest request) {
+        log.error("NotFoundException: {}", ex.getMessage());
         ErrorDTO error = ErrorDTO.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.NOT_FOUND.value())
-                .error("Not Found")
                 .message(ex.getMessage())
-                .path(request.getRequestURI())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorDTO> handleConflictException(ConflictException ex, HttpServletRequest request) {
-        log.error("Conflict exception: {}", ex.getMessage());
-        
+    public ResponseEntity<ErrorDTO> handleConflictException(
+            ConflictException ex, WebRequest request) {
+        log.error("ConflictException: {}", ex.getMessage());
         ErrorDTO error = ErrorDTO.builder()
-                .timestamp(Instant.now())
+                .message(ex.getMessage())
                 .status(HttpStatus.CONFLICT.value())
-                .error("Conflict")
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorDTO> handleBadRequestException(BadRequestException ex, HttpServletRequest request) {
-        log.error("Bad request exception: {}", ex.getMessage());
-        
-        ErrorDTO error = ErrorDTO.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Bad Request")
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
-                .build();
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorDTO> handleUnauthorizedException(UnauthorizedException ex, HttpServletRequest request) {
-        log.error("Unauthorized exception: {}", ex.getMessage());
-        
+    public ResponseEntity<ErrorDTO> handleUnauthorizedException(
+            UnauthorizedException ex, WebRequest request) {
+        log.error("UnauthorizedException: {}", ex.getMessage());
         ErrorDTO error = ErrorDTO.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .error("Unauthorized")
                 .message(ex.getMessage())
-                .path(request.getRequestURI())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ErrorDTO> handleForbiddenException(ForbiddenException ex, HttpServletRequest request) {
-        log.error("Forbidden exception: {}", ex.getMessage());
-        
+    public ResponseEntity<ErrorDTO> handleForbiddenException(
+            ForbiddenException ex, WebRequest request) {
+        log.error("ForbiddenException: {}", ex.getMessage());
         ErrorDTO error = ErrorDTO.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.FORBIDDEN.value())
-                .error("Forbidden")
                 .message(ex.getMessage())
-                .path(request.getRequestURI())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorDTO> handleBadRequestException(
+            BadRequestException ex, WebRequest request) {
+        log.error("BadRequestException: {}", ex.getMessage());
+        ErrorDTO error = ErrorDTO.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PaymentException.class)
+    public ResponseEntity<ErrorDTO> handlePaymentException(
+            PaymentException ex, WebRequest request) {
+        log.error("PaymentException: {}", ex.getMessage());
+        ErrorDTO error = ErrorDTO.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.PAYMENT_REQUIRED.value())
+                .error("Payment Required")
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.PAYMENT_REQUIRED);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorDTO> handleAccessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
-        log.error("Access denied exception: {}", ex.getMessage());
-        
+    public ResponseEntity<ErrorDTO> handleAccessDeniedException(
+            AccessDeniedException ex, WebRequest request) {
+        log.error("AccessDeniedException: {}", ex.getMessage());
         ErrorDTO error = ErrorDTO.builder()
-                .timestamp(Instant.now())
+                .message("Access denied: You don't have permission to access this resource")
                 .status(HttpStatus.FORBIDDEN.value())
-                .error("Forbidden")
-                .message("You don't have permission to access this resource")
-                .path(request.getRequestURI())
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDTO> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        log.error("Validation exception: {}", ex.getMessage());
+    public ResponseEntity<ErrorDTO> handleValidationException(
+            MethodArgumentNotValidException ex, WebRequest request) {
+        log.error("ValidationException: {}", ex.getMessage());
         
-        Map<String, String> validationErrors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            validationErrors.put(fieldName, errorMessage);
-        });
-        
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
+
         ErrorDTO error = ErrorDTO.builder()
-                .timestamp(Instant.now())
+                .message("Validation failed")
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error("Validation Failed")
-                .message("Input validation failed")
-                .path(request.getRequestURI())
-                .validationErrors(validationErrors)
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
+                .details(errors)
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDTO> handleGenericException(Exception ex, HttpServletRequest request) {
-        log.error("Unexpected exception: ", ex);
-        
+    public ResponseEntity<ErrorDTO> handleGlobalException(
+            Exception ex, WebRequest request) {
+        log.error("Unhandled exception: ", ex);
         ErrorDTO error = ErrorDTO.builder()
-                .timestamp(Instant.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("Internal Server Error")
                 .message("An unexpected error occurred")
-                .path(request.getRequestURI())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .timestamp(LocalDateTime.now())
                 .build();
-        
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

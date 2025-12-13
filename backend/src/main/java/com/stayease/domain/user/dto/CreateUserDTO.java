@@ -1,3 +1,4 @@
+// CreateUserDTO.java
 package com.stayease.domain.user.dto;
 
 import jakarta.validation.constraints.Email;
@@ -8,29 +9,33 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CreateUserDTO {
-
+    
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
-
+    
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    private String password;
+    
     @NotBlank(message = "First name is required")
-    @Size(min = 1, max = 100, message = "First name must be between 1 and 100 characters")
+    @Size(max = 100, message = "First name must not exceed 100 characters")
     private String firstName;
-
+    
     @NotBlank(message = "Last name is required")
-    @Size(min = 1, max = 100, message = "Last name must be between 1 and 100 characters")
+    @Size(max = 100, message = "Last name must not exceed 100 characters")
     private String lastName;
-
-    private String imageUrl;
-
-    private String password; // Optional for OAuth users
-
-    private Set<String> authorities;
+    
+    @Size(max = 20, message = "Phone number must not exceed 20 characters")
+    private String phoneNumber;
+    
+    private String profileImageUrl;
+    
+    @Size(max = 1000, message = "Bio must not exceed 1000 characters")
+    private String bio;
 }

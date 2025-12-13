@@ -1,3 +1,5 @@
+-- V5__create_service_offering_tables.sql
+
 -- Create service table
 CREATE TABLE service (
     id BIGSERIAL PRIMARY KEY,
@@ -5,7 +7,7 @@ CREATE TABLE service (
     provider_public_id UUID NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    price DECIMAL(12,2) NOT NULL,
+    price DECIMAL(12, 2) NOT NULL,
     currency VARCHAR(10) NOT NULL DEFAULT 'USD',
     service_type VARCHAR(100) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -30,7 +32,7 @@ CREATE TABLE service_booking (
     booking_date TIMESTAMP NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
     quantity INT NOT NULL DEFAULT 1,
-    total_price DECIMAL(12,2) NOT NULL,
+    total_price DECIMAL(12, 2) NOT NULL,
     currency VARCHAR(10) NOT NULL DEFAULT 'USD',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_service_booking_service FOREIGN KEY (service_id) REFERENCES service(id) ON DELETE CASCADE,
@@ -38,10 +40,11 @@ CREATE TABLE service_booking (
 );
 
 -- Create service indexes
-CREATE UNIQUE INDEX uk_service_public_id ON service(public_id);
-CREATE UNIQUE INDEX uk_service_booking_public_id ON service_booking(public_id);
+CREATE INDEX idx_service_public_id ON service(public_id);
 CREATE INDEX idx_service_provider ON service(provider_public_id);
 CREATE INDEX idx_service_type ON service(service_type);
+CREATE INDEX idx_service_image_service ON service_image(service_id);
+CREATE INDEX idx_service_booking_public_id ON service_booking(public_id);
 CREATE INDEX idx_service_booking_service ON service_booking(service_id);
 CREATE INDEX idx_service_booking_customer ON service_booking(customer_public_id);
 CREATE INDEX idx_service_booking_status ON service_booking(status);
@@ -50,3 +53,17 @@ CREATE INDEX idx_service_booking_status ON service_booking(status);
 CREATE SEQUENCE service_seq START WITH 1 INCREMENT BY 50;
 CREATE SEQUENCE service_image_seq START WITH 1 INCREMENT BY 50;
 CREATE SEQUENCE service_booking_seq START WITH 1 INCREMENT BY 50;
+
+-- Create update timestamp trigger
+CREATE OR REPLACE FUNCTION update_service_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_service_timestamp
+    BEFORE UPDATE ON service
+    FOR EACH ROW
+    EXECUTE FUNCTION update_service_timestamp();

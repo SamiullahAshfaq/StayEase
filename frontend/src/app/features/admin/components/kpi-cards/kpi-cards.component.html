@@ -1,0 +1,159 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- Revenue KPI -->
+  <mat-card class="admin-kpi-card p-6 cursor-pointer transition-all hover:shadow-lg">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <p class="text-sm font-medium mb-2" style="color: var(--admin-text-secondary)">
+          Total Revenue
+        </p>
+        <h3 class="text-3xl font-bold mb-1" style="color: var(--admin-text-primary)">
+          ${{ formatNumber(stats.revenueStats.totalRevenue) }}
+        </h3>
+        <div class="flex items-center gap-2">
+          <span
+            [class]="stats.revenueStats.revenueGrowthPercentage >= 0 ? 'admin-stat-positive' : 'admin-stat-negative'"
+            class="text-sm font-semibold flex items-center">
+            <mat-icon class="text-base">
+              {{ stats.revenueStats.revenueGrowthPercentage >= 0 ? 'trending_up' : 'trending_down' }}
+            </mat-icon>
+            {{ Math.abs(stats.revenueStats.revenueGrowthPercentage).toFixed(1) }}%
+          </span>
+          <span class="text-xs" style="color: var(--admin-text-secondary)">vs last month</span>
+        </div>
+      </div>
+      <div class="w-12 h-12 rounded-full flex items-center justify-center"
+           style="background: rgba(94, 64, 55, 0.2)">
+        <mat-icon class="text-2xl" style="color: var(--admin-primary)">attach_money</mat-icon>
+      </div>
+    </div>
+    <div class="mt-4 pt-4 border-t" style="border-color: var(--admin-border)">
+      <div class="flex justify-between text-xs">
+        <span style="color: var(--admin-text-secondary)">Today</span>
+        <span class="font-semibold" style="color: var(--admin-text-primary)">
+          ${{ formatNumber(stats.revenueStats.todayRevenue) }}
+        </span>
+      </div>
+      <div class="flex justify-between text-xs mt-1">
+        <span style="color: var(--admin-text-secondary)">This Week</span>
+        <span class="font-semibold" style="color: var(--admin-text-primary)">
+          ${{ formatNumber(stats.revenueStats.weekRevenue) }}
+        </span>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Bookings KPI -->
+  <mat-card class="admin-kpi-card p-6 cursor-pointer transition-all hover:shadow-lg">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <p class="text-sm font-medium mb-2" style="color: var(--admin-text-secondary)">
+          Total Bookings
+        </p>
+        <h3 class="text-3xl font-bold mb-1" style="color: var(--admin-text-primary)">
+          {{ formatNumber(stats.bookingStats.totalBookings) }}
+        </h3>
+        <div class="flex items-center gap-2">
+          <span class="admin-stat-positive text-sm font-semibold">
+            {{ stats.bookingStats.activeBookings }} Active
+          </span>
+          <span class="text-xs" style="color: var(--admin-text-secondary)">
+            {{ stats.bookingStats.occupancyRate.toFixed(1) }}% Occupancy
+          </span>
+        </div>
+      </div>
+      <div class="w-12 h-12 rounded-full flex items-center justify-center"
+           style="background: rgba(66, 165, 245, 0.2)">
+        <mat-icon class="text-2xl" style="color: var(--admin-info)">event_note</mat-icon>
+      </div>
+    </div>
+    <div class="mt-4 pt-4 border-t" style="border-color: var(--admin-border)">
+      <div class="flex justify-between text-xs">
+        <span style="color: var(--admin-text-secondary)">Pending</span>
+        <span class="font-semibold admin-stat-neutral">{{ stats.bookingStats.pendingBookings }}</span>
+      </div>
+      <div class="flex justify-between text-xs mt-1">
+        <span style="color: var(--admin-text-secondary)">Cancelled</span>
+        <span class="font-semibold admin-stat-negative">{{ stats.bookingStats.cancelledBookings }}</span>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Users KPI -->
+  <mat-card class="admin-kpi-card p-6 cursor-pointer transition-all hover:shadow-lg">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <p class="text-sm font-medium mb-2" style="color: var(--admin-text-secondary)">
+          Total Users
+        </p>
+        <h3 class="text-3xl font-bold mb-1" style="color: var(--admin-text-primary)">
+          {{ formatNumber(stats.userStats.totalUsers) }}
+        </h3>
+        <div class="flex items-center gap-2">
+          <span
+            [class]="stats.userStats.userGrowthPercentage >= 0 ? 'admin-stat-positive' : 'admin-stat-negative'"
+            class="text-sm font-semibold flex items-center">
+            <mat-icon class="text-base">
+              {{ stats.userStats.userGrowthPercentage >= 0 ? 'trending_up' : 'trending_down' }}
+            </mat-icon>
+            {{ Math.abs(stats.userStats.userGrowthPercentage).toFixed(1) }}%
+          </span>
+          <span class="text-xs" style="color: var(--admin-text-secondary)">growth rate</span>
+        </div>
+      </div>
+      <div class="w-12 h-12 rounded-full flex items-center justify-center"
+           style="background: rgba(102, 187, 106, 0.2)">
+        <mat-icon class="text-2xl" style="color: var(--admin-success)">people</mat-icon>
+      </div>
+    </div>
+    <div class="mt-4 pt-4 border-t" style="border-color: var(--admin-border)">
+      <div class="flex justify-between text-xs">
+        <span style="color: var(--admin-text-secondary)">Tenants</span>
+        <span class="font-semibold" style="color: var(--admin-text-primary)">
+          {{ formatNumber(stats.userStats.totalTenants) }}
+        </span>
+      </div>
+      <div class="flex justify-between text-xs mt-1">
+        <span style="color: var(--admin-text-secondary)">Landlords</span>
+        <span class="font-semibold" style="color: var(--admin-text-primary)">
+          {{ formatNumber(stats.userStats.totalLandlords) }}
+        </span>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Listings KPI -->
+  <mat-card class="admin-kpi-card p-6 cursor-pointer transition-all hover:shadow-lg">
+    <div class="flex justify-between items-start">
+      <div class="flex-1">
+        <p class="text-sm font-medium mb-2" style="color: var(--admin-text-secondary)">
+          Total Listings
+        </p>
+        <h3 class="text-3xl font-bold mb-1" style="color: var(--admin-text-primary)">
+          {{ formatNumber(stats.listingStats.totalListings) }}
+        </h3>
+        <div class="flex items-center gap-2">
+          <span class="admin-stat-positive text-sm font-semibold">
+            {{ stats.listingStats.activeListings }} Active
+          </span>
+          <span class="text-xs" style="color: var(--admin-text-secondary)">
+            ⭐ {{ stats.listingStats.averageRating.toFixed(1) }}
+          </span>
+        </div>
+      </div>
+      <div class="w-12 h-12 rounded-full flex items-center justify-center"
+           style="background: rgba(255, 167, 38, 0.2)">
+        <mat-icon class="text-2xl" style="color: var(--admin-warning)">home</mat-icon>
+      </div>
+    </div>
+    <div class="mt-4 pt-4 border-t" style="border-color: var(--admin-border)">
+      <div class="flex justify-between text-xs">
+        <span style="color: var(--admin-text-secondary)">Pending Approval</span>
+        <span class="font-semibold admin-stat-neutral">{{ stats.listingStats.pendingApproval }}</span>
+      </div>
+      <div class="flex justify-between text-xs mt-1">
+        <span style="color: var(--admin-text-secondary)">Featured</span>
+        <span class="font-semibold admin-stat-positive">{{ stats.listingStats.featuredListings }}</span>
+      </div>
+    </div>
+  </mat-card>
+</div>

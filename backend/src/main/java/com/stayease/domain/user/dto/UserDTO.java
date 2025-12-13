@@ -1,11 +1,14 @@
+// UserDTO.java
 package com.stayease.domain.user.dto;
 
-import com.stayease.domain.user.entity.User;
-import lombok.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -14,18 +17,21 @@ import java.util.UUID;
 public class UserDTO {
     private UUID publicId;
     private String email;
+    private String passwordHash;
     private String firstName;
     private String lastName;
     private String phoneNumber;
     private String profileImageUrl;
-    private LocalDate dateOfBirth;
     private String bio;
-    private String language;
-    private String currency;
     private Boolean isEmailVerified;
     private Boolean isPhoneVerified;
-    private User.AccountStatus accountStatus;
-    private List<String> authorities;
-    private Instant createdAt;
-    private Instant lastLoginAt;
+    private Boolean isActive;
+    private String oauthProvider;
+    private String oauthProviderId;
+    private String stripeCustomerId;
+    private String stripeAccountId;
+    private Set<String> authorities;
+    private LocalDateTime lastLoginAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

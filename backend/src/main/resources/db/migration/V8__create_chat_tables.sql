@@ -1,3 +1,5 @@
+-- V8__create_chat_tables.sql
+
 -- Create conversation table
 CREATE TABLE conversation (
     id BIGSERIAL PRIMARY KEY,
@@ -32,8 +34,9 @@ CREATE TABLE message (
 );
 
 -- Create chat indexes
-CREATE UNIQUE INDEX uk_conversation_public_id ON conversation(public_id);
+CREATE INDEX idx_conversation_public_id ON conversation(public_id);
 CREATE INDEX idx_conversation_participant_user ON conversation_participant(user_public_id);
+CREATE INDEX idx_conversation_participant_conversation ON conversation_participant(conversation_id);
 CREATE INDEX idx_message_conversation ON message(conversation_id);
 CREATE INDEX idx_message_sender ON message(sender_public_id);
 CREATE INDEX idx_message_created_at ON message(created_at);
@@ -41,3 +44,17 @@ CREATE INDEX idx_message_created_at ON message(created_at);
 -- Create chat sequences
 CREATE SEQUENCE conversation_seq START WITH 1 INCREMENT BY 50;
 CREATE SEQUENCE message_seq START WITH 1 INCREMENT BY 50;
+
+-- Create update timestamp trigger
+CREATE OR REPLACE FUNCTION update_conversation_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_conversation_timestamp
+    BEFORE UPDATE ON conversation
+    FOR EACH ROW
+    EXECUTE FUNCTION update_conversation_timestamp();

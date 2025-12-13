@@ -42,3 +42,38 @@
         opacity: 1;
     }
 }
+
+/* Theme color utility classes for register */
+.bg-primary {
+  background-color: #005461;
+}
+.bg-secondary {
+  background-color: #018790;
+}
+.bg-accent {
+  background-color: #00B7B5;
+}
+.bg-light {
+  background-color: #F4F4F4;
+}
+.text-primary {
+  color: #005461;
+}
+.text-secondary {
+  color: #018790;
+}
+.text-accent {
+  color: #00B7B5;
+}
+.text-light {
+  color: #F4F4F4;
+}
+.border-primary {
+  border-color: #005461;
+}
+.border-secondary {
+  border-color: #018790;
+}
+.border-accent {
+  border-color: #00B7B5;
+}

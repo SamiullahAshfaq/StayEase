@@ -1,3 +1,5 @@
+-- V6__create_payment_tables.sql
+
 -- Create payment table
 CREATE TABLE payment (
     id BIGSERIAL PRIMARY KEY,
@@ -6,7 +8,7 @@ CREATE TABLE payment (
     related_service_booking_id BIGINT,
     payer_public_id UUID NOT NULL,
     payee_public_id UUID NOT NULL,
-    amount DECIMAL(12,2) NOT NULL,
+    amount DECIMAL(12, 2) NOT NULL,
     currency VARCHAR(10) NOT NULL DEFAULT 'USD',
     method VARCHAR(50) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
@@ -22,7 +24,7 @@ CREATE TABLE payment (
 CREATE TABLE payout (
     id BIGSERIAL PRIMARY KEY,
     host_public_id UUID NOT NULL,
-    amount DECIMAL(12,2) NOT NULL,
+    amount DECIMAL(12, 2) NOT NULL,
     currency VARCHAR(10) NOT NULL DEFAULT 'USD',
     method VARCHAR(50) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
@@ -31,12 +33,14 @@ CREATE TABLE payout (
 );
 
 -- Create payment indexes
-CREATE UNIQUE INDEX uk_payment_public_id ON payment(public_id);
+CREATE INDEX idx_payment_public_id ON payment(public_id);
 CREATE INDEX idx_payment_payer ON payment(payer_public_id);
 CREATE INDEX idx_payment_payee ON payment(payee_public_id);
 CREATE INDEX idx_payment_status ON payment(status);
 CREATE INDEX idx_payment_booking ON payment(related_booking_id);
+CREATE INDEX idx_payment_service_booking ON payment(related_service_booking_id);
 CREATE INDEX idx_payout_host ON payout(host_public_id);
+CREATE INDEX idx_payout_status ON payout(status);
 
 -- Create payment sequences
 CREATE SEQUENCE payment_seq START WITH 1 INCREMENT BY 50;

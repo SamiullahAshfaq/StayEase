@@ -1,3 +1,5 @@
+-- V10__create_admin_tables.sql
+
 -- Create admin_action table
 CREATE TABLE admin_action (
     id BIGSERIAL PRIMARY KEY,
@@ -24,6 +26,7 @@ CREATE TABLE audit_log (
 -- Create admin indexes
 CREATE INDEX idx_admin_action_admin ON admin_action(admin_public_id);
 CREATE INDEX idx_admin_action_type ON admin_action(action_type);
+CREATE INDEX idx_admin_action_created_at ON admin_action(created_at);
 CREATE INDEX idx_audit_log_actor ON audit_log(actor_public_id);
 CREATE INDEX idx_audit_log_action ON audit_log(action);
 CREATE INDEX idx_audit_log_created_at ON audit_log(created_at);

@@ -12,12 +12,12 @@ CREATE TABLE listing (
     latitude DECIMAL(10, 8),
     longitude DECIMAL(11, 8),
     address TEXT,
-    price_per_night DECIMAL(12,2) NOT NULL,
+    price_per_night DECIMAL(12, 2) NOT NULL,
     currency VARCHAR(10) NOT NULL DEFAULT 'USD',
     max_guests INT NOT NULL,
     bedrooms INT NOT NULL,
     beds INT NOT NULL,
-    bathrooms DECIMAL(3,1) NOT NULL,
+    bathrooms DECIMAL(3, 1) NOT NULL,
     property_type VARCHAR(50) NOT NULL,
     category VARCHAR(100) NOT NULL,
     amenities JSONB,
@@ -25,7 +25,7 @@ CREATE TABLE listing (
     cancellation_policy VARCHAR(50) DEFAULT 'FLEXIBLE',
     minimum_stay INT DEFAULT 1,
     maximum_stay INT,
-    instant_book BOOLEAN DEFAULT false,
+    instant_book BOOLEAN DEFAULT FALSE,
     status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -37,7 +37,7 @@ CREATE TABLE listing_image (
     listing_id BIGINT NOT NULL,
     url VARCHAR(1000) NOT NULL,
     caption VARCHAR(255),
-    is_cover BOOLEAN DEFAULT false,
+    is_cover BOOLEAN DEFAULT FALSE,
     sort_order INT DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_listing_image_listing FOREIGN KEY (listing_id) REFERENCES listing(id) ON DELETE CASCADE
@@ -55,7 +55,7 @@ CREATE INDEX idx_listing_status ON listing(status);
 CREATE INDEX idx_listing_property_type ON listing(property_type);
 CREATE INDEX idx_listing_amenities ON listing USING GIN (amenities);
 CREATE INDEX idx_listing_image_listing ON listing_image(listing_id);
-CREATE INDEX idx_listing_image_cover ON listing_image(listing_id, is_cover) WHERE is_cover = true;
+CREATE INDEX idx_listing_image_cover ON listing_image(listing_id, is_cover) WHERE is_cover = TRUE;
 
 -- Create sequences
 CREATE SEQUENCE listing_seq START WITH 1 INCREMENT BY 50;

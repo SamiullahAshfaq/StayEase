@@ -52,7 +52,7 @@
 
           @if (currentUser$ | async; as user) {
             <div class="user-avatar">
-              {{ user.name?.charAt(0)?.toUpperCase() || 'U' }}
+              {{ user.name.charAt(0).toUpperCase() || 'U' }}
             </div>
           } @else {
             <svg class="user-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
