@@ -1,11 +1,23 @@
 package com.stayease.domain.user.controller;
 
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.stayease.domain.user.dto.AuthResponseDTO;
 import com.stayease.domain.user.dto.CreateUserDTO;
 import com.stayease.domain.user.dto.UserDTO;
 import com.stayease.domain.user.service.AuthService;
 import com.stayease.security.SecurityUtils;
 import com.stayease.shared.dto.ApiResponse;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,12 +27,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -90,7 +96,6 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    @PreAuthorize("hasAnyAuthority('USER', 'LANDLORD', 'ADMIN')")
     public ResponseEntity<ApiResponse<Void>> logout() {
         log.info("POST request to logout user");
         // JWT is stateless, so logout is handled on the client side by removing the token

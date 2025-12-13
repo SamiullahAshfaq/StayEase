@@ -21,8 +21,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      // Handle 401 Unauthorized errors
-      if (error.status === 401) {
+      // Handle 401 Unauthorized errors (but not for logout requests)
+      if (error.status === 401 && !req.url.includes('/logout')) {
         authService.logout();
         router.navigate(['/auth/login'], {
           queryParams: { returnUrl: router.url, error: 'Session expired' }

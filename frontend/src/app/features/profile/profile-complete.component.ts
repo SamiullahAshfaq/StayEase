@@ -332,7 +332,7 @@ export class ProfileCompleteComponent implements OnInit {
     // } else {
     //   this.router.navigate(['/']);
     // }
-    
+
     this.router.navigate(['/']);
   }
 }

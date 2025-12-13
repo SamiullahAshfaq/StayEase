@@ -1,49 +1,284 @@
-<header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white shadow-sm">
-  <div class="container mx-auto px-4">
-    <div class="flex h-16 items-center justify-between">
-      <a routerLink="/" class="flex items-center gap-2 text-2xl font-bold text-gray-800">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+<!-- Airbnb-style Header -->
+<header class="header-container">
+  <div class="header-content">
+    <!-- Logo and Navigation -->
+    <div class="logo-nav-section">
+      <!-- Logo -->
+      <a routerLink="/" class="logo">
+        <svg class="logo-icon" viewBox="0 0 32 32" fill="currentColor">
+          <path d="M16 1c2 0 3.46.96 4.75 3.27L23.25 9l2.5 4.73L28.5 19c.5 1.08.5 2.05 0 2.82-.63 1-1.85 1.23-3.27 1.13L16 21.5l-9.23 1.45c-1.42.1-2.64-.13-3.27-1.13-.5-.77-.5-1.74 0-2.82l2.75-5.27 2.5-4.73L11.25 4.27C12.54 1.96 14 1 16 1zm0 2c-1.08 0-2.05.5-3.08 2.48L10.42 10l-2.5 4.73L5.23 20c-.32.58-.32 1.02 0 1.32.32.27.82.4 1.53.33L16 20.32l9.24 1.33c.7.07 1.21-.06 1.53-.33.32-.3.32-.74 0-1.32l-2.69-5.27-2.5-4.73-2.5-4.52C18.05 2.5 17.08 2 16 2z"/>
         </svg>
-        <span class="text-blue-600">StayEase</span>
+        <span class="logo-text">stayease</span>
       </a>
 
-      <nav class="hidden items-center space-x-8 md:flex">
-        <a routerLink="/listings" class="text-gray-600 hover:text-blue-600">Explore</a>
+      <!-- Desktop Navigation -->
+      <nav class="desktop-nav">
+        <a routerLink="/listings" class="nav-link">Stays</a>
         @if (isAuthenticated) {
-          <a routerLink="/create-listing" class="text-gray-600 hover:text-blue-600">Become a Host</a>
+          <a routerLink="/create-listing" class="nav-link">Become a Host</a>
         }
       </nav>
+    </div>
 
-      <div class="flex items-center gap-4">
-        @if (isAuthenticated) {
-          <div class="relative">
-            <button (click)="toggleMenu()" class="flex items-center gap-2 focus:outline-none">
-              @if (currentUser && currentUser.profileImageUrl) {
-                <img [src]="currentUser.profileImageUrl" alt="User Avatar" class="h-10 w-10 rounded-full object-cover">
-              } @else {
-                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-semibold">
-                  {{ (currentUser?.firstName || 'U').charAt(0).toUpperCase() }}
-                </div>
+    <!-- Search Bar -->
+    <div class="search-container" [class.expanded]="isSearchExpanded()">
+      <div class="search-bar" (click)="setActiveSection('where')" (keydown.enter)="setActiveSection('where')" tabindex="0" role="search" aria-label="Search properties">
+        <!-- Where Section -->
+        <div class="search-section"
+             [class.active]="activeSearchSection() === 'where'"
+             (click)="$event.stopPropagation(); setActiveSection('where')"
+             (keydown.enter)="$event.stopPropagation(); setActiveSection('where')"
+             tabindex="0"
+             role="button"
+             aria-label="Select destination">
+          <span class="search-label">Where</span>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search destinations"
+            [(ngModel)]="searchDestination"
+            (click)="$event.stopPropagation(); setActiveSection('where')"
+          />
+        </div>
+
+        <div class="search-divider"></div>
+
+        <!-- Check In Section -->
+        <div class="search-section"
+             [class.active]="activeSearchSection() === 'when'"
+             (click)="$event.stopPropagation(); setActiveSection('when')"
+             (keydown.enter)="$event.stopPropagation(); setActiveSection('when')"
+             tabindex="0"
+             role="button"
+             aria-label="Select check-in date">
+          <span class="search-label">Check in</span>
+          <div class="search-input">
+            {{ checkInDate() ? (checkInDate() | date: 'MMM d') : 'Add dates' }}
+          </div>
+        </div>
+
+        <div class="search-divider"></div>
+
+        <!-- Check Out Section -->
+        <div class="search-section"
+             [class.active]="activeSearchSection() === 'when'"
+             (click)="$event.stopPropagation(); setActiveSection('when')"
+             (keydown.enter)="$event.stopPropagation(); setActiveSection('when')"
+             tabindex="0"
+             role="button"
+             aria-label="Select check-out date">
+          <span class="search-label">Check out</span>
+          <div class="search-input">
+            {{ checkOutDate() ? (checkOutDate() | date: 'MMM d') : 'Add dates' }}
+          </div>
+        </div>
+
+        <div class="search-divider"></div>
+
+        <!-- Who Section -->
+        <div class="search-section guests-section"
+             [class.active]="activeSearchSection() === 'who'"
+             (click)="$event.stopPropagation(); setActiveSection('who')"
+             (keydown.enter)="$event.stopPropagation(); setActiveSection('who')"
+             tabindex="0"
+             role="button"
+             aria-label="Select number of guests">
+          <span class="search-label">Who</span>
+          <div class="search-input">
+            {{ getTotalGuests() > 1 ? getGuestText() : 'Add guests' }}
+          </div>
+        </div>
+
+        <!-- Search Button -->
+        <button class="search-button" (click)="$event.stopPropagation(); performSearch()">
+          <svg class="search-icon" viewBox="0 0 32 32" fill="none">
+            <circle cx="14" cy="14" r="10" stroke="currentColor" stroke-width="3"/>
+            <path d="M21 21L27 27" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          @if (isSearchExpanded()) {
+            <span class="search-button-text">Search</span>
+          }
+        </button>
+      </div>
+
+      <!-- Date Picker Dropdown -->
+      @if (activeSearchSection() === 'when') {
+        <div class="dropdown-panel date-picker-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="dialog" aria-label="Date picker">
+          <div class="calendar-container">
+            <!-- Calendar Header -->
+            <div class="calendar-header">
+              <button class="calendar-nav-btn" (click)="previousMonth()">
+                <svg viewBox="0 0 32 32" class="calendar-nav-icon">
+                  <path d="M20 24L10 16L20 8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="calendar-month">{{ getMonthName(currentMonth()) }}</div>
+              <button class="calendar-nav-btn" (click)="nextMonth()">
+                <svg viewBox="0 0 32 32" class="calendar-nav-icon">
+                  <path d="M12 8L22 16L12 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Weekday Headers -->
+            <div class="calendar-weekdays">
+              <div class="weekday">Su</div>
+              <div class="weekday">Mo</div>
+              <div class="weekday">Tu</div>
+              <div class="weekday">We</div>
+              <div class="weekday">Th</div>
+              <div class="weekday">Fr</div>
+              <div class="weekday">Sa</div>
+            </div>
+
+            <!-- Calendar Days -->
+            <div class="calendar-days">
+              @for (date of getDaysInMonth(currentMonth()); track date.getTime()) {
+                <button
+                  class="calendar-day"
+                  [class.empty]="date.getTime() === 0"
+                  [class.selected]="isDateSelected(date)"
+                  [class.in-range]="isDateInRange(date)"
+                  (click)="selectDate(date)"
+                  [disabled]="date.getTime() === 0"
+                >
+                  {{ date.getTime() !== 0 ? date.getDate() : '' }}
+                </button>
               }
-            </button>
+            </div>
+          </div>
+        </div>
+      }
 
-            @if (isMenuOpen) {
-              <div class="absolute right-0 mt-2 w-48 rounded-md bg-white py-1 shadow-xl ring-1 ring-black ring-opacity-5">
-                <div class="px-4 py-2 text-sm text-gray-900 font-semibold border-b border-gray-100">
-                  {{ (currentUser?.firstName && currentUser?.lastName) ? (currentUser?.firstName + ' ' + currentUser?.lastName) : currentUser?.email }}
-                </div>
-                <a routerLink="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
-                <a routerLink="/my-listings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Listings</a>
-                <button (click)="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Log Out</button>
+      <!-- Guest Selector Dropdown -->
+      @if (activeSearchSection() === 'who') {
+        <div class="dropdown-panel guests-panel" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="dialog" aria-label="Guest selector">
+          <div class="guest-row">
+            <div class="guest-info">
+              <div class="guest-title">Adults</div>
+              <div class="guest-subtitle">Age 13+</div>
+            </div>
+            <div class="guest-counter">
+              <button
+                class="counter-btn"
+                [disabled]="guests().adults <= 1"
+                (click)="decrementGuests('adults')"
+              >
+                <svg viewBox="0 0 32 32" class="counter-icon">
+                  <path d="M8 16h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <span class="counter-value">{{ guests().adults }}</span>
+              <button
+                class="counter-btn"
+                (click)="incrementGuests('adults')"
+              >
+                <svg viewBox="0 0 32 32" class="counter-icon">
+                  <path d="M16 8v16M8 16h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="guest-divider"></div>
+
+          <div class="guest-row">
+            <div class="guest-info">
+              <div class="guest-title">Children</div>
+              <div class="guest-subtitle">Ages 2-12</div>
+            </div>
+            <div class="guest-counter">
+              <button
+                class="counter-btn"
+                [disabled]="guests().children <= 0"
+                (click)="decrementGuests('children')"
+              >
+                <svg viewBox="0 0 32 32" class="counter-icon">
+                  <path d="M8 16h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <span class="counter-value">{{ guests().children }}</span>
+              <button
+                class="counter-btn"
+                (click)="incrementGuests('children')"
+              >
+                <svg viewBox="0 0 32 32" class="counter-icon">
+                  <path d="M16 8v16M8 16h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="guest-divider"></div>
+
+          <div class="guest-row">
+            <div class="guest-info">
+              <div class="guest-title">Infants</div>
+              <div class="guest-subtitle">Under 2</div>
+            </div>
+            <div class="guest-counter">
+              <button
+                class="counter-btn"
+                [disabled]="guests().infants <= 0"
+                (click)="decrementGuests('infants')"
+              >
+                <svg viewBox="0 0 32 32" class="counter-icon">
+                  <path d="M8 16h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <span class="counter-value">{{ guests().infants }}</span>
+              <button
+                class="counter-btn"
+                (click)="incrementGuests('infants')"
+              >
+                <svg viewBox="0 0 32 32" class="counter-icon">
+                  <path d="M16 8v16M8 16h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Right Side Menu -->
+    <div class="right-menu">
+      @if (isAuthenticated) {
+        <div class="user-menu">
+          <button class="menu-button" (click)="toggleMenu()">
+            <svg class="menu-icon" viewBox="0 0 32 32" fill="none">
+              <rect x="6" y="8" width="20" height="2" fill="currentColor"/>
+              <rect x="6" y="15" width="20" height="2" fill="currentColor"/>
+              <rect x="6" y="22" width="20" height="2" fill="currentColor"/>
+            </svg>
+            @if (currentUser && currentUser.profileImageUrl) {
+              <img [src]="currentUser.profileImageUrl" alt="Profile" class="user-avatar">
+            } @else {
+              <div class="user-avatar-placeholder">
+                {{ (currentUser?.firstName || 'U').charAt(0).toUpperCase() }}
               </div>
             }
-          </div>
-        } @else {
-          <button (click)="login()" class="text-gray-600 hover:text-blue-600">Log In</button>
-          <button (click)="signup()" class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Sign Up</button>
-        }
-      </div>
+          </button>
+
+          @if (isMenuOpen) {
+            <div class="user-dropdown">
+              <div class="user-dropdown-header">
+                {{ (currentUser?.firstName && currentUser?.lastName) ? (currentUser?.firstName + ' ' + currentUser?.lastName) : currentUser?.email }}
+              </div>
+              <div class="dropdown-divider"></div>
+              <a routerLink="/profile" class="dropdown-item">Profile</a>
+              <a routerLink="/my-listings" class="dropdown-item">My Listings</a>
+              <div class="dropdown-divider"></div>
+              <button (click)="logout()" class="dropdown-item logout-item">Log out</button>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="auth-buttons">
+          <button (click)="login()" class="auth-link">Log in</button>
+          <button (click)="signup()" class="auth-button">Sign up</button>
+        </div>
+      }
     </div>
   </div>
 </header>

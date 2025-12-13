@@ -146,12 +146,18 @@ export class AuthService {
    * Logout user
    */
   logout(): void {
+    // Clear auth immediately to prevent infinite loops
+    this.clearAuth();
+
+    // Make the backend call but don't wait for it
     this.http.post(`${this.API_URL}/logout`, {}).subscribe({
-      complete: () => {
-        this.clearAuth();
-        this.router.navigate(['/auth/login']);
+      error: () => {
+        // Ignore errors on logout - we've already cleared local state
       }
     });
+
+    // Navigate to login
+    this.router.navigate(['/auth/login']);
   }
 
   /**
