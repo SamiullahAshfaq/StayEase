@@ -41,7 +41,14 @@ export const routes: Routes = [
     ]
   },
 
-  // OAuth redirect
+  // Auth0 callback
+  {
+    path: 'callback',
+    loadComponent: () => import('./features/auth/auth0-callback/auth0-callback.component').then(m => m.Auth0CallbackComponent),
+    title: 'Completing Sign In...'
+  },
+
+  // Legacy OAuth redirect (kept for backwards compatibility)
   {
     path: 'oauth2/redirect',
     loadComponent: () => import('./features/auth/oauth-redirect/oauth-redirect.component').then(m => m.OAuthRedirectComponent),

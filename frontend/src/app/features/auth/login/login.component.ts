@@ -1,10 +1,10 @@
 // src/app/features/auth/login/login.component.ts
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
-import { OAuthService } from '../../../core/services/oauth.service';
+import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-login',
@@ -22,9 +22,10 @@ export class LoginComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private oauthService = inject(OAuthService);
+  private auth0 = inject(Auth0Service, { optional: true });
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private platformId = inject(PLATFORM_ID);
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -51,21 +52,51 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * Login with Google OAuth
+   * Login with Auth0 (supports Google, Facebook, etc.)
    */
-  loginWithGoogle(): void {
+  loginWithAuth0(): void {
+    if (!isPlatformBrowser(this.platformId) || !this.auth0) {
+      return;
+    }
     this.loading = true;
     this.error = null;
-    this.oauthService.loginWithGoogle();
+    this.auth0.loginWithRedirect({
+      appState: { target: this.returnUrl }
+    });
   }
 
   /**
-   * Login with Facebook OAuth
+   * Login with Google via Auth0
    */
-  loginWithFacebook(): void {
+  loginWithGoogle(): void {
+    if (!isPlatformBrowser(this.platformId) || !this.auth0) {
+      return;
+    }
     this.loading = true;
     this.error = null;
-    this.oauthService.loginWithFacebook();
+    this.auth0.loginWithRedirect({
+      authorizationParams: {
+        connection: 'google-oauth2'
+      },
+      appState: { target: this.returnUrl }
+    });
+  }
+
+  /**
+   * Login with Facebook via Auth0
+   */
+  loginWithFacebook(): void {
+    if (!isPlatformBrowser(this.platformId) || !this.auth0) {
+      return;
+    }
+    this.loading = true;
+    this.error = null;
+    this.auth0.loginWithRedirect({
+      authorizationParams: {
+        connection: 'facebook'
+      },
+      appState: { target: this.returnUrl }
+    });
   }
 
   /**

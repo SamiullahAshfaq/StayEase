@@ -2,14 +2,10 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:8080/api',
-  oauth: {
-    google: {
-      clientId: 'YOUR_GOOGLE_CLIENT_ID',
-      redirectUri: 'http://localhost:4200/oauth2/redirect'
-    },
-    facebook: {
-      clientId: 'YOUR_FACEBOOK_APP_ID',
-      redirectUri: 'http://localhost:4200/oauth2/redirect'
-    }
+  auth0: {
+    domain: 'dev-k03ztn804p2l0zs8.us.auth0.com',
+    clientId: 'VbSEaE4pZLPwIoGAd5N8ue23H8ci2wQs',
+    // audience: 'https://stayease-api',  // Temporarily disabled for testing
+    redirectUri: 'http://localhost:4200/callback'
   }
 };

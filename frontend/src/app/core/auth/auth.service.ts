@@ -3,7 +3,7 @@ import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, tap, catchError, throwError, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface LoginRequest {
@@ -27,6 +27,17 @@ export interface AuthResponse {
     expiresIn: number;
     user: User;
   };
+}
+
+export interface Auth0User {
+  sub?: string;
+  email?: string;
+  email_verified?: boolean;
+  name?: string;
+  nickname?: string;
+  picture?: string;
+  given_name?: string;
+  family_name?: string;
 }
 
 export interface User {
@@ -288,5 +299,41 @@ export class AuthService {
    */
   changePassword(oldPassword: string, newPassword: string): Observable<{ success: boolean; message?: string }> {
     return this.http.post<{ success: boolean; message?: string }>(`${this.API_URL}/change-password`, { oldPassword, newPassword });
+  }
+
+  /**
+   * Sync Auth0 user with backend
+   * Sends Auth0 token in Authorization header for validation
+   * Receives local JWT token from backend
+   */
+  syncAuth0User(auth0User: Auth0User, auth0Token: string): Observable<User> {
+    // Send Auth0 user data to backend with Auth0 token for validation
+    return this.http.post<AuthResponse>(`${this.API_URL}/auth0/sync`, {
+      sub: auth0User.sub,
+      email: auth0User.email,
+      emailVerified: auth0User.email_verified,
+      name: auth0User.name,
+      nickname: auth0User.nickname,
+      picture: auth0User.picture,
+      givenName: auth0User.given_name,
+      familyName: auth0User.family_name
+    }, {
+      headers: {
+        'Authorization': `Bearer ${auth0Token}`
+      }
+    }).pipe(
+      map(response => {
+        if (response.success && response.data) {
+          // Store the LOCAL JWT token from backend (not Auth0 token)
+          this.handleAuthSuccess(response.data);
+          return response.data.user;
+        }
+        throw new Error('Failed to sync user');
+      }),
+      catchError(error => {
+        console.error('Error syncing Auth0 user:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }

@@ -17,7 +17,7 @@ spring:
       include-stacktrace: on_param
       include-exception: false
 
-  # OAuth2 Client Configuration
+  # OAuth2 Client Configuration (Legacy - kept for backward compatibility)
   security:
     oauth2:
       client:
@@ -43,6 +43,11 @@ spring:
             authorization-uri: https://www.facebook.com/v12.0/dialog/oauth
             token-uri: https://graph.facebook.com/v12.0/oauth/access_token
             user-info-uri: https://graph.facebook.com/v12.0/me?fields=id,name,email,picture
+      # Auth0 JWT Resource Server Configuration
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH0_ISSUER_URI:https://YOUR_AUTH0_DOMAIN.auth0.com/}
+          audiences: ${AUTH0_AUDIENCE:https://stayease-api}
 
 server:
   port: 8080

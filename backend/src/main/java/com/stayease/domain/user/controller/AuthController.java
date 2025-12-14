@@ -103,6 +103,23 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success(null, "Logout successful"));
     }
 
+    @PostMapping("/auth0/sync")
+    public ResponseEntity<ApiResponse<AuthResponseDTO>> syncAuth0User(
+            @Valid @RequestBody Auth0SyncRequest request) {
+        log.info("POST request to sync Auth0 user with sub: {}", request.getSub());
+        AuthResponseDTO response = authService.syncAuth0User(
+                request.getSub(),
+                request.getEmail(),
+                request.getEmailVerified(),
+                request.getName(),
+                request.getNickname(),
+                request.getPicture(),
+                request.getGivenName(),
+                request.getFamilyName()
+        );
+        return ResponseEntity.ok(ApiResponse.success(response, "Auth0 user synced successfully"));
+    }
+
     // Request DTOs
     @Data
     @NoArgsConstructor
@@ -163,5 +180,25 @@ public class AuthController {
 
         // In production, you'd also require a reset token here
         private String resetToken;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Auth0SyncRequest {
+        @NotBlank(message = "Auth0 sub is required")
+        private String sub;
+
+        @NotBlank(message = "Email is required")
+        @Email(message = "Email must be valid")
+        private String email;
+
+        private Boolean emailVerified;
+        private String name;
+        private String nickname;
+        private String picture;
+        private String givenName;
+        private String familyName;
     }
 }
