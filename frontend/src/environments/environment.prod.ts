@@ -2,14 +2,10 @@
 export const environment = {
   production: true,
   apiUrl: 'https://your-production-domain.com/api',
-  oauth: {
-    google: {
-      clientId: 'YOUR_PRODUCTION_GOOGLE_CLIENT_ID',
-      redirectUri: 'https://your-production-domain.com/oauth2/redirect'
-    },
-    facebook: {
-      clientId: 'YOUR_PRODUCTION_FACEBOOK_APP_ID',
-      redirectUri: 'https://your-production-domain.com/oauth2/redirect'
-    }
+  auth0: {
+    domain: 'dev-k03ztn804p2l0zs8.us.auth0.com',
+    clientId: 'VbSEaE4pZLPwIoGAd5N8ue23H8ci2wQs',
+    audience: 'https://stayease-api',
+    redirectUri: 'https://your-production-domain.com/callback'
   }
 };

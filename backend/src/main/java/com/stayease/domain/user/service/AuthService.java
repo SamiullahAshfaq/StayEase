@@ -193,4 +193,82 @@ public class AuthService {
     public UserDTO getCurrentUser(UUID userId) {
         return userService.getUserById(userId);
     }
+
+    /**
+     * Sync Auth0 user with local database
+     * Creates new user or updates existing user based on Auth0 sub
+     * Returns AuthResponseDTO with local JWT token
+     */
+    public AuthResponseDTO syncAuth0User(String sub, String email, Boolean emailVerified,
+                                  String name, String nickname, String picture,
+                                  String givenName, String familyName) {
+        log.info("Syncing Auth0 user with sub: {}", sub);
+
+        User user = userRepository.findByOauthProviderAndOauthProviderId("auth0", sub)
+                .orElseGet(() -> {
+                    log.info("Creating new Auth0 user for email: {}", email);
+
+                    // Split name if givenName/familyName not provided
+                    String firstName = givenName;
+                    String lastName = familyName;
+                    if (firstName == null && name != null) {
+                        String[] nameParts = name.split(" ", 2);
+                        firstName = nameParts[0];
+                        lastName = nameParts.length > 1 ? nameParts[1] : "";
+                    }
+
+                    User newUser = User.builder()
+                            .email(email)
+                            .firstName(firstName)
+                            .lastName(lastName)
+                            .profileImageUrl(picture)
+                            .oauthProvider("auth0")
+                            .oauthProviderId(sub)
+                            .isEmailVerified(emailVerified != null ? emailVerified : false)
+                            .isPhoneVerified(false)
+                            .isActive(true)
+                            .lastLoginAt(LocalDateTime.now())
+                            .publicId(UUID.randomUUID())
+                            .build();
+
+                    // Assign default TENANT authority
+                    Authority userAuthority = authorityRepository.findByName(AuthorityConstant.ROLE_TENANT)
+                            .orElseThrow(() -> new NotFoundException("Authority not found: " + AuthorityConstant.ROLE_TENANT));
+                    newUser.addAuthority(userAuthority);
+
+                    return userRepository.save(newUser);
+                });
+
+        if (!user.getIsActive()) {
+            throw new UnauthorizedException("User account is deactivated");
+        }
+
+        // Update user information from Auth0
+        boolean updated = false;
+        if (picture != null && !picture.equals(user.getProfileImageUrl())) {
+            user.setProfileImageUrl(picture);
+            updated = true;
+        }
+        if (emailVerified != null && !emailVerified.equals(user.getIsEmailVerified())) {
+            user.setIsEmailVerified(emailVerified);
+            updated = true;
+        }
+
+        user.setLastLoginAt(LocalDateTime.now());
+        if (updated) {
+            userRepository.save(user);
+        }
+
+        // Generate local JWT token for the user
+        String token = jwtTokenProvider.generateToken(user);
+        UserDTO userDTO = userMapper.toDTO(user);
+        log.info("Auth0 user synced successfully with ID: {}", user.getId());
+
+        return AuthResponseDTO.builder()
+                .token(token)
+                .tokenType("Bearer")
+                .expiresIn(jwtTokenProvider.getExpirationTime())
+                .user(userDTO)
+                .build();
+    }
 }

@@ -1,10 +1,10 @@
 // src/app/features/auth/register/register.component.ts
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, OnInit, PLATFORM_ID, Optional } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
-import { OAuthService } from '../../../core/services/oauth.service';
+import { AuthService as Auth0Service } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-register',
@@ -16,8 +16,9 @@ import { OAuthService } from '../../../core/services/oauth.service';
 export class RegisterComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private oauthService = inject(OAuthService);
+  private auth0 = inject(Auth0Service, { optional: true });
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
   registerForm: FormGroup;
   loading = signal(false);
@@ -55,21 +56,39 @@ export class RegisterComponent implements OnInit {
   }
 
   /**
-   * Login with Google OAuth
+   * Sign up with Google via Auth0
    */
   loginWithGoogle(): void {
+    if (!isPlatformBrowser(this.platformId) || !this.auth0) {
+      return;
+    }
     this.loading.set(true);
     this.errorMessage.set(null);
-    this.oauthService.loginWithGoogle();
+    this.auth0.loginWithRedirect({
+      authorizationParams: {
+        connection: 'google-oauth2',
+        screen_hint: 'signup'
+      },
+      appState: { target: '/' }
+    });
   }
 
   /**
-   * Login with Facebook OAuth
+   * Sign up with Facebook via Auth0
    */
   loginWithFacebook(): void {
+    if (!isPlatformBrowser(this.platformId) || !this.auth0) {
+      return;
+    }
     this.loading.set(true);
     this.errorMessage.set(null);
-    this.oauthService.loginWithFacebook();
+    this.auth0.loginWithRedirect({
+      authorizationParams: {
+        connection: 'facebook',
+        screen_hint: 'signup'
+      },
+      appState: { target: '/' }
+    });
   }
 
   /**
