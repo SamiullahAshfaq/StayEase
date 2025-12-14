@@ -1,0 +1,172 @@
+/* Reusing most styles from listing-create.component.css */
+.edit-listing-container {
+  min-height: 100vh;
+  background: #f7f7f7;
+  padding-bottom: 100px;
+}
+
+/* Progress Header */
+.progress-header {
+  background: white;
+  border-bottom: 1px solid #ebebeb;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222222;
+  margin: 0;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid #dddddd;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #222222;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #f7f7f7;
+}
+
+.progress-bar {
+  height: 4px;
+  background: #ebebeb;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff385c 0%, #e61e4d 100%);
+  transition: width 0.3s ease;
+}
+
+.step-indicators {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.step-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #dddddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #717171;
+  background: white;
+  transition: all 0.2s;
+}
+
+.step-indicator.active .step-number {
+  border-color: #ff385c;
+  background: #ff385c;
+  color: white;
+}
+
+.step-indicator.completed .step-number {
+  border-color: #00a699;
+  background: #00a699;
+  color: white;
+}
+
+.step-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #717171;
+  text-align: center;
+}
+
+.step-indicator.active .step-label {
+  color: #ff385c;
+}
+
+.step-indicator.completed .step-label {
+  color: #00a699;
+}
+
+/* Error Banner */
+.error-banner {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 16px 24px;
+  background: #fff0f0;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ff385c;
+}
+
+/* Import all other styles from create component */
+@import './listing-create.component.css';
+
+/* Additional styles specific to edit */
+.subsection-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222222;
+  margin-bottom: 12px;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: #717171;
+  text-align: center;
+  min-height: 60vh;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #ff385c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

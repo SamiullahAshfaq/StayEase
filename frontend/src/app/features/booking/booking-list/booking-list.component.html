@@ -44,6 +44,14 @@
           Upcoming
         </button>
         <button
+          (click)="selectTab('completed')"
+          [class.border-black]="selectedTab === 'completed'"
+          [class.text-gray-900]="selectedTab === 'completed'"
+          [class.text-gray-500]="selectedTab !== 'completed'"
+          class="pb-4 border-b-2 border-transparent font-semibold whitespace-nowrap hover:text-gray-900 transition-colors duration-200">
+          Completed
+        </button>
+        <button
           (click)="selectTab('past')"
           [class.border-black]="selectedTab === 'past'"
           [class.text-gray-900]="selectedTab === 'past'"

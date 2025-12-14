@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, SimpleChanges, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -19,11 +19,6 @@ import { DashboardService } from '../../services/dashboard.service';
             Booking trends and status distribution
           </p>
         </div>
-        <mat-button-toggle-group [(value)]="selectedPeriod" (change)="loadChart()">
-          <mat-button-toggle value="7">7 Days</mat-button-toggle>
-          <mat-button-toggle value="30">30 Days</mat-button-toggle>
-          <mat-button-toggle value="90">90 Days</mat-button-toggle>
-        </mat-button-toggle-group>
       </div>
 
       @if (loading()) {
@@ -52,10 +47,11 @@ import { DashboardService } from '../../services/dashboard.service';
     </mat-card>
   `
 })
-export class BookingChartComponent implements OnInit {
+export class BookingChartComponent implements OnInit, OnChanges {
   private dashboardService = inject(DashboardService);
   
-  selectedPeriod = '30';
+  @Input() days: number = 30;
+
   loading = signal(false);
   chartOption = signal<EChartsOption | null>(null);
   pieChartOption = signal<EChartsOption | null>(null);
@@ -64,10 +60,16 @@ export class BookingChartComponent implements OnInit {
     this.loadChart();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['days'] && !changes['days'].firstChange) {
+      this.loadChart();
+    }
+  }
+
   loadChart() {
     this.loading.set(true);
     
-    this.dashboardService.getBookingChart(+this.selectedPeriod).subscribe({
+    this.dashboardService.getBookingChart(this.days).subscribe({
       next: (data) => {
         // Line/Bar Chart
         this.chartOption.set({

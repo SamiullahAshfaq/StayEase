@@ -159,31 +159,31 @@ export const routes: Routes = [
     path: 'admin',
     canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_ADMIN'])],
     children: [
-      // {
-      //   path: 'dashboard',
-      //   loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
-      //   title: 'Admin Dashboard - StayEase'
-      // },
-      // {
-      //   path: 'users',
-      //   loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent),
-      //   title: 'User Management - StayEase'
-      // },
-      // {
-      //   path: 'listings',
-      //   loadComponent: () => import('./features/admin/listing-management/listing-management.component').then(m => m.ListingManagementComponent),
-      //   title: 'Listing Management - StayEase'
-      // },
-      // {
-      //   path: 'bookings',
-      //   loadComponent: () => import('./features/admin/booking-management/booking-management.component').then(m => m.BookingManagementComponent),
-      //   title: 'Booking Management - StayEase'
-      // },
-      // {
-      //   path: 'audit-logs',
-      //   loadComponent: () => import('./features/admin/audit-log/audit-log.component').then(m => m.AuditLogComponent),
-      //   title: 'Audit Logs - StayEase'
-      // },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+        title: 'Admin Dashboard - StayEase'
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent),
+        title: 'User Management - StayEase'
+      },
+      {
+        path: 'listings',
+        loadComponent: () => import('./features/admin/listing-management/listing-management.component').then(m => m.ListingManagementComponent),
+        title: 'Listing Management - StayEase'
+      },
+      {
+        path: 'bookings',
+        loadComponent: () => import('./features/admin/booking-management/booking-management.component').then(m => m.BookingManagementComponent),
+        title: 'Booking Management - StayEase'
+      },
+      {
+        path: 'audit-logs',
+        loadComponent: () => import('./features/admin/audit-log/audit-log.component').then(m => m.AuditLogComponent),
+        title: 'Audit Logs - StayEase'
+      },
       {
         path: '',
         redirectTo: 'dashboard',

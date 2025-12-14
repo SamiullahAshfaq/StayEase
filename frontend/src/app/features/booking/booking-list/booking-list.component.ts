@@ -29,7 +29,7 @@ export class BookingListComponent implements OnInit {
   totalElements = 0;
 
   // Filters
-  selectedTab: 'all' | 'upcoming' | 'past' | 'cancelled' = 'all';
+  selectedTab: 'all' | 'upcoming' | 'completed' | 'past' | 'cancelled' = 'all';
   
   // Cancel modal
   showCancelModal = false;
@@ -109,13 +109,20 @@ export class BookingListComponent implements OnInit {
           console.log('Checking booking:', b.listingTitle, 'checkInDate:', checkInDate, 'isAfterNow:', checkInDate > now);
           return checkInDate > now && 
             b.bookingStatus !== BookingStatus.CANCELLED && 
-            b.bookingStatus !== BookingStatus.REJECTED;
+            b.bookingStatus !== BookingStatus.REJECTED &&
+            b.bookingStatus !== BookingStatus.CHECKED_OUT;
         });
+        break;
+      case 'completed':
+        this.filteredBookings = this.bookings.filter(b => 
+          b.bookingStatus === BookingStatus.CHECKED_OUT
+        );
         break;
       case 'past':
         this.filteredBookings = this.bookings.filter(b => 
-          new Date(b.checkOutDate) < now &&
-          b.bookingStatus !== BookingStatus.CANCELLED
+          (new Date(b.checkOutDate) < now || b.bookingStatus === BookingStatus.CHECKED_OUT) &&
+          b.bookingStatus !== BookingStatus.CANCELLED &&
+          b.bookingStatus !== BookingStatus.REJECTED
         );
         break;
       case 'cancelled':
@@ -134,7 +141,7 @@ export class BookingListComponent implements OnInit {
     }
   }
 
-  selectTab(tab: 'all' | 'upcoming' | 'past' | 'cancelled'): void {
+  selectTab(tab: 'all' | 'upcoming' | 'completed' | 'past' | 'cancelled'): void {
     this.selectedTab = tab;
     this.filterBookings();
   }

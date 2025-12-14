@@ -18,7 +18,7 @@ export class DashboardService {
   private apiUrl = `${environment.apiUrl}/admin/dashboard`;
 
   // Toggle this to enable/disable mock data for testing
-  private useMockData = true;
+  private useMockData = false;
 
   getDashboardStats(): Observable<DashboardStats> {
     if (this.useMockData) {

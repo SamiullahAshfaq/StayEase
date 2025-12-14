@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, SimpleChanges, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -12,10 +12,11 @@ import { DashboardService } from '../../services/dashboard.service';
   imports: [CommonModule, MatCardModule, MatButtonToggleModule, NgxEchartsModule],
   templateUrl: './user-chart.component.html'
 })
-export class UserChartComponent implements OnInit {
+export class UserChartComponent implements OnInit, OnChanges {
   private dashboardService = inject(DashboardService);
 
-  selectedPeriod = '30';
+  @Input() days: number = 30;
+
   loading = signal(false);
   chartOption = signal<EChartsOption | null>(null);
   pieChartOption = signal<EChartsOption | null>(null);
@@ -24,10 +25,16 @@ export class UserChartComponent implements OnInit {
     this.loadChart();
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['days'] && !changes['days'].firstChange) {
+      this.loadChart();
+    }
+  }
+
   loadChart() {
     this.loading.set(true);
 
-    this.dashboardService.getUserChart(+this.selectedPeriod).subscribe({
+    this.dashboardService.getUserChart(this.days).subscribe({
       next: (data) => {
         // Area Chart
         this.chartOption.set({
