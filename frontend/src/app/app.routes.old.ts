@@ -27,11 +27,11 @@ export const routes: Routes = [
     path: 'listings/:id',
     loadComponent: () => import('./features/listing/listing-detail/listing-detail.component').then(m => m.ListingDetailComponent)
   },
-  {
-    path: 'create-listing',
-    loadComponent: () => import('./features/listing/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
-    canActivate: [AuthGuard] // LandlordGuard removed temporarily
-  },
+  // {
+  //   path: 'create-listing',
+  //   loadComponent: () => import('./features/listing/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
+  //   canActivate: [AuthGuard] // LandlordGuard removed temporarily
+  // },
 
   // Booking Routes
   // {

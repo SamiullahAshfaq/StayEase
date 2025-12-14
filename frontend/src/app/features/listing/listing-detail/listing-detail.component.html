@@ -29,7 +29,7 @@
             {{ listing.city }}, {{ listing.country }}
           </button>
         </div>
-        
+
         <div class="flex items-center gap-4">
           <button (click)="toggleShare()" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,26 +52,26 @@
       <div class="grid grid-cols-4 grid-rows-2 gap-2 rounded-xl overflow-hidden h-[500px]">
         <!-- Main large image -->
         @if (listing.images[0]) {
-          <div 
+          <div
             class="col-span-2 row-span-2 cursor-pointer group relative overflow-hidden"
             (click)="openPhotoGallery(0)">
-            <img 
-              [src]="listing.images[0].url" 
+            <img
+              [src]="getImageUrl(listing.images[0].url)"
               [alt]="listing.title"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
           </div>
         }
-        
+
         <!-- Grid images -->
         @for (image of listing.images.slice(1, 5); track image.url; let i = $index) {
-          <div 
+          <div
             class="cursor-pointer group relative overflow-hidden"
             (click)="openPhotoGallery(i + 1)">
-            <img 
-              [src]="image.url" 
+            <img
+              [src]="getImageUrl(image.url)"
               [alt]="listing.title"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-            
+
             <!-- Show all photos button on last image -->
             @if (i === 3 && listing.images.length > 5) {
               <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
@@ -88,10 +88,10 @@
     <!-- Content -->
     <div class="max-w-[1120px] mx-auto px-8">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        
+
         <!-- Left column - Details -->
         <div class="lg:col-span-2 space-y-8">
-          
+
           <!-- Title & Host -->
           <div class="pb-8 border-b">
             <h2 class="text-2xl font-semibold mb-2">
@@ -163,7 +163,7 @@
               }
             </div>
             @if (listing.amenities.length > 10) {
-              <button 
+              <button
                 (click)="toggleAllAmenities()"
                 class="mt-6 px-6 py-3 border border-black rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200">
                 {{ showAllAmenities ? 'Show less' : 'Show all ' + listing.amenities.length + ' amenities' }}
@@ -189,8 +189,8 @@
           <!-- Host Section -->
           <div class="pb-8 border-b">
             <div class="flex items-center gap-6 mb-6">
-              <img 
-                [src]="host.avatar" 
+              <img
+                [src]="host.avatar"
                 [alt]="host.name"
                 class="w-16 h-16 rounded-full">
               <div>
@@ -316,8 +316,8 @@
                 @for (review of (showAllReviews ? reviews : reviews.slice(0, 6)); track review.id) {
                   <div class="space-y-3">
                     <div class="flex items-center gap-3">
-                      <img 
-                        [src]="review.guestAvatar" 
+                      <img
+                        [src]="review.guestAvatar"
                         [alt]="review.guestName"
                         class="w-12 h-12 rounded-full">
                       <div>
@@ -338,7 +338,7 @@
               </div>
 
               @if (reviews.length > 6) {
-                <button 
+                <button
                   (click)="toggleAllReviews()"
                   class="px-6 py-3 border border-black rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200">
                   {{ showAllReviews ? 'Show less' : 'Show all ' + reviews.length + ' reviews' }}
@@ -351,7 +351,7 @@
           <div class="pb-8 border-b">
             <h3 class="text-xl font-semibold mb-4">Where you'll be</h3>
             <p class="text-gray-700 mb-6">{{ listing.city }}, {{ listing.country }}</p>
-            
+
             <!-- Map placeholder -->
             <div class="w-full h-96 bg-gray-200 rounded-xl flex items-center justify-center">
               <div class="text-center">
@@ -369,7 +369,7 @@
         <!-- Right column - Booking Card -->
         <div class="lg:col-span-1">
           <div class="border border-gray-300 rounded-xl shadow-xl p-6 sticky top-24">
-            
+
             <!-- Price -->
             <div class="flex items-baseline gap-1 mb-6">
               <span class="text-2xl font-semibold">${{ listing.pricePerNight }}</span>
@@ -381,7 +381,7 @@
               <div class="grid grid-cols-2 divide-x divide-gray-300">
                 <div class="p-3">
                   <label class="text-xs font-semibold uppercase">Check-in</label>
-                  <input 
+                  <input
                     type="date"
                     [(ngModel)]="checkIn"
                     [min]="today"
@@ -389,7 +389,7 @@
                 </div>
                 <div class="p-3">
                   <label class="text-xs font-semibold uppercase">Checkout</label>
-                  <input 
+                  <input
                     type="date"
                     [(ngModel)]="checkOut"
                     [min]="checkIn || today"
@@ -398,7 +398,7 @@
               </div>
               <div class="p-3 border-t border-gray-300">
                 <label class="text-xs font-semibold uppercase">Guests</label>
-                <select 
+                <select
                   [(ngModel)]="guests"
                   class="w-full mt-1 text-sm focus:outline-none">
                   @for (n of [].constructor(listing.maxGuests); track i; let i = $index) {
@@ -411,7 +411,7 @@
             </div>
 
             <!-- Reserve Button -->
-            <button 
+            <button
               (click)="proceedToBooking()"
               [disabled]="!checkIn || !checkOut"
               class="w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-lg hover:from-rose-600 hover:to-pink-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -453,18 +453,18 @@
     @if (similarListings.length > 0) {
       <div class="max-w-[1120px] mx-auto px-8 mt-16 pt-12 border-t">
         <h2 class="text-2xl font-semibold mb-8">Similar listings you might like</h2>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           @for (similar of similarListings; track similar.publicId) {
-            <div 
+            <div
               (click)="navigateToListing(similar.publicId)"
               class="cursor-pointer group">
               <div class="relative aspect-square rounded-xl overflow-hidden mb-3">
-                <img 
-                  [src]="similar.images[0]?.url" 
+                <img
+                  [src]="similar.images[0]?.url"
                   [alt]="similar.title"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                
+
                 @if (similar.averageRating) {
                   <div class="absolute top-3 right-3 bg-white px-2 py-1 rounded-lg shadow-lg flex items-center gap-1">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
@@ -504,10 +504,10 @@
     @if (showAllPhotos) {
       <div
         class="fixed inset-0 z-50 bg-black">
-        
+
         <!-- Header -->
         <div class="absolute top-0 left-0 right-0 p-6 z-10 bg-gradient-to-b from-black/50 to-transparent">
-          <button 
+          <button
             (click)="closePhotoGallery()"
             class="flex items-center gap-2 text-white hover:text-gray-300 transition-colors duration-200">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -533,7 +533,7 @@
               </svg>
             </button>
           }
-          
+
           @if (selectedImageIndex < listing.images.length - 1) {
             <button
               (click)="nextImage()"
@@ -547,8 +547,8 @@
 
         <!-- Main Image -->
         <div class="w-full h-full flex items-center justify-center p-20">
-          <img 
-            [src]="listing.images[selectedImageIndex]?.url"
+          <img
+            [src]="getImageUrl(listing.images[selectedImageIndex]?.url || '')"
             [alt]="listing.title"
             class="max-w-full max-h-full object-contain">
         </div>
@@ -561,12 +561,12 @@
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
         (click)="toggleShare()">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-        
-        <div 
+
+        <div
           (click)="$event.stopPropagation()"
           class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
-          
-          <button 
+
+          <button
             (click)="toggleShare()"
             class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -616,12 +616,12 @@
           <!-- Copy Link -->
           <div class="border-t pt-6">
             <div class="flex items-center gap-2">
-              <input 
+              <input
                 type="text"
                 [value]="currentUrl"
                 readonly
                 class="flex-1 px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-sm">
-              <button 
+              <button
                 (click)="copyLink()"
                 class="px-6 py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-colors duration-200 whitespace-nowrap">
                 {{ copied ? 'Copied!' : 'Copy' }}

@@ -59,41 +59,52 @@ export const routes: Routes = [
   {
     path: 'profile/complete',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/profile//profile-complete.component').then(m => m.ProfileCompleteComponent),
+    loadComponent: () => import('./features/profile/profile-complete.component').then(m => m.ProfileCompleteComponent),
     title: 'Complete Profile - StayEase'
   },
 
   // User profile routes (for all authenticated users)
-  // {
-  //   path: 'profile',
-  //   canActivate: [authGuard, profileCompleteGuard],
-  //   children: [
-  //     {
-  //       path: '',
-  //       loadComponent: () => import('./features/profile/profile-view/profile-view.component').then(m => m.ProfileViewComponent),
-  //       title: 'My Profile - StayEase'
-  //     },
-  //     {
-  //       path: 'edit',
-  //       loadComponent: () => import('./features/profile/profile-edit/profile-edit.component').then(m => m.ProfileEditComponent),
-  //       title: 'Edit Profile - StayEase'
-  //     }
-  //   ]
-  // },
+  {
+    path: 'profile',
+    canActivate: [authGuard, profileCompleteGuard],
+    children: [
+      {
+        path: 'view',
+        loadComponent: () => import('./features/profile/profile-view/profile-view.component').then(m => m.ProfileViewComponent),
+        title: 'My Profile - StayEase'
+      },
+      {
+        path: 'edit',
+        loadComponent: () => import('./features/profile/profile-edit/profile-edit.component').then(m => m.ProfileEditComponent),
+        title: 'Edit Profile - StayEase'
+      },
+      {
+        path: 'my-listings',
+        canActivate: [roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/profile/listing-list/listing-list.component').then(m => m.ListingListComponent),
+        title: 'My Listings - StayEase'
+      },
+      {
+        path: '',
+        redirectTo: 'view',
+        pathMatch: 'full'
+      }
+    ]
+  },
 
   // Listing routes (public view, auth required for actions)
   {
-    path: 'listings',
+    path: 'listing',
     children: [
       {
-        path: '',
+        path: 'search',
         loadComponent: () => import('./features/listing/listing-search/listing-search.component').then(m => m.ListingSearchComponent),
         title: 'Search Listings - StayEase'
       },
       {
         path: 'create',
         canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
-        loadComponent: () => import('./features/listing/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
+        loadComponent: () => import('./features/profile/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
         title: 'Create Listing - StayEase'
       },
       {
@@ -101,22 +112,27 @@ export const routes: Routes = [
         loadComponent: () => import('./features/listing/listing-detail/listing-detail.component').then(m => m.ListingDetailComponent),
         title: 'Listing Details - StayEase'
       },
-      // {
-      //   path: ':id/edit',
-      //   canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
-      //   loadComponent: () => import('./features/listing/listing-edit/listing-edit.component').then(m => m.ListingEditComponent),
-      //   title: 'Edit Listing - StayEase'
-      // }
+      {
+        path: ':id/edit',
+        canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/profile/listing-edit/listing-edit.component').then(m => m.ListingEditComponent),
+        title: 'Edit Listing - StayEase'
+      },
+      {
+        path: '',
+        redirectTo: 'search',
+        pathMatch: 'full'
+      }
     ]
   },
 
   // Booking routes (auth required)
   {
-    path: 'bookings',
+    path: 'booking',
     canActivate: [authGuard, profileCompleteGuard],
     children: [
       {
-        path: '',
+        path: 'list',
         loadComponent: () => import('./features/booking/booking-list/booking-list.component').then(m => m.BookingListComponent),
         title: 'My Bookings - StayEase'
       },
@@ -129,6 +145,11 @@ export const routes: Routes = [
         path: ':id',
         loadComponent: () => import('./features/booking/booking-detail/booking-detail.component').then(m => m.BookingDetailComponent),
         title: 'Booking Details - StayEase'
+      },
+      {
+        path: '',
+        redirectTo: 'list',
+        pathMatch: 'full'
       }
     ]
   },
@@ -171,11 +192,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
         title: 'Admin Dashboard - StayEase'
       },
-      {
-        path: 'users',
-        loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent),
-        title: 'User Management - StayEase'
-      },
+      // {
+      //   path: 'users',
+      //   loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent),
+      //   title: 'User Management - StayEase'
+      // },
       {
         path: 'listings',
         loadComponent: () => import('./features/admin/listing-management/listing-management.component').then(m => m.ListingManagementComponent),
@@ -186,11 +207,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/booking-management/booking-management.component').then(m => m.BookingManagementComponent),
         title: 'Booking Management - StayEase'
       },
-      {
-        path: 'audit-logs',
-        loadComponent: () => import('./features/admin/audit-log/audit-log.component').then(m => m.AuditLogComponent),
-        title: 'Audit Logs - StayEase'
-      },
+      // {
+      //   path: 'audit-logs',
+      //   loadComponent: () => import('./features/admin/audit-log/audit-log.component').then(m => m.AuditLogComponent),
+      //   title: 'Audit Logs - StayEase'
+      // },
       {
         path: '',
         redirectTo: 'dashboard',
@@ -201,26 +222,39 @@ export const routes: Routes = [
 
   // Service provider routes
   {
-    path: 'services',
+    path: 'service-offering',
     children: [
-      // {
-      //   path: '',
-      //   loadComponent: () => import('./features/service-offering/service-list/service-list.component').then(m => m.ServiceListComponent),
-      //   title: 'Services - StayEase'
-      // },
-      // {
-      //   path: 'create',
-      //   canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN'])],
-      //   loadComponent: () => import('./features/service-offering/service-create/service-create.component').then(m => m.ServiceCreateComponent),
-      //   title: 'Create Service - StayEase'
-      // },
-      // {
-      //   path: ':id',
-      //   loadComponent: () => import('./features/service-offering/service-detail/service-detail.component').then(m => m.ServiceDetailComponent),
-      //   title: 'Service Details - StayEase'
-      // }
+      {
+        path: 'list',
+        loadComponent: () => import('./features/service-offering/service-list/service-list.component').then(m => m.ServiceListComponent),
+        title: 'Services - StayEase'
+      },
+      {
+        path: 'create',
+        canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/service-offering/service-create/service-create.component').then(m => m.ServiceCreateComponent),
+        title: 'Create Service - StayEase'
+      },
+      {
+        path: ':id',
+        loadComponent: () => import('./features/service-offering/service-detail/service-detail.component').then(m => m.ServiceDetailComponent),
+        title: 'Service Details - StayEase'
+      },
+      {
+        path: '',
+        redirectTo: 'list',
+        pathMatch: 'full'
+      }
     ]
   },
+
+  // Chat routes
+  // {
+  //   path: 'chat',
+  //   canActivate: [authGuard, profileCompleteGuard],
+  //   loadComponent: () => import('./features/chat/chat-window/chat-window.component').then(m => m.ChatWindowComponent),
+  //   title: 'Messages - StayEase'
+  // },
 
   // Error pages
   {
@@ -234,9 +268,9 @@ export const routes: Routes = [
   //   title: 'Not Found - StayEase'
   // },
 
-  // Wildcard route
+  // Wildcard route - redirect to home
   {
     path: '**',
-    redirectTo: 'not-found'
+    redirectTo: ''
   }
 ];

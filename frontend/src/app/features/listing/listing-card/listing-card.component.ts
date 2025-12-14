@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Listing } from '../models/listing.model';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 @Component({
   selector: 'app-listing-card',
@@ -11,7 +12,7 @@ import { Listing } from '../models/listing.model';
 })
 export class ListingCardComponent {
   @Input() listing!: Listing;
-  
+
   currentImageIndex = 0;
   isHovered = false;
 
@@ -48,8 +49,11 @@ export class ListingCardComponent {
 
   getDisplayImage(): string {
     if (this.listing.images && this.listing.images.length > 0) {
-      return this.listing.images[this.currentImageIndex]?.url || this.listing.coverImageUrl || '';
+      const imageUrl = this.listing.images[this.currentImageIndex]?.url || this.listing.coverImageUrl || '';
+      return ImageUrlHelper.getFullImageUrl(imageUrl);
     }
-    return this.listing.coverImageUrl || '/assets/placeholder-listing.jpg';
+    return this.listing.coverImageUrl
+      ? ImageUrlHelper.getFullImageUrl(this.listing.coverImageUrl)
+      : ImageUrlHelper.getPlaceholderImage();
   }
 }

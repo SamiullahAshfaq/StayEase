@@ -4,21 +4,19 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ServiceOfferingService } from '../services/service-offering.service';
 import { ServiceBookingService } from '../services/service-booking.service';
-import { 
-  ServiceOffering, 
-  ServiceImage,
-  CreateServiceBookingRequest,
-  BookingStatus,
+import {
+  ServiceOffering,
+  // ServiceImage,
   SERVICE_CATEGORY_LABELS,
   PRICING_TYPE_LABELS
 } from '../models/service-offering.model';
+import { CreateServiceBookingRequest } from '../models/service-booking.model';
 
 @Component({
   selector: 'app-service-detail',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './service-detail.component.html',
-  styleUrl: './service-detail.component.css'
+  templateUrl: './service-detail.component.html'
 })
 export class ServiceDetailComponent implements OnInit {
   private serviceOfferingService = inject(ServiceOfferingService);
@@ -31,7 +29,7 @@ export class ServiceDetailComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
   isFavorite = signal(false);
-  
+
   // Image gallery
   selectedImageIndex = signal(0);
   showGalleryModal = signal(false);
@@ -45,14 +43,13 @@ export class ServiceDetailComponent implements OnInit {
   // Booking form
   bookingForm = signal<CreateServiceBookingRequest>({
     servicePublicId: '',
-    scheduledDate: '',
-    scheduledTime: '',
+    bookingDate: '',
+    startTime: '',
     numberOfPeople: 1,
     numberOfItems: 1,
-    customerNotes: '',
-    customerName: '',
-    customerEmail: '',
-    customerPhone: ''
+    specialRequests: '',
+    customerPhone: '',
+    customerEmail: ''
   });
 
   // Availability check
@@ -82,7 +79,7 @@ export class ServiceDetailComponent implements OnInit {
       next: (response) => {
         this.service.set(response.data);
         this.loading.set(false);
-        
+
         // Initialize booking form
         this.bookingForm.update(form => ({
           ...form,
@@ -122,8 +119,8 @@ export class ServiceDetailComponent implements OnInit {
   previousImage() {
     const service = this.service();
     if (service && service.images.length > 0) {
-      const prevIndex = this.selectedImageIndex() === 0 
-        ? service.images.length - 1 
+      const prevIndex = this.selectedImageIndex() === 0
+        ? service.images.length - 1
         : this.selectedImageIndex() - 1;
       this.selectedImageIndex.set(prevIndex);
     }
@@ -146,7 +143,7 @@ export class ServiceDetailComponent implements OnInit {
     if (!service) return;
 
     const currentFavorite = this.isFavorite();
-    
+
     this.serviceOfferingService.toggleFavorite(service.publicId, !currentFavorite).subscribe({
       next: () => {
         this.isFavorite.set(!currentFavorite);
@@ -170,29 +167,28 @@ export class ServiceDetailComponent implements OnInit {
     this.showBookingModal.set(false);
     this.bookingForm.update(form => ({
       ...form,
-      scheduledDate: '',
-      scheduledTime: '',
+      bookingDate: '',
+      startTime: '',
       numberOfPeople: 1,
       numberOfItems: 1,
-      customerNotes: '',
-      customerName: '',
-      customerEmail: '',
-      customerPhone: ''
+      specialRequests: '',
+      customerPhone: '',
+      customerEmail: ''
     }));
   }
 
   checkAvailability() {
     const form = this.bookingForm();
-    if (!form.scheduledDate || !form.scheduledTime) {
+    if (!form.bookingDate || !form.startTime) {
       return;
     }
 
     this.availabilityChecking.set(true);
-    
+
     this.serviceBookingService.checkAvailability(
       form.servicePublicId,
-      form.scheduledDate,
-      form.scheduledTime
+      form.bookingDate,
+      form.startTime
     ).subscribe({
       next: (response) => {
         this.isAvailable.set(response.data);
@@ -209,16 +205,16 @@ export class ServiceDetailComponent implements OnInit {
   submitBooking() {
     const form = this.bookingForm();
     const service = this.service();
-    
+
     if (!service) return;
 
     // Validation
-    if (!form.scheduledDate || !form.scheduledTime) {
+    if (!form.bookingDate || !form.startTime) {
       this.bookingError.set('Please select date and time');
       return;
     }
 
-    if (!form.customerName || !form.customerEmail || !form.customerPhone) {
+    if (!form.customerEmail || !form.customerPhone) {
       this.bookingError.set('Please fill in all customer details');
       return;
     }
@@ -230,7 +226,7 @@ export class ServiceDetailComponent implements OnInit {
       next: (response) => {
         this.bookingSuccess.set(true);
         this.bookingLoading.set(false);
-        
+
         setTimeout(() => {
           this.closeBookingModal();
           this.router.navigate(['/bookings', response.data.publicId]);
@@ -266,11 +262,11 @@ export class ServiceDetailComponent implements OnInit {
   calculateTotal(): number {
     const service = this.service();
     const form = this.bookingForm();
-    
+
     if (!service) return 0;
 
     let total = service.finalPrice;
-    
+
     // Multiply by people or items based on pricing type
     if (service.pricingType === 'PER_PERSON') {
       total *= form.numberOfPeople || 1;
@@ -312,8 +308,39 @@ export class ServiceDetailComponent implements OnInit {
   contactProvider() {
     const service = this.service();
     if (!service) return;
-    
+
     // TODO: Implement contact provider functionality
     alert('Contact provider functionality coming soon');
+  }
+
+  // Form update methods for template bindings
+  updateBookingDate(date: string) {
+    this.bookingForm.update(f => ({ ...f, bookingDate: date }));
+    this.checkAvailability();
+  }
+
+  updateStartTime(time: string) {
+    this.bookingForm.update(f => ({ ...f, startTime: time }));
+    this.checkAvailability();
+  }
+
+  updateNumberOfPeople(count: number) {
+    this.bookingForm.update(f => ({ ...f, numberOfPeople: count }));
+  }
+
+  updateNumberOfItems(count: number) {
+    this.bookingForm.update(f => ({ ...f, numberOfItems: count }));
+  }
+
+  updateCustomerEmail(email: string) {
+    this.bookingForm.update(f => ({ ...f, customerEmail: email }));
+  }
+
+  updateCustomerPhone(phone: string) {
+    this.bookingForm.update(f => ({ ...f, customerPhone: phone }));
+  }
+
+  updateSpecialRequests(requests: string) {
+    this.bookingForm.update(f => ({ ...f, specialRequests: requests }));
   }
 }

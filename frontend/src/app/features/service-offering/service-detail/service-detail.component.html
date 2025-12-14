@@ -1,447 +1,620 @@
-<div class="service-detail-container" *ngIf="!loading() && !error() && service()">
-  <!-- Back Button -->
-  <div class="back-nav">
-    <button routerLink="/services" class="back-button">
-      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-      Back to services
-    </button>
-  </div>
-
-  <!-- Hero Section with Images -->
-  <div class="hero-section">
-    <div class="main-image" (click)="openGallery(0)">
-      <img [src]="service()!.images[selectedImageIndex()]?.imageUrl || '/images/default-service.jpg'" 
-           [alt]="service()!.title">
-      <div class="image-counter">
-        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+@if (!loading() && !error() && service()) {
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Back Button -->
+    <nav class="mb-6">
+      <button routerLink="/services" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
-        {{ selectedImageIndex() + 1 }} / {{ service()!.images.length }}
-      </div>
-    </div>
-    
-    <div class="thumbnail-grid" *ngIf="service()!.images.length > 1">
-      <div 
-        *ngFor="let image of service()!.images.slice(0, 5); let i = index"
-        class="thumbnail"
-        [class.active]="selectedImageIndex() === i"
-        (click)="selectImage(i)">
-        <img [src]="image.imageUrl" [alt]="'Image ' + (i + 1)">
-        <div class="more-images" *ngIf="i === 4 && service()!.images.length > 5">
-          +{{ service()!.images.length - 5 }}
+        <span class="font-medium">Back to services</span>
+      </button>
+    </nav>
+
+    <!-- Hero Section with Images -->
+    <div class="mb-8">
+      <div
+        class="relative rounded-2xl overflow-hidden cursor-pointer group mb-4"
+        tabindex="0"
+        role="button"
+        (click)="openGallery(0)"
+        (keyup.enter)="openGallery(0)"
+        (keydown.enter)="openGallery(0)"
+        (keypress.enter)="openGallery(0)">
+        <img
+          [src]="service()!.images[selectedImageIndex()]?.imageUrl || '/images/default-service.jpg'"
+          [alt]="service()!.title"
+          class="w-full h-[400px] sm:h-[500px] object-cover transition-transform duration-300 group-hover:scale-105">
+        <div class="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-2 rounded-lg backdrop-blur-sm flex items-center gap-2">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+          </svg>
+          <span class="text-sm font-medium">{{ selectedImageIndex() + 1 }} / {{ service()!.images.length }}</span>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="content-section">
-    <!-- Main Content -->
-    <div class="main-content">
-      <!-- Header -->
-      <div class="service-header">
-        <div>
-          <div class="category-badge">
-            {{ categoryLabels[service()!.category] }}
-          </div>
-          <h1>{{ service()!.title }}</h1>
-          
-          <div class="meta-info">
-            <div class="provider-info">
-              <img [src]="service()!.providerAvatar || '/images/default-avatar.png'" 
-                   [alt]="service()!.providerName" 
-                   class="provider-avatar">
-              <div>
-                <span class="provider-name">Hosted by {{ service()!.providerName }}</span>
-                <span class="verified-badge" *ngIf="service()!.isVerified">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                  </svg>
-                  Verified Provider
-                </span>
+      @if (service()!.images.length > 1) {
+        <div class="grid grid-cols-5 gap-2">
+          @for (image of service()!.images.slice(0, 5); track image.id; let i = $index) {
+              <div
+              class="relative rounded-lg overflow-hidden cursor-pointer border-2 transition-all duration-200 hover:opacity-80"
+              [style.border-color]="selectedImageIndex() === i ? 'var(--primary)' : 'transparent'"
+              [class.border-transparent]="selectedImageIndex() !== i"
+              tabindex="0"
+              role="button"
+              (click)="selectImage(i)"
+              (keyup.enter)="selectImage(i)"
+              (keydown.enter)="selectImage(i)"
+              (keypress.enter)="selectImage(i)">
+              <img [src]="image.imageUrl" [alt]="'Image ' + (i + 1)" class="w-full h-24 object-cover">
+              @if (i === 4 && service()!.images.length > 5) {
+                <div class="absolute inset-0 bg-black/60 flex items-center justify-center text-white font-semibold">
+                  +{{ service()!.images.length - 5 }}
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Main Content -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Header -->
+        <div class="border-b border-gray-200 pb-6">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mb-3" style="background-color: rgba(0, 183, 181, 0.1); color: var(--primary);">
+                {{ categoryLabels[service()!.category] }}
+              </span>
+              <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ service()!.title }}</h1>
+
+              <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+
+                <div class="flex items-center gap-2">
+                  <img
+                    [src]="service()!.providerAvatar || '/images/default-avatar.png'"
+                    [alt]="service()!.providerName"
+                    class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
+                  <div class="flex flex-col">
+                    <span class="font-medium text-gray-900">Hosted by {{ service()!.providerName }}</span>
+                    @if (service()!.isVerified) {
+                      <span class="flex items-center gap-1 text-emerald-600 font-medium">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Verified
+                      </span>
+                    }
+                  </div>
+                </div>
+
+                @if (service()!.totalReviews > 0) {
+                  <div class="flex items-center gap-1 font-medium">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" class="text-yellow-500">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <span class="text-gray-900">{{ service()!.averageRating.toFixed(1) }}</span>
+                    <span>({{ service()!.totalReviews }} reviews)</span>
+                  </div>
+                }
+
+                @if (service()!.city) {
+                  <div class="flex items-center gap-1">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ service()!.city }}, {{ service()!.country }}
+                  </div>
+                }
               </div>
             </div>
 
-            <div class="rating-reviews" *ngIf="service()!.totalReviews > 0">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-              {{ service()!.averageRating.toFixed(1) }} ({{ service()!.totalReviews }} reviews)
-            </div>
-
-            <div class="location" *ngIf="service()!.city">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
-              </svg>
-              {{ service()!.city }}, {{ service()!.state }}
+            <div class="flex items-center gap-2">
+              <button
+                class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                (click)="toggleFavorite()">
+                <svg
+                  width="24"
+                  height="24"
+                  [attr.fill]="isFavorite() ? 'currentColor' : 'none'"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  style="color: var(--primary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+              </button>
+              <button
+                class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                (click)="shareService()">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-gray-600">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
 
-        <div class="action-buttons">
-          <button class="icon-button" (click)="toggleFavorite()">
-            <svg width="24" height="24" [attr.fill]="isFavorite() ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg>
-          </button>
-          <button class="icon-button" (click)="shareService()">
-            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-            </svg>
-          </button>
-        </div>
+        <!-- Description -->
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">About this service</h2>
+          <p class="text-gray-700 leading-relaxed">{{ service()!.description }}</p>
+        </section>
+
+        <!-- Highlights -->
+        @if (service()!.highlights) {
+          <section class="border-t border-gray-200 pt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
+            <p class="text-gray-700 leading-relaxed">{{ service()!.highlights }}</p>
+          </section>
+        }
+
+        <!-- What's Included -->
+        @if (service()!.whatIsIncluded) {
+          <section class="border-t border-gray-200 pt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">What's Included</h2>
+            <div class="prose max-w-none">
+              <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ service()!.whatIsIncluded }}</p>
+            </div>
+          </section>
+        }
+
+        <!-- Service Details -->
+        <section class="border-t border-gray-200 pt-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Service Details</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            @if (service()!.durationMinutes) {
+              <div class="flex items-start gap-4">
+                <div class="p-3 rounded-lg" style="background-color: rgba(0, 183, 181, 0.1);">
+                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20" style="color: var(--primary);">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-1">Duration</h4>
+                  <p class="text-gray-600">{{ (service()!.durationMinutes || 0) / 60 }} hours</p>
+                </div>
+              </div>
+            }
+
+            @if (service()!.maxCapacity) {
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-rose-50 rounded-lg">
+                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20" class="text-rose-600">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-1">Group Size</h4>
+                  <p class="text-gray-600">Up to {{ service()!.maxCapacity }} people</p>
+                </div>
+              </div>
+            }
+
+            @if (service()!.languages && service()!.languages.length > 0) {
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-rose-50 rounded-lg">
+                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20" class="text-rose-600">
+                    <path fill-rule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.490 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-1">Languages</h4>
+                  <p class="text-gray-600">{{ service()!.languages.join(', ') }}</p>
+                </div>
+              </div>
+            }
+
+            @if (service()!.providesMobileService) {
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-rose-50 rounded-lg">
+                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20" class="text-rose-600">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-1">Mobile Service</h4>
+                  <p class="text-gray-600">Provider comes to your location</p>
+                </div>
+              </div>
+            }
+
+            @if (service()!.isInstantBooking) {
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-rose-50 rounded-lg">
+                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20" class="text-rose-600">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 mb-1">Instant Booking</h4>
+                  <p class="text-gray-600">Book immediately without approval</p>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Requirements -->
+        @if (service()!.requirements) {
+          <section class="border-t border-gray-200 pt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
+            <ul class="space-y-3">
+              @for (req of service()!.requirements; track req) {
+                <li class="flex items-start gap-3">
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="color: var(--primary);" class="flex-shrink-0 mt-0.5">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                  </svg>
+                  <span class="text-gray-700">{{ req }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        <!-- Cancellation Policy -->
+        @if (service()!.cancellationPolicy) {
+          <section class="border-t border-gray-200 pt-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Cancellation Policy</h2>
+            <p class="text-gray-700 leading-relaxed">{{ service()!.cancellationPolicy }}</p>
+          </section>
+        }
       </div>
 
-      <!-- Description -->
-      <section class="section">
-        <h2>About this service</h2>
-        <p class="description">{{ service()!.description }}</p>
-      </section>
-
-      <!-- Highlights -->
-      <section class="section" *ngIf="service()!.highlights">
-        <h2>Highlights</h2>
-        <p>{{ service()!.highlights }}</p>
-      </section>
-
-      <!-- What's Included -->
-      <section class="section" *ngIf="service()!.includedItems && service()!.includedItems.length > 0">
-        <h2>What's Included</h2>
-        <ul class="included-list">
-          <li *ngFor="let item of service()!.includedItems">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-            {{ item }}
-          </li>
-        </ul>
-      </section>
-
-      <!-- Service Details -->
-      <section class="section">
-        <h2>Service Details</h2>
-        <div class="details-grid">
-          <div class="detail-item" *ngIf="service()!.durationMinutes">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-            </svg>
+      <!-- Booking Sidebar -->
+      <aside class="lg:col-span-1">
+        <div class="sticky top-8 border border-gray-200 rounded-2xl shadow-lg p-6 bg-white">
+          <div class="flex items-start justify-between mb-4">
             <div>
-              <h4>Duration</h4>
-              <p>{{ service()!.durationMinutes / 60 }} hours</p>
+              <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-gray-900">{{ formatPrice(service()!.finalPrice) }}</span>
+                <span class="text-gray-600">{{ pricingLabels[service()!.pricingType] }}</span>
+              </div>
+              @if (service()!.discountPercentage) {
+                <div class="flex items-center gap-2 mt-2">
+                  <span class="text-gray-500 line-through">{{ formatPrice(service()!.basePrice) }}</span>
+                  <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold" style="background-color: rgba(0, 183, 181, 0.1); color: var(--primary);">
+                    {{ service()!.discountPercentage }}% OFF
+                  </span>
+                </div>
+              }
             </div>
           </div>
 
-          <div class="detail-item" *ngIf="service()!.maxCapacity">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-            </svg>
-            <div>
-              <h4>Group Size</h4>
-              <p>Up to {{ service()!.maxCapacity }} people</p>
+          <div class="flex flex-wrap gap-2 mb-6">
+            @if (service()!.isInstantBooking) {
+              <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
+                </svg>
+                Instant Booking
+              </span>
+            }
+            @if (service()!.isFeatured) {
+              <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                Featured
+              </span>
+            }
+          </div>
+
+          <button
+            class="w-full text-white font-semibold py-4 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 mb-3"
+            style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);"
+            (click)="openBookingModal()">
+            Request to Book
+          </button>
+
+          <p class="text-center text-sm text-gray-600 mb-6">You won't be charged yet</p>
+
+          <div class="grid grid-cols-2 gap-4 py-6 border-t border-gray-200">
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" class="text-gray-400">
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium text-gray-900">{{ service()!.viewCount }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" class="text-gray-400">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <span class="font-medium text-gray-900">{{ service()!.totalBookings }}</span>
             </div>
           </div>
 
-          <div class="detail-item" *ngIf="service()!.languages && service()!.languages.length > 0">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.490 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clip-rule="evenodd"/>
-            </svg>
-            <div>
-              <h4>Languages</h4>
-              <p>{{ service()!.languages.join(', ') }}</p>
-            </div>
-          </div>
+          <button
+            class="w-full border-2 border-gray-300 text-gray-700 font-semibold py-3 rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 mb-3"
+            (click)="contactProvider()">
+            Contact Provider
+          </button>
 
-          <div class="detail-item" *ngIf="service()!.providesMobileService">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+          <button
+            class="w-full flex items-center justify-center gap-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 text-sm underline"
+            (click)="reportService()">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd"/>
             </svg>
-            <div>
-              <h4>Mobile Service</h4>
-              <p>Provider comes to your location</p>
-            </div>
-          </div>
-
-          <div class="detail-item" *ngIf="service()!.isInstantBooking">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
-            </svg>
-            <div>
-              <h4>Instant Booking</h4>
-              <p>Book immediately without waiting for approval</p>
-            </div>
-          </div>
+            Report this listing
+          </button>
         </div>
-      </section>
-
-      <!-- Requirements -->
-      <section class="section" *ngIf="service()!.requirements && service()!.requirements.length > 0">
-        <h2>Requirements</h2>
-        <ul class="requirements-list">
-          <li *ngFor="let req of service()!.requirements">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-            </svg>
-            {{ req }}
-          </li>
-        </ul>
-      </section>
-
-      <!-- Cancellation Policy -->
-      <section class="section" *ngIf="service()!.cancellationPolicy">
-        <h2>Cancellation Policy</h2>
-        <p>{{ service()!.cancellationPolicy }}</p>
-      </section>
+      </aside>
     </div>
-
-    <!-- Booking Sidebar -->
-    <aside class="booking-sidebar">
-      <div class="price-card">
-        <div class="price-header">
-          <div class="price">
-            <span class="amount">{{ formatPrice(service()!.finalPrice) }}</span>
-            <span class="unit">{{ pricingLabels[service()!.pricingType] }}</span>
-          </div>
-          <span class="discount-badge" *ngIf="service()!.discountPercentage">
-            {{ service()!.discountPercentage }}% OFF
-          </span>
-        </div>
-        
-        <div class="original-price" *ngIf="service()!.discountPercentage">
-          {{ formatPrice(service()!.basePrice) }}
-        </div>
-
-        <div class="badges">
-          <span class="badge instant" *ngIf="service()!.isInstantBooking">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"/>
-            </svg>
-            Instant Booking
-          </span>
-          <span class="badge featured" *ngIf="service()!.isFeatured">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-            </svg>
-            Featured
-          </span>
-        </div>
-
-        <button class="book-button" (click)="openBookingModal()">
-          Request to Book
-        </button>
-
-        <p class="booking-note">You won't be charged yet</p>
-
-        <div class="stats">
-          <div class="stat">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-            </svg>
-            {{ service()!.viewCount }} views
-          </div>
-          <div class="stat">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-            {{ service()!.totalBookings }} bookings
-          </div>
-        </div>
-
-        <button class="contact-button" (click)="contactProvider()">
-          Contact Provider
-        </button>
-
-        <button class="report-button" (click)="reportService()">
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd"/>
-          </svg>
-          Report this listing
-        </button>
-      </div>
-    </aside>
   </div>
-</div>
+}
 
 <!-- Loading State -->
-<div class="loading-state" *ngIf="loading()">
-  <div class="spinner"></div>
-  <p>Loading service details...</p>
-</div>
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <div class="w-16 h-16 rounded-full animate-spin" style="border: 4px solid var(--background); border-top-color: var(--primary);"></div>
+    <p class="mt-4 text-gray-600 font-medium">Loading service details...</p>
+  </div>
+}
 
 <!-- Error State -->
-<div class="error-state" *ngIf="error() && !loading()">
-  <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-  </svg>
-  <p>{{ error() }}</p>
-  <button class="retry-button" routerLink="/services">Back to Services</button>
-</div>
+@if (error() && !loading()) {
+  <div class="flex flex-col items-center justify-center min-h-screen px-4">
+    <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #e74c3c;" class="mb-4">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <p class="text-xl font-semibold text-gray-900 mb-6">{{ error() }}</p>
+    <button
+      routerLink="/services"
+      class="px-6 py-3 text-white font-semibold rounded-xl transition-all duration-200" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);">
+      Back to Services
+    </button>
+  </div>
+}
 
 <!-- Booking Modal -->
-<div class="modal-overlay" *ngIf="showBookingModal()" (click)="closeBookingModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Request to Book</h2>
-      <button class="close-button" (click)="closeBookingModal()">
-        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+@if (showBookingModal()) {
+  <div
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
+    (click)="closeBookingModal()"
+    tabindex="0"
+    (keyup.escape)="closeBookingModal()">
+    <div
+      class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      (click)="$event.stopPropagation()"
+      (keydown)="$event.stopPropagation()"
+      tabindex="-1">
+      <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
+        <h2 class="text-2xl font-bold text-gray-900">Request to Book</h2>
+        <button
+          class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+          (click)="closeBookingModal()">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-gray-500">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <form class="p-6 space-y-6" (ngSubmit)="submitBooking()">
+        <!-- Date and Time -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="modalBookingDate" class="block text-sm font-semibold text-gray-900 mb-2">Date</label>
+            <input
+              id="modalBookingDate"
+              type="date"
+              [ngModel]="bookingForm().bookingDate"
+              (ngModelChange)="updateBookingDate($event)"
+              name="bookingDate"
+              [min]="getMinDate()"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+              required>
+          </div>
+          <div>
+            <label for="modalStartTime" class="block text-sm font-semibold text-gray-900 mb-2">Time</label>
+            <input
+              id="modalStartTime"
+              type="time"
+              [ngModel]="bookingForm().startTime"
+              (ngModelChange)="updateStartTime($event)"
+              name="startTime"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+              required>
+          </div>
+        </div>
+
+        <!-- Availability Status -->
+        @if (availabilityChecking()) {
+          <div class="flex items-center gap-3 px-4 py-3 bg-blue-50 rounded-lg">
+            <div class="w-5 h-5 rounded-full animate-spin" style="border: 2px solid var(--background); border-top-color: var(--primary);"></div>
+            <span class="text-blue-800 font-medium">Checking availability...</span>
+          </div>
+        }
+        @if (!availabilityChecking() && isAvailable() === true) {
+          <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 rounded-lg">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" class="text-emerald-500">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-emerald-800 font-medium">Available</span>
+          </div>
+        }
+        @if (!availabilityChecking() && isAvailable() === false) {
+          <div class="flex items-center gap-3 px-4 py-3 bg-red-50 rounded-lg">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="color: #e74c3c;">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+            <span class="text-red-800 font-medium">Not available at this time</span>
+          </div>
+        }
+
+        <!-- Number of People/Items -->
+        @if (service()) {
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            @if (service()!.pricingType === 'PER_PERSON') {
+              <div>
+                <label for="numPeople" class="block text-sm font-semibold text-gray-900 mb-2">Number of People</label>
+                <input
+                  id="numPeople"
+                  type="number"
+                  [ngModel]="bookingForm().numberOfPeople"
+                  (ngModelChange)="updateNumberOfPeople($event)"
+                  name="numberOfPeople"
+                  [max]="service()!.maxCapacity || 100"
+                  min="1"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+                  required>
+              </div>
+            }
+            @if (service()!.pricingType === 'PER_ITEM') {
+              <div>
+                <label for="numItems" class="block text-sm font-semibold text-gray-900 mb-2">Number of Items</label>
+                <input
+                  id="numItems"
+                  type="number"
+                  [ngModel]="bookingForm().numberOfItems"
+                  (ngModelChange)="updateNumberOfItems($event)"
+                  name="numberOfItems"
+                  min="1"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+                  required>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Customer Details -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900">Your Details</h3>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="userEmail" class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
+              <input
+                id="userEmail"
+                type="email"
+                [ngModel]="bookingForm().customerEmail"
+                (ngModelChange)="updateCustomerEmail($event)"
+                name="customerEmail"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+                required>
+            </div>
+            <div>
+              <label for="userPhone" class="block text-sm font-semibold text-gray-900 mb-2">Phone</label>
+              <input
+                id="userPhone"
+                type="tel"
+                [(ngModel)]="bookingForm().customerPhone"
+                (ngModelChange)="updateCustomerPhone($event)"
+                name="customerPhone"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
+                required>
+            </div>
+          </div>
+
+          <div>
+            <label for="specialRequests" class="block text-sm font-semibold text-gray-900 mb-2">Special Requests (Optional)</label>
+            <textarea
+              id="specialRequests"
+              [ngModel]="bookingForm().specialRequests"
+              (ngModelChange)="updateSpecialRequests($event)"
+              name="specialRequests"
+              rows="3"
+              placeholder="Any special requirements or notes..."
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200 resize-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Total Price -->
+        <div class="flex items-center justify-between px-6 py-4 bg-gray-50 rounded-lg">
+          <span class="text-lg font-semibold text-gray-900">Total</span>
+          <span class="text-2xl font-bold text-rose-600">{{ formatPrice(calculateTotal()) }}</span>
+        </div>
+
+        <!-- Error Message -->
+        @if (bookingError()) {
+          <div class="px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-800 font-medium">{{ bookingError() }}</p>
+          </div>
+        }
+
+        <!-- Success Message -->
+        @if (bookingSuccess()) {
+          <div class="flex items-center gap-3 px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20" class="text-emerald-500">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <p class="text-emerald-800 font-medium">Booking request submitted successfully! Redirecting...</p>
+          </div>
+        }
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold py-4 rounded-xl hover:from-rose-600 hover:to-pink-600 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+          [disabled]="bookingLoading() || bookingSuccess() || (isAvailable() === false)">
+          @if (bookingLoading()) {
+            <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            <span>Processing...</span>
+          } @else {
+            <span>Confirm Booking</span>
+          }
+        </button>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- Gallery Modal -->
+@if (showGalleryModal()) {
+  <div
+    class="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    (click)="closeGallery()"
+    tabindex="0"
+    (keyup.enter)="closeGallery()"
+    (keydown.enter)="closeGallery()"
+    (keypress.enter)="closeGallery()">
+    <div class="relative w-full h-full flex items-center justify-center" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
+      <button
+        class="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200 z-10"
+        (click)="closeGallery()"
+        tabindex="0"
+        (keyup.enter)="closeGallery()"
+        (keydown.enter)="closeGallery()"
+        (keypress.enter)="closeGallery()">
+        <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-white">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>
-    </div>
 
-    <form class="booking-form" (ngSubmit)="submitBooking()">
-      <!-- Date and Time -->
-      <div class="form-row">
-        <div class="form-group">
-          <label>Date</label>
-          <input 
-            type="date" 
-            [(ngModel)]="bookingForm.update(f => ({ ...f, scheduledDate: $any($event.target).value }))"
-            [min]="getMinDate()"
-            (change)="checkAvailability()"
-            required>
-        </div>
-        <div class="form-group">
-          <label>Time</label>
-          <input 
-            type="time" 
-            [(ngModel)]="bookingForm.update(f => ({ ...f, scheduledTime: $any($event.target).value }))"
-            (change)="checkAvailability()"
-            required>
-        </div>
-      </div>
-
-      <!-- Availability Status -->
-      <div class="availability-status" *ngIf="availabilityChecking()">
-        <div class="spinner-small"></div>
-        Checking availability...
-      </div>
-      <div class="availability-status available" *ngIf="!availabilityChecking() && isAvailable() === true">
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+      <button
+        class="absolute left-4 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200"
+        (click)="previousImage()"
+        tabindex="0"
+        (keyup.enter)="previousImage()"
+        (keydown.enter)="previousImage()"
+        (keypress.enter)="previousImage()">
+        <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-white">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
-        Available
-      </div>
-      <div class="availability-status unavailable" *ngIf="!availabilityChecking() && isAvailable() === false">
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-        </svg>
-        Not available at this time
-      </div>
-
-      <!-- Number of People/Items -->
-      <div class="form-row" *ngIf="service()">
-        <div class="form-group" *ngIf="service()!.pricingType === 'PER_PERSON'">
-          <label>Number of People</label>
-          <input 
-            type="number" 
-            [(ngModel)]="bookingForm.update(f => ({ ...f, numberOfPeople: $any($event.target).value }))"
-            [max]="service()!.maxCapacity"
-            min="1"
-            required>
-        </div>
-        <div class="form-group" *ngIf="service()!.pricingType === 'PER_ITEM'">
-          <label>Number of Items</label>
-          <input 
-            type="number" 
-            [(ngModel)]="bookingForm.update(f => ({ ...f, numberOfItems: $any($event.target).value }))"
-            min="1"
-            required>
-        </div>
-      </div>
-
-      <!-- Customer Details -->
-      <div class="form-group">
-        <label>Your Name</label>
-        <input 
-          type="text" 
-          [(ngModel)]="bookingForm.update(f => ({ ...f, customerName: $any($event.target).value }))"
-          required>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Email</label>
-          <input 
-            type="email" 
-            [(ngModel)]="bookingForm.update(f => ({ ...f, customerEmail: $any($event.target).value }))"
-            required>
-        </div>
-        <div class="form-group">
-          <label>Phone</label>
-          <input 
-            type="tel" 
-            [(ngModel)]="bookingForm.update(f => ({ ...f, customerPhone: $any($event.target).value }))"
-            required>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Special Requests (Optional)</label>
-        <textarea 
-          [(ngModel)]="bookingForm.update(f => ({ ...f, customerNotes: $any($event.target).value }))"
-          rows="3"
-          placeholder="Any special requirements or notes..."></textarea>
-      </div>
-
-      <!-- Total Price -->
-      <div class="total-price">
-        <span>Total</span>
-        <span class="amount">{{ formatPrice(calculateTotal()) }}</span>
-      </div>
-
-      <!-- Error Message -->
-      <div class="error-message" *ngIf="bookingError()">
-        {{ bookingError() }}
-      </div>
-
-      <!-- Success Message -->
-      <div class="success-message" *ngIf="bookingSuccess()">
-        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-        </svg>
-        Booking request submitted successfully! Redirecting...
-      </div>
-
-      <!-- Submit Button -->
-      <button 
-        type="submit" 
-        class="submit-button"
-        [disabled]="bookingLoading() || bookingSuccess() || (isAvailable() === false)">
-        <span class="spinner-small" *ngIf="bookingLoading()"></span>
-        {{ bookingLoading() ? 'Processing...' : 'Confirm Booking' }}
       </button>
-    </form>
-  </div>
-</div>
 
-<!-- Gallery Modal -->
-<div class="modal-overlay" *ngIf="showGalleryModal()" (click)="closeGallery()">
-  <div class="gallery-modal" (click)="$event.stopPropagation()">
-    <button class="close-button" (click)="closeGallery()">
-      <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-      </svg>
-    </button>
-    
-    <button class="nav-button prev" (click)="previousImage()">
-      <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-    </button>
+      <img
+        [src]="service()!.images[selectedImageIndex()]?.imageUrl"
+        [alt]="service()!.title"
+        class="max-w-full max-h-full object-contain">
 
-    <img [src]="service()!.images[selectedImageIndex()]?.imageUrl" [alt]="service()!.title">
+      <button
+        class="absolute right-4 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200"
+        (click)="nextImage()"
+        tabindex="0"
+        (keyup.enter)="nextImage()"
+        (keydown.enter)="nextImage()"
+        (keypress.enter)="nextImage()">
+        <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="text-white">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
 
-    <button class="nav-button next" (click)="nextImage()">
-      <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-      </svg>
-    </button>
-
-    <div class="gallery-counter">
-      {{ selectedImageIndex() + 1 }} / {{ service()!.images.length }}
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/70 text-white rounded-lg backdrop-blur-sm">
+        <span class="font-medium">{{ selectedImageIndex() + 1 }} / {{ service()!.images.length }}</span>
+      </div>
     </div>
   </div>
-</div>
+}

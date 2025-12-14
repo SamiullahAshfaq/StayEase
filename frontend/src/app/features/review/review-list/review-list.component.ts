@@ -25,7 +25,7 @@ export class ReviewListComponent implements OnInit {
   statistics = signal<ReviewStatistics | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
-  
+
   // Pagination
   currentPage = signal(0);
   totalPages = signal(0);
@@ -179,7 +179,7 @@ export class ReviewListComponent implements OnInit {
   /**
    * Helper methods
    */
-  getStarArray(rating: number): number[] {
+  getStarArray(): number[] {
     return Array(5).fill(0).map((_, i) => i + 1);
   }
 

@@ -84,9 +84,14 @@ export class ReviewFormComponent implements OnInit {
   }
 
   getDisplayRating(category: string): number {
-    const ratings = this.ratings() as any;
-    const hoveredRatings = this.hoveredRatings() as any;
+    const ratings = this.ratings() as Record<string, number>;
+    const hoveredRatings = this.hoveredRatings() as Record<string, number>;
     return hoveredRatings[category] || ratings[category];
+  }
+
+  getRatingValue(category: string): number {
+    const ratings = this.ratings() as Record<string, number>;
+    return ratings[category] || 0;
   }
 
   /**
@@ -94,7 +99,7 @@ export class ReviewFormComponent implements OnInit {
    */
   canProceedFromStep1(): boolean {
     const r = this.ratings();
-    return r.overall > 0 && r.cleanliness > 0 && r.accuracy > 0 && 
+    return r.overall > 0 && r.cleanliness > 0 && r.accuracy > 0 &&
            r.checkIn > 0 && r.communication > 0 && r.location > 0 && r.value > 0;
   }
 
@@ -122,15 +127,18 @@ export class ReviewFormComponent implements OnInit {
   /**
    * Photo upload
    */
-  onPhotoSelect(event: any) {
-    const files = event.target.files;
+  onPhotoSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
     if (files && files.length > 0) {
       // In a real app, upload to storage and get URLs
       // For now, create temporary URLs
       for (let i = 0; i < Math.min(files.length, 10); i++) {
         const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.photos.update(photos => [...photos, e.target.result]);
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          if (e.target?.result && typeof e.target.result === 'string') {
+            this.photos.update(photos => [...photos, e.target!.result as string]);
+          }
         };
         reader.readAsDataURL(files[i]);
       }
@@ -173,7 +181,7 @@ export class ReviewFormComponent implements OnInit {
     };
 
     this.reviewService.createReview(request).subscribe({
-      next: (response) => {
+      next: () => {
         this.success.set(true);
         this.loading.set(false);
         setTimeout(() => {

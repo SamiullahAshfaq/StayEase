@@ -15,8 +15,7 @@ import {
   selector: 'app-listing-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './listing-list.component.html',
-  styleUrl: './listing-list.component.css'
+  templateUrl: './listing-list.component.html'
 })
 export class ListingListComponent implements OnInit {
   private landlordService = inject(LandlordService);
@@ -36,6 +35,7 @@ export class ListingListComponent implements OnInit {
   viewMode = signal<'grid' | 'list'>('grid');
 
   // Labels
+  ListingStatus = ListingStatus;
   listingStatusLabels = LISTING_STATUS_LABELS;
   propertyTypeLabels = PROPERTY_TYPE_LABELS;
   roomTypeLabels = ROOM_TYPE_LABELS;
@@ -92,7 +92,7 @@ export class ListingListComponent implements OnInit {
     // Search filter
     const keyword = this.searchKeyword().toLowerCase();
     if (keyword) {
-      filtered = filtered.filter(l => 
+      filtered = filtered.filter(l =>
         l.title.toLowerCase().includes(keyword) ||
         l.city.toLowerCase().includes(keyword) ||
         l.address.toLowerCase().includes(keyword)
@@ -101,12 +101,12 @@ export class ListingListComponent implements OnInit {
 
     // Sort
     filtered.sort((a, b) => {
-      let aValue: any = a[this.sortBy()];
-      let bValue: any = b[this.sortBy()];
+      let aValue: string | number = a[this.sortBy()];
+      let bValue: string | number = b[this.sortBy()];
 
       if (this.sortBy() === 'createdAt') {
-        aValue = new Date(aValue).getTime();
-        bValue = new Date(bValue).getTime();
+        aValue = new Date(aValue as string).getTime();
+        bValue = new Date(bValue as string).getTime();
       }
 
       if (this.sortDirection() === 'asc') {
@@ -163,7 +163,7 @@ export class ListingListComponent implements OnInit {
 
   duplicateListing(publicId: string, event: Event) {
     event.stopPropagation();
-    
+
     if (confirm('Create a copy of this listing?')) {
       // TODO: Implement duplicate functionality
       console.log('Duplicate listing:', publicId);
@@ -239,18 +239,19 @@ export class ListingListComponent implements OnInit {
   getStatusClass(status: ListingStatus): string {
     switch (status) {
       case ListingStatus.ACTIVE:
-        return 'status-success';
+        return 'bg-green-100 text-green-800 border border-green-200';
       case ListingStatus.PENDING_APPROVAL:
+        return 'bg-blue-100 text-blue-800 border border-blue-200';
       case ListingStatus.DRAFT:
-        return 'status-warning';
+        return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
       case ListingStatus.SUSPENDED:
       case ListingStatus.REJECTED:
-        return 'status-danger';
+        return 'bg-red-100 text-red-800 border border-red-200';
       case ListingStatus.PAUSED:
       case ListingStatus.INACTIVE:
-        return 'status-default';
+        return 'bg-gray-100 text-gray-800 border border-gray-200';
       default:
-        return 'status-default';
+        return 'bg-gray-100 text-gray-800 border border-gray-200';
     }
   }
 

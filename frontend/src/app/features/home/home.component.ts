@@ -1,4 +1,4 @@
-import { Component, OnInit, PLATFORM_ID, Inject, NgZone } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, inject, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -24,27 +24,27 @@ import { Listing } from '../listing/models/listing.model';
 })
 export class HomeComponent implements OnInit {
   categories = [
-    { 
-      name: 'Entire Homes', 
-      image: 'images/category-entire-homes.jpg', 
+    {
+      name: 'Entire Homes',
+      image: 'images/category-entire-homes.jpg',
       query: 'home',
       icon: '🏠'
     },
-    { 
-      name: 'Unique Stays', 
-      image: 'images/category-unique-stays.jpg', 
+    {
+      name: 'Unique Stays',
+      image: 'images/category-unique-stays.jpg',
       query: 'unique',
       icon: '✨'
     },
-    { 
-      name: 'Apartments', 
-      image: 'images/category-apartments.jpg', 
+    {
+      name: 'Apartments',
+      image: 'images/category-apartments.jpg',
       query: 'apartment',
       icon: '🏢'
     },
-    { 
-      name: 'Villas', 
-      image: 'images/category-villas.jpg', 
+    {
+      name: 'Villas',
+      image: 'images/category-villas.jpg',
       query: 'villa',
       icon: '🏖️'
     }
@@ -73,16 +73,14 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  searchQuery: string = '';
+  searchQuery = '';
   featuredListings: Listing[] = [];
   loadingListings = false;
 
-  constructor(
-    private listingService: ListingService,
-    private router: Router,
-    private ngZone: NgZone,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  private listingService = inject(ListingService);
+  private router = inject(Router);
+  private ngZone = inject(NgZone);
+  private platformId = inject(PLATFORM_ID);
 
   ngOnInit(): void {
     // Add smooth scroll behavior only in browser

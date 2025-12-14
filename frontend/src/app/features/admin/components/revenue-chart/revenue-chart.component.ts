@@ -15,7 +15,7 @@ import { DashboardService } from '../../services/dashboard.service';
 export class RevenueChartComponent implements OnInit, OnChanges {
   private dashboardService = inject(DashboardService);
 
-  @Input() days: number = 30;
+  @Input() days = 30;
 
   loading = signal(false);
   chartOption = signal<EChartsOption | null>(null);

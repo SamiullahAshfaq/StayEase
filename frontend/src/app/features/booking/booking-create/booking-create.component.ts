@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../services/booking.service';
-import { MockBookingService } from '../services/mock-booking.service';
 import { ListingService } from '../../listing/services/listing.service';
 import { Listing } from '../../listing/models/listing.model';
 import { BookingAddon } from '../models/booking.model';
@@ -12,10 +11,7 @@ import { BookingAddon } from '../models/booking.model';
   selector: 'app-booking-create',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './booking-create.component.html',
-  providers: [
-    { provide: BookingService, useClass: MockBookingService }
-  ]
+  templateUrl: './booking-create.component.html'
 })
 export class BookingCreateComponent implements OnInit {
   bookingForm!: FormGroup;
@@ -67,7 +63,7 @@ export class BookingCreateComponent implements OnInit {
 
   initForm(): void {
     const params = this.route.snapshot.queryParams;
-    
+
     this.bookingForm = this.fb.group({
       listingId: [params['listingId'] || '', Validators.required],
       checkIn: [params['checkIn'] || '', Validators.required],
@@ -125,7 +121,7 @@ export class BookingCreateComponent implements OnInit {
       this.numberOfNights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       this.basePrice = this.listing.pricePerNight * this.numberOfNights;
-      
+
       const addonsTotal = this.selectedAddons.reduce(
         (sum, addon) => sum + (addon.price * addon.quantity), 0
       );
@@ -137,13 +133,13 @@ export class BookingCreateComponent implements OnInit {
 
   toggleAddon(addon: BookingAddon): void {
     const index = this.selectedAddons.findIndex(a => a.name === addon.name);
-    
+
     if (index > -1) {
       this.selectedAddons.splice(index, 1);
     } else {
       this.selectedAddons.push({ ...addon });
     }
-    
+
     this.calculatePricing();
   }
 
@@ -176,7 +172,7 @@ export class BookingCreateComponent implements OnInit {
         if (response.success && response.data) {
           this.successMessage = '🎉 Booking created successfully! Redirecting to your bookings...';
           this.error = null;
-          
+
           // Wait 2 seconds to show success message, then redirect
           setTimeout(() => {
             this.router.navigate(['/booking/list']);

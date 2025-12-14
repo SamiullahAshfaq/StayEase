@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ListingService } from '../services/listing.service';
 import { Listing } from '../models/listing.model';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 interface Review {
   id: string;
@@ -33,16 +34,16 @@ export class ListingDetailComponent implements OnInit {
   listing: Listing | null = null;
   loading = false;
   error: string | null = null;
-  
+
   // Image gallery
   showAllPhotos = false;
   selectedImageIndex = 0;
-  
+
   // Booking
   checkIn: string = '';
   checkOut: string = '';
   guests = 1;
-  
+
   // Share & Save
   showShareModal = false;
   copied = false;
@@ -105,7 +106,7 @@ export class ListingDetailComponent implements OnInit {
   // Rating breakdown
   get ratingBreakdown() {
     if (!this.listing) return null;
-    
+
     return {
       cleanliness: 4.9,
       communication: 5.0,
@@ -136,7 +137,7 @@ export class ListingDetailComponent implements OnInit {
   loadListing(publicId: string): void {
     this.loading = true;
     this.error = null;
-    
+
     this.listingService.getListingById(publicId).subscribe({
       next: (response) => {
         if (response.success && response.data) {
@@ -204,19 +205,19 @@ export class ListingDetailComponent implements OnInit {
       alert('Please select check-in and check-out dates');
       return;
     }
-    
+
     if (!this.listing?.publicId) {
       alert('Listing information not available');
       return;
     }
-    
+
     console.log('Navigating to booking create with:', {
       listingId: this.listing.publicId,
       checkIn: this.checkIn,
       checkOut: this.checkOut,
       guests: this.guests
     });
-    
+
     this.router.navigate(['/booking/create', this.listing.publicId], {
       queryParams: {
         listingId: this.listing.publicId,
@@ -229,12 +230,12 @@ export class ListingDetailComponent implements OnInit {
 
   calculateNights(): number {
     if (!this.checkIn || !this.checkOut) return 0;
-    
+
     const start = new Date(this.checkIn);
     const end = new Date(this.checkOut);
     const diffTime = Math.abs(end.getTime() - start.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     return diffDays;
   }
 
@@ -261,7 +262,7 @@ export class ListingDetailComponent implements OnInit {
   share(platform: string): void {
     const url = this.document.location.href;
     const title = this.listing?.title || 'Check out this listing';
-    
+
     let shareUrl = '';
     switch (platform) {
       case 'facebook':
@@ -277,7 +278,7 @@ export class ListingDetailComponent implements OnInit {
         shareUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`;
         break;
     }
-    
+
     if (shareUrl) {
       window.open(shareUrl, '_blank');
     }
@@ -303,7 +304,7 @@ export class ListingDetailComponent implements OnInit {
 
   getAmenityIcon(amenity: string): string {
     const amenityLower = amenity.toLowerCase();
-    
+
     if (amenityLower.includes('wifi') || amenityLower.includes('internet')) {
       return 'M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0';
     }
@@ -328,7 +329,7 @@ export class ListingDetailComponent implements OnInit {
     if (amenityLower.includes('gym') || amenityLower.includes('fitness')) {
       return 'M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5';
     }
-    
+
     // Default icon (checkmark)
     return 'M5 13l4 4L19 7';
   }
@@ -344,5 +345,12 @@ export class ListingDetailComponent implements OnInit {
 
   getRatingStars(rating: number): number[] {
     return Array(5).fill(0).map((_, i) => i < Math.round(rating) ? 1 : 0);
+  }
+
+  /**
+   * Get full image URL from backend path
+   */
+  getImageUrl(imagePath: string): string {
+    return ImageUrlHelper.getFullImageUrl(imagePath);
   }
 }

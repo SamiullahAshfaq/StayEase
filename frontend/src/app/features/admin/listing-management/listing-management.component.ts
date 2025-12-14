@@ -18,11 +18,11 @@ export class ListingManagementComponent implements OnInit {
   listings = signal<ListingManagement[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
-  
+
   // Filters
   status = signal<string>('');
   searchTerm = signal<string>('');
-  
+
   // Pagination
   currentPage = signal(0);
   pageSize = signal(10);
@@ -49,7 +49,7 @@ export class ListingManagementComponent implements OnInit {
         }
         this.loading.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.error.set('Failed to load listings');
         this.loading.set(false);
       }
@@ -86,11 +86,11 @@ export class ListingManagementComponent implements OnInit {
   }
 
   featureListing(listingId: number, publicId: string, featured: boolean) {
-    const reason = featured 
+    const reason = featured
       ? prompt('Provide a reason for featuring this listing:') || 'Featured by admin'
       : prompt('Provide a reason for unfeaturing this listing:') || 'Unfeatured by admin';
 
-    const action$ = featured 
+    const action$ = featured
       ? this.adminService.featureListing(publicId, reason)
       : this.adminService.unfeatureListing(publicId, reason);
 

@@ -9,11 +9,14 @@ import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { environment } from '../environments/environment';
+import { provideEchartsCore } from 'ngx-echarts';
+import * as echarts from 'echarts/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideRouter(routes),
+    provideEchartsCore({ echarts }),
     provideHttpClient(
       withInterceptors([authInterceptor, loadingInterceptor])
     ),

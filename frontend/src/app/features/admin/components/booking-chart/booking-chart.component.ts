@@ -23,7 +23,7 @@ import { DashboardService } from '../../services/dashboard.service';
 
       @if (loading()) {
         <div class="flex justify-center items-center h-96">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2" 
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2"
                style="border-color: var(--admin-primary)"></div>
         </div>
       } @else if (chartOption()) {
@@ -32,7 +32,7 @@ import { DashboardService } from '../../services/dashboard.service';
           <div class="lg:col-span-2">
             <div echarts [options]="chartOption()!" class="h-96"></div>
           </div>
-          
+
           <!-- Status Distribution Pie -->
           <div>
             <h4 class="text-sm font-semibold mb-3" style="color: var(--admin-text-primary)">
@@ -49,8 +49,8 @@ import { DashboardService } from '../../services/dashboard.service';
 })
 export class BookingChartComponent implements OnInit, OnChanges {
   private dashboardService = inject(DashboardService);
-  
-  @Input() days: number = 30;
+
+  @Input() days = 30;
 
   loading = signal(false);
   chartOption = signal<EChartsOption | null>(null);
@@ -68,7 +68,7 @@ export class BookingChartComponent implements OnInit, OnChanges {
 
   loadChart() {
     this.loading.set(true);
-    
+
     this.dashboardService.getBookingChart(this.days).subscribe({
       next: (data) => {
         // Line/Bar Chart

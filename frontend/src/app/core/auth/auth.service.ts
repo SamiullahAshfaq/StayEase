@@ -185,17 +185,37 @@ export class AuthService {
   }
 
   /**
-   * Get stored token
+   * Get stored token (validates and removes if expired)
    */
   getToken(): string | null {
     if (!isPlatformBrowser(this.platformId)) {
       return null;
     }
-    return localStorage.getItem(this.TOKEN_KEY);
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    if (token && this.isTokenExpired(token)) {
+      // Token is expired, clean up
+      this.logout();
+      return null;
+    }
+    return token;
   }
 
   /**
-   * Check if user has token
+   * Check if JWT token is expired
+   */
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiry = payload.exp * 1000; // Convert to milliseconds
+      return Date.now() >= expiry;
+    } catch {
+      // If we can't parse the token, consider it expired
+      return true;
+    }
+  }
+
+  /**
+   * Check if user has valid token
    */
   private hasToken(): boolean {
     return !!this.getToken();

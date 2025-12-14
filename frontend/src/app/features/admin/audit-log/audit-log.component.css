@@ -1,0 +1,40 @@
+/* Minimal custom styles - most styling is via Tailwind utilities */
+
+/* Timeline connector line */
+.space-y-4 > div:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 60px;
+  width: 2px;
+  height: calc(100% + 16px);
+  background: linear-gradient(to bottom, #E5E7EB 0%, #E5E7EB 100%);
+}
+
+.space-y-4 > div {
+  position: relative;
+}
+
+/* Smooth transitions */
+button, select, input {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom scrollbar */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #00B7B5;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #018790;
+}

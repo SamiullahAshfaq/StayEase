@@ -2,13 +2,13 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { LandlordService } from '../../../core/services/landlord.service';
-import { 
-  PropertyType, 
+import { LandlordService } from '../services/landlord.service';
+import {
+  PropertyType,
   RoomType,
   PROPERTY_TYPE_LABELS,
   ROOM_TYPE_LABELS
-} from '../../../core/models/landlord.model';
+} from '../models/landlord.model';
 
 interface ListingFormData {
   // Step 1: Property Basics
@@ -103,6 +103,15 @@ export class ListingCreateComponent implements OnInit {
   propertyTypeLabels = PROPERTY_TYPE_LABELS;
   roomTypeLabels = ROOM_TYPE_LABELS;
 
+  // Helper methods for labels
+  getPropertyTypeLabel(type: PropertyType): string {
+    return this.propertyTypeLabels[type];
+  }
+
+  getRoomTypeLabel(type: RoomType): string {
+    return this.roomTypeLabels[type];
+  }
+
   // Available amenities
   availableAmenities = [
     'WiFi', 'TV', 'Kitchen', 'Washing Machine', 'Air Conditioning',
@@ -124,7 +133,8 @@ export class ListingCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Initialize
+    // Initialization logic can be added here
+
   }
 
   // Navigation
@@ -238,7 +248,7 @@ export class ListingCreateComponent implements OnInit {
 
     const files = Array.from(input.files);
     const newImages = [...this.formData().images, ...files];
-    
+
     // Generate preview URLs
     const newPreviewUrls = files.map(file => URL.createObjectURL(file));
     const allPreviewUrls = [...this.formData().imagePreviewUrls, ...newPreviewUrls];
@@ -277,15 +287,13 @@ export class ListingCreateComponent implements OnInit {
     const data = this.formData();
 
     // First, upload images
-    const imageUploads = data.images.map(file => {
-      const formData = new FormData();
-      formData.append('image', file);
-      return this.landlordService.uploadListingImages('temp', formData);
-    });
+    const imageUploads = data.images.length > 0
+      ? [this.landlordService.uploadListingImages('temp', data.images).toPromise()]
+      : [];
 
     // Wait for all images to upload
     Promise.all(imageUploads).then(responses => {
-      const imageUrls = responses.map(r => r.data);
+      const imageUrls = responses.flatMap(r => r?.data || []);
 
       // Create listing request
       const listingRequest = {
@@ -293,16 +301,18 @@ export class ListingCreateComponent implements OnInit {
         roomType: data.roomType!,
         address: data.address,
         city: data.city,
+        state: '',
         country: data.country,
         zipCode: data.zipCode,
         latitude: data.latitude,
         longitude: data.longitude,
         bedrooms: data.bedrooms,
+        beds: data.bedrooms,
         bathrooms: data.bathrooms,
         maxGuests: data.maxGuests,
         propertySize: data.propertySize,
         amenities: data.amenities,
-        images: imageUrls,
+        imageUrls: imageUrls,
         title: data.title,
         description: data.description,
         houseRules: data.houseRules,
@@ -315,6 +325,7 @@ export class ListingCreateComponent implements OnInit {
         minNights: data.minNights,
         maxNights: data.maxNights,
         cancellationPolicy: data.cancellationPolicy,
+        isInstantBooking: false,
         status: isDraft ? 'DRAFT' : 'PENDING_APPROVAL'
       };
 

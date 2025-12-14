@@ -1,7 +1,6 @@
 package com.stayease.config;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -112,8 +111,17 @@ public class SecurityConfiguration {
             "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"
         ));
         
-        // Allow all headers
-        configuration.setAllowedHeaders(List.of("*"));
+        // Allow common headers (cannot use * with credentials)
+        configuration.setAllowedHeaders(Arrays.asList(
+            "Authorization",
+            "Content-Type",
+            "Accept",
+            "Origin",
+            "X-Requested-With",
+            "Cache-Control",
+            "Pragma",
+            "Expires"
+        ));
         
         // Expose headers that the client can access
         configuration.setExposedHeaders(Arrays.asList(

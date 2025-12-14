@@ -1,0 +1,11 @@
+/* Minimal custom styles - most styling is via Tailwind utilities */
+
+/* Smooth transitions for interactive elements */
+button, select, input, a {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Card hover effect enhancement */
+.hover\:shadow-md {
+  transition: box-shadow 0.3s ease-in-out;
+}

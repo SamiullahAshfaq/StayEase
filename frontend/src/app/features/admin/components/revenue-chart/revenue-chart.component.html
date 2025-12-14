@@ -8,7 +8,7 @@
         Daily revenue trends and payment breakdown
       </p>
     </div>
-    <mat-button-toggle-group [(value)]="selectedPeriod" (change)="loadChart()">
+    <mat-button-toggle-group (change)="loadChart()">
       <mat-button-toggle value="7">7 Days</mat-button-toggle>
       <mat-button-toggle value="30">30 Days</mat-button-toggle>
       <mat-button-toggle value="90">90 Days</mat-button-toggle>

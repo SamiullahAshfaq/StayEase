@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { AuthService, User } from '../../core/auth/auth.service';
-import { environment } from '../../../environments/environment';
+import { AuthService } from '../../core/auth/auth.service';
+import { ProfileService } from '../../core/services/profile.service';
 
 @Component({
   selector: 'app-profile-complete',
@@ -177,6 +177,7 @@ import { environment } from '../../../environments/environment';
 export class ProfileCompleteComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService: AuthService = inject(AuthService);
+  private profileService = inject(ProfileService);
   private http = inject(HttpClient);
   private router = inject(Router);
 
@@ -257,58 +258,41 @@ export class ProfileCompleteComponent implements OnInit {
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    try {
-      // Upload image first
-      const imageUrl = await this.uploadImage(this.selectedFile()!);
+    // Upload image using ProfileService
+    this.profileService.uploadProfileImage(this.selectedFile()!).subscribe({
+      next: (uploadResponse) => {
+        if (uploadResponse.success && uploadResponse.data) {
+          // Update profile with image URL and other data
+          const updateData = {
+            phoneNumber: this.profileForm.value.phoneNumber,
+            bio: this.profileForm.value.bio,
+            profileImageUrl: uploadResponse.data.imageUrl
+          };
 
-      // Update profile
-      const currentUser = this.authService.getCurrentUser();
-      if (!currentUser) {
-        throw new Error('No user found');
-      }
+          this.profileService.updateProfile(updateData).subscribe({
+            next: (response) => {
+              if (response.success && response.data) {
+                // Update current user with the refreshed data from backend
+                // The response.data is correctly typed as the User from auth.service
+                this.authService.updateCurrentUser(response.data);
 
-      const updateData = {
-        phoneNumber: this.profileForm.value.phoneNumber,
-        bio: this.profileForm.value.bio,
-        profileImageUrl: imageUrl
-      };
-
-      this.http.put<{ success: boolean; data: User }>(
-        `${environment.apiUrl}/users/${currentUser.publicId}`,
-        updateData
-      ).subscribe({
-        next: (response) => {
-          if (response.success) {
-            // Update current user
-            this.authService.updateCurrentUser({
-              ...currentUser,
-              ...updateData
-            });
-
-            // Navigate based on role
-            this.navigateBasedOnRole();
-          }
-        },
-        error: (error) => {
-          this.loading.set(false);
-          this.errorMessage.set(error.error?.message || 'Failed to update profile');
+                // Navigate based on role
+                this.navigateBasedOnRole();
+              }
+            },
+            error: (error) => {
+              this.loading.set(false);
+              console.error('Profile update error:', error);
+              this.errorMessage.set(error.error?.message || 'Failed to update profile. Please try again.');
+            }
+          });
         }
-      });
-    } catch (error: unknown) {
-      this.loading.set(false);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
-      this.errorMessage.set(errorMessage);
-    }
-  }
-
-  private async uploadImage(file: File): Promise<string> {
-    // In production, upload to your cloud storage (AWS S3, Cloudinary, etc.)
-    // For now, convert to base64 and return
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
+      },
+      error: (error) => {
+        this.loading.set(false);
+        console.error('Image upload error:', error);
+        this.errorMessage.set(error.error?.message || 'Failed to upload image. Please try again.');
+      }
     });
   }
 

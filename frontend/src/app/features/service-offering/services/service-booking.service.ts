@@ -5,8 +5,9 @@ import { environment } from '../../../../environments/environment';
 import {
   ServiceBooking,
   CreateServiceBookingRequest,
-  ApiResponse
-} from '../models/service-offering.model';
+  ServiceBookingListResponse
+} from '../models/service-booking.model';
+import { ApiResponse } from '../models/service-offering.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,23 +33,23 @@ export class ServiceBookingService {
   /**
    * Get my bookings (customer)
    */
-  getMyBookings(page: number = 0, size: number = 10): Observable<ApiResponse<any>> {
+  getMyBookings(page: number = 0, size: number = 10): Observable<ApiResponse<ServiceBookingListResponse>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
-    
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/my-bookings`, { params });
+
+    return this.http.get<ApiResponse<ServiceBookingListResponse>>(`${this.apiUrl}/my-bookings`, { params });
   }
 
   /**
    * Get provider bookings
    */
-  getProviderBookings(page: number = 0, size: number = 10): Observable<ApiResponse<any>> {
+  getProviderBookings(page: number = 0, size: number = 10): Observable<ApiResponse<ServiceBookingListResponse>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
-    
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/provider-bookings`, { params });
+
+    return this.http.get<ApiResponse<ServiceBookingListResponse>>(`${this.apiUrl}/provider-bookings`, { params });
   }
 
   /**
@@ -94,7 +95,7 @@ export class ServiceBookingService {
       .set('servicePublicId', servicePublicId)
       .set('date', date)
       .set('startTime', startTime);
-    
+
     return this.http.get<ApiResponse<boolean>>(`${this.apiUrl}/check-availability`, { params });
   }
 }

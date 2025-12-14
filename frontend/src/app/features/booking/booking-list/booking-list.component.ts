@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { BookingService } from '../services/booking.service';
-import { MockBookingService } from '../services/mock-booking.service';
 import { Booking, BookingStatus } from '../models/booking.model';
 import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs/operators';
@@ -11,10 +10,7 @@ import { filter } from 'rxjs/operators';
   selector: 'app-booking-list',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './booking-list.component.html',
-  providers: [
-    { provide: BookingService, useClass: MockBookingService }
-  ]
+  templateUrl: './booking-list.component.html'
 })
 export class BookingListComponent implements OnInit {
   bookings: Booking[] = [];
@@ -30,7 +26,7 @@ export class BookingListComponent implements OnInit {
 
   // Filters
   selectedTab: 'all' | 'upcoming' | 'completed' | 'past' | 'cancelled' = 'all';
-  
+
   // Cancel modal
   showCancelModal = false;
   bookingToCancel: Booking | null = null;
@@ -77,7 +73,7 @@ export class BookingListComponent implements OnInit {
           this.totalElements = response.data.totalElements;
           this.filterBookings();
           console.log('Filtered bookings:', this.filteredBookings.length);
-          
+
           // Force loading to false and trigger change detection
           this.loading = false;
           console.log('Loading set to false, triggering change detection');
@@ -101,41 +97,41 @@ export class BookingListComponent implements OnInit {
     const now = new Date();
     console.log('filterBookings() called, selectedTab:', this.selectedTab);
     console.log('Current date:', now);
-    
+
     switch (this.selectedTab) {
       case 'upcoming':
         this.filteredBookings = this.bookings.filter(b => {
           const checkInDate = new Date(b.checkInDate);
           console.log('Checking booking:', b.listingTitle, 'checkInDate:', checkInDate, 'isAfterNow:', checkInDate > now);
-          return checkInDate > now && 
-            b.bookingStatus !== BookingStatus.CANCELLED && 
+          return checkInDate > now &&
+            b.bookingStatus !== BookingStatus.CANCELLED &&
             b.bookingStatus !== BookingStatus.REJECTED &&
             b.bookingStatus !== BookingStatus.CHECKED_OUT;
         });
         break;
       case 'completed':
-        this.filteredBookings = this.bookings.filter(b => 
+        this.filteredBookings = this.bookings.filter(b =>
           b.bookingStatus === BookingStatus.CHECKED_OUT
         );
         break;
       case 'past':
-        this.filteredBookings = this.bookings.filter(b => 
+        this.filteredBookings = this.bookings.filter(b =>
           (new Date(b.checkOutDate) < now || b.bookingStatus === BookingStatus.CHECKED_OUT) &&
           b.bookingStatus !== BookingStatus.CANCELLED &&
           b.bookingStatus !== BookingStatus.REJECTED
         );
         break;
       case 'cancelled':
-        this.filteredBookings = this.bookings.filter(b => 
-          b.bookingStatus === BookingStatus.CANCELLED || 
+        this.filteredBookings = this.bookings.filter(b =>
+          b.bookingStatus === BookingStatus.CANCELLED ||
           b.bookingStatus === BookingStatus.REJECTED
         );
         break;
       case 'all':
       default:
         // All trips should exclude cancelled bookings (like Airbnb)
-        this.filteredBookings = this.bookings.filter(b => 
-          b.bookingStatus !== BookingStatus.CANCELLED && 
+        this.filteredBookings = this.bookings.filter(b =>
+          b.bookingStatus !== BookingStatus.CANCELLED &&
           b.bookingStatus !== BookingStatus.REJECTED
         );
     }
@@ -218,8 +214,8 @@ export class BookingListComponent implements OnInit {
   canCancel(booking: Booking): boolean {
     const checkInDate = new Date(booking.checkInDate);
     const now = new Date();
-    
-    return checkInDate > now && 
+
+    return checkInDate > now &&
            booking.bookingStatus !== BookingStatus.CANCELLED &&
            booking.bookingStatus !== BookingStatus.REJECTED &&
            booking.bookingStatus !== BookingStatus.CHECKED_OUT;

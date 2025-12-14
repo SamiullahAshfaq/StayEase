@@ -2,44 +2,47 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { LandlordService } from '../../../core/services/landlord.service';
-import { 
+import { LandlordService } from '../services/landlord.service';
+import {
   Listing,
-  PropertyType, 
+  PropertyType,
   RoomType,
   PROPERTY_TYPE_LABELS,
   ROOM_TYPE_LABELS
-} from '../../../core/models/landlord.model';
+} from '../models/landlord.model';
 
 interface ListingFormData {
   propertyType: PropertyType | null;
   roomType: RoomType | null;
   address: string;
   city: string;
+  state: string;
   country: string;
   zipCode: string;
   latitude?: number;
   longitude?: number;
   bedrooms: number;
+  beds: number;
   bathrooms: number;
   maxGuests: number;
-  propertySize: number;
   amenities: string[];
   images: File[];
   imagePreviewUrls: string[];
-  existingImages: Array<{ id: number; imageUrl: string }>;
+  existingImages: { id: number; imageUrl: string }[];
   title: string;
   description: string;
   houseRules: string;
   basePrice: number;
   cleaningFee: number;
+  securityDeposit: number;
+  weekendPrice: number;
   weeklyDiscount: number;
   monthlyDiscount: number;
   checkInTime: string;
   checkOutTime: string;
   minNights: number;
   maxNights: number;
-  cancellationPolicy: string;
+  isInstantBooking: boolean;
 }
 
 @Component({
@@ -68,12 +71,13 @@ export class ListingEditComponent implements OnInit {
     roomType: null,
     address: '',
     city: '',
+    state: '',
     country: '',
     zipCode: '',
     bedrooms: 1,
+    beds: 1,
     bathrooms: 1,
     maxGuests: 2,
-    propertySize: 0,
     amenities: [],
     images: [],
     imagePreviewUrls: [],
@@ -83,13 +87,15 @@ export class ListingEditComponent implements OnInit {
     houseRules: '',
     basePrice: 0,
     cleaningFee: 0,
+    securityDeposit: 0,
+    weekendPrice: 0,
     weeklyDiscount: 0,
     monthlyDiscount: 0,
     checkInTime: '15:00',
     checkOutTime: '11:00',
     minNights: 1,
     maxNights: 30,
-    cancellationPolicy: 'Flexible'
+    isInstantBooking: false
   });
 
   // Enums
@@ -98,20 +104,21 @@ export class ListingEditComponent implements OnInit {
   propertyTypeLabels = PROPERTY_TYPE_LABELS;
   roomTypeLabels = ROOM_TYPE_LABELS;
 
+  // Helper methods for labels
+  getPropertyTypeLabel(type: PropertyType): string {
+    return this.propertyTypeLabels[type];
+  }
+
+  getRoomTypeLabel(type: RoomType): string {
+    return this.roomTypeLabels[type];
+  }
+
   // Available amenities
   availableAmenities = [
     'WiFi', 'TV', 'Kitchen', 'Washing Machine', 'Air Conditioning',
     'Heating', 'Parking', 'Pool', 'Gym', 'Hot Tub',
     'Workspace', 'Pets Allowed', 'Smoking Allowed', 'Fireplace',
     'Balcony', 'Garden', 'BBQ Grill', 'Beach Access', 'Elevator'
-  ];
-
-  // Cancellation policies
-  cancellationPolicies = [
-    { value: 'Flexible', label: 'Flexible - Full refund 1 day prior' },
-    { value: 'Moderate', label: 'Moderate - Full refund 5 days prior' },
-    { value: 'Strict', label: 'Strict - Full refund 7 days prior' },
-    { value: 'Super Strict', label: 'Super Strict - 50% refund up to 30 days prior' }
   ];
 
   ngOnInit(): void {
@@ -127,21 +134,22 @@ export class ListingEditComponent implements OnInit {
     this.error.set(null);
 
     this.landlordService.getListing(id).subscribe({
-      next: (response: any) => {
+      next: (response: { data: Listing }) => {
         const listing: Listing = response.data;
         this.formData.set({
           propertyType: listing.propertyType,
           roomType: listing.roomType,
           address: listing.address || '',
           city: listing.city,
+          state: listing.state || '',
           country: listing.country,
           zipCode: listing.zipCode || '',
           latitude: listing.latitude,
           longitude: listing.longitude,
           bedrooms: listing.bedrooms,
+          beds: listing.beds,
           bathrooms: listing.bathrooms,
           maxGuests: listing.maxGuests,
-          propertySize: listing.propertySize || 0,
           amenities: listing.amenities || [],
           images: [],
           imagePreviewUrls: [],
@@ -151,20 +159,22 @@ export class ListingEditComponent implements OnInit {
           houseRules: listing.houseRules || '',
           basePrice: listing.basePrice,
           cleaningFee: listing.cleaningFee || 0,
+          securityDeposit: listing.securityDeposit || 0,
+          weekendPrice: listing.weekendPrice || 0,
           weeklyDiscount: listing.weeklyDiscount || 0,
           monthlyDiscount: listing.monthlyDiscount || 0,
           checkInTime: listing.checkInTime || '15:00',
           checkOutTime: listing.checkOutTime || '11:00',
           minNights: listing.minNights,
           maxNights: listing.maxNights || 30,
-          cancellationPolicy: listing.cancellationPolicy || 'Flexible'
+          isInstantBooking: listing.isInstantBooking
         });
         this.loading.set(false);
       },
-      error: (err: any) => {
+      error: () => {
         this.error.set('Failed to load listing');
         this.loading.set(false);
-        console.error('Error loading listing:', err);
+        console.error('Error loading listing');
       }
     });
   }
@@ -280,7 +290,7 @@ export class ListingEditComponent implements OnInit {
 
     const files = Array.from(input.files);
     const newImages = [...this.formData().images, ...files];
-    
+
     const newPreviewUrls = files.map(file => URL.createObjectURL(file));
     const allPreviewUrls = [...this.formData().imagePreviewUrls, ...newPreviewUrls];
 
@@ -308,8 +318,8 @@ export class ListingEditComponent implements OnInit {
             existingImages: data.existingImages.filter(img => img.id !== imageId)
           }));
         },
-        error: (err: any) => {
-          console.error('Error deleting image:', err);
+        error: () => {
+          console.error('Error deleting image:');
           alert('Failed to delete image');
         }
       });
@@ -329,18 +339,15 @@ export class ListingEditComponent implements OnInit {
 
     // First, upload new images if any
     if (data.images.length > 0) {
-      const imageUploads = data.images.map(file => {
-        const formData = new FormData();
-        formData.append('image', file);
-        return this.landlordService.uploadListingImages(this.listingId(), formData);
-      });
-
-      Promise.all(imageUploads).then(() => {
-        this.updateListing();
-      }).catch((err: any) => {
-        this.saving.set(false);
-        this.error.set('Failed to upload images');
-        console.error('Error uploading images:', err);
+      this.landlordService.uploadListingImages(this.listingId(), data.images).subscribe({
+        next: () => {
+          this.updateListing();
+        },
+        error: () => {
+          this.saving.set(false);
+          this.error.set('Failed to upload images');
+          console.error('Error uploading images');
+        }
       });
     } else {
       this.updateListing();
@@ -355,27 +362,30 @@ export class ListingEditComponent implements OnInit {
       roomType: data.roomType!,
       address: data.address,
       city: data.city,
+      state: data.state,
       country: data.country,
       zipCode: data.zipCode,
       latitude: data.latitude,
       longitude: data.longitude,
       bedrooms: data.bedrooms,
+      beds: data.beds,
       bathrooms: data.bathrooms,
       maxGuests: data.maxGuests,
-      propertySize: data.propertySize,
       amenities: data.amenities,
       title: data.title,
       description: data.description,
       houseRules: data.houseRules,
       basePrice: data.basePrice,
       cleaningFee: data.cleaningFee,
+      securityDeposit: data.securityDeposit,
+      weekendPrice: data.weekendPrice,
       weeklyDiscount: data.weeklyDiscount,
       monthlyDiscount: data.monthlyDiscount,
       checkInTime: data.checkInTime,
       checkOutTime: data.checkOutTime,
       minNights: data.minNights,
       maxNights: data.maxNights,
-      cancellationPolicy: data.cancellationPolicy
+      isInstantBooking: data.isInstantBooking
     };
 
     this.landlordService.updateListing(this.listingId(), updateRequest).subscribe({
@@ -383,10 +393,10 @@ export class ListingEditComponent implements OnInit {
         this.saving.set(false);
         this.router.navigate(['/landlord/listings', this.listingId()]);
       },
-      error: (err: any) => {
+      error: () => {
         this.saving.set(false);
         this.error.set('Failed to update listing');
-        console.error('Error updating listing:', err);
+        console.error('Error updating listing');
       }
     });
   }

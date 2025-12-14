@@ -1,263 +1,392 @@
-<div class="listing-list-container">
-  <!-- Header -->
-  <header class="page-header">
-    <div class="header-content">
-      <div class="title-section">
-        <h1>My Listings</h1>
-        <p>Manage your property listings</p>
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header Section -->
+    <div class="mb-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">My Listings</h1>
+          <p class="text-gray-600 mt-2">Manage your properties and reservations</p>
+        </div>
+
+        <button [routerLink]="['/listing/create']"
+                class="px-6 py-3 bg-[#005461] text-white rounded-lg font-medium hover:bg-[#018790] transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Create New Listing
+        </button>
       </div>
-      <button class="create-btn" (click)="createListing()">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
-        Create New Listing
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600">Total</p>
+              <p class="text-3xl font-bold text-gray-900">{{ totalListings() }}</p>
+            </div>
+            <div class="w-12 h-12 bg-[#005461]/10 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-[#005461]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+             (click)="filterByStatus(ListingStatus.ACTIVE)"
+             (keyup.enter)="filterByStatus(ListingStatus.ACTIVE)"
+             (keyup.space)="filterByStatus(ListingStatus.ACTIVE)"
+             tabindex="0"
+             role="button"
+             aria-label="Filter by active listings">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600">Active</p>
+              <p class="text-3xl font-bold text-green-600">{{ activeListings() }}</p>
+            </div>
+            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+             (click)="filterByStatus(ListingStatus.DRAFT)"
+             (keyup.enter)="filterByStatus(ListingStatus.DRAFT)"
+             (keyup.space)="filterByStatus(ListingStatus.DRAFT)"
+             tabindex="0"
+             role="button"
+             aria-label="Filter by draft listings">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600">Drafts</p>
+              <p class="text-3xl font-bold text-yellow-600">{{ draftListings() }}</p>
+            </div>
+            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+             (click)="filterByStatus(ListingStatus.PAUSED)"
+             (keyup.enter)="filterByStatus(ListingStatus.PAUSED)"
+             (keyup.space)="filterByStatus(ListingStatus.PAUSED)"
+             tabindex="0"
+             role="button"
+             aria-label="Filter by paused listings">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600">Paused</p>
+              <p class="text-3xl font-bold text-gray-600">{{ pausedListings() }}</p>
+            </div>
+            <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+      <div class="grid md:grid-cols-4 gap-4">
+        <!-- Search -->
+        <div class="md:col-span-2">
+          <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input id="search"
+                   type="text"
+                   [value]="searchKeyword()"
+                   (input)="search($any($event.target).value)"
+                   placeholder="Search by title, city, or address..."
+                   class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#005461] focus:border-transparent">
+          </div>
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <select id="status"
+                  [value]="selectedStatus()"
+                  (change)="filterByStatus($any($event.target).value)"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#005461] focus:border-transparent">
+            @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- View Mode Toggle -->
+        <div>
+          <div class="block text-sm font-medium text-gray-700 mb-2">View</div>
+          <div class="flex gap-2">
+            <button (click)="viewMode.set('grid')"
+                    [class.bg-[#005461]]="viewMode() === 'grid'"
+                    [class.text-white]="viewMode() === 'grid'"
+                    [class.bg-gray-100]="viewMode() !== 'grid'"
+                    [class.text-gray-700]="viewMode() !== 'grid'"
+                    class="flex-1 px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+              </svg>
+              Grid
+            </button>
+            <button (click)="viewMode.set('list')"
+                    [class.bg-[#005461]]="viewMode() === 'list'"
+                    [class.text-white]="viewMode() === 'list'"
+                    [class.bg-gray-100]="viewMode() !== 'list'"
+                    [class.text-gray-700]="viewMode() !== 'list'"
+                    class="flex-1 px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+              List
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+      <div class="bg-white rounded-xl shadow-md overflow-hidden animate-pulse">
+        <div class="h-48 bg-gray-200"></div>
+        <div class="p-6 space-y-4">
+          <div class="h-6 bg-gray-200 rounded w-3/4"></div>
+          <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div class="h-4 bg-gray-200 rounded w-full"></div>
+        </div>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Error State -->
+    @if (error() && !loading()) {
+    <div class="bg-white rounded-xl shadow-md p-12 text-center">
+      <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">Error Loading Listings</h3>
+      <p class="text-gray-600 mb-6">{{ error() }}</p>
+      <button (click)="loadListings()"
+              class="px-6 py-3 bg-[#005461] text-white rounded-lg hover:bg-[#018790] transition-colors">
+        Try Again
       </button>
     </div>
-  </header>
+    }
 
-  <!-- Stats Cards -->
-  <div class="stats-row">
-    <div class="stat-card" (click)="filterByStatus('ALL')">
-      <div class="stat-icon all">
-        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+    <!-- Empty State -->
+    @if (!loading() && !error() && filteredListings().length === 0) {
+    <div class="bg-white rounded-xl shadow-md p-12 text-center">
+      <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+      </svg>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">No Listings Found</h3>
+      <p class="text-gray-600 mb-6">
+        @if (searchKeyword() || selectedStatus() !== 'ALL') {
+          Try adjusting your filters or search criteria
+        } @else {
+          Start by creating your first listing
+        }
+      </p>
+      @if (!searchKeyword() && selectedStatus() === 'ALL') {
+      <button [routerLink]="['/listing/create']"
+              class="px-6 py-3 bg-[#005461] text-white rounded-lg hover:bg-[#018790] transition-colors inline-flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-      </div>
-      <div class="stat-content">
-        <h3>{{ totalListings() }}</h3>
-        <p>Total Listings</p>
-      </div>
+        Create Your First Listing
+      </button>
+      }
     </div>
+    }
 
-    <div class="stat-card" (click)="filterByStatus(ListingStatus.ACTIVE)">
-      <div class="stat-icon active">
-        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-        </svg>
-      </div>
-      <div class="stat-content">
-        <h3>{{ activeListings() }}</h3>
-        <p>Active</p>
-      </div>
-    </div>
-
-    <div class="stat-card" (click)="filterByStatus(ListingStatus.DRAFT)">
-      <div class="stat-icon draft">
-        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-        </svg>
-      </div>
-      <div class="stat-content">
-        <h3>{{ draftListings() }}</h3>
-        <p>Drafts</p>
-      </div>
-    </div>
-
-    <div class="stat-card" (click)="filterByStatus(ListingStatus.PAUSED)">
-      <div class="stat-icon paused">
-        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-        </svg>
-      </div>
-      <div class="stat-content">
-        <h3>{{ pausedListings() }}</h3>
-        <p>Paused</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="search-section">
-      <div class="search-bar">
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
-        </svg>
-        <input 
-          type="text" 
-          placeholder="Search listings..."
-          [(ngModel)]="searchKeyword"
-          (keyup)="search(searchKeyword())"
-          class="search-input">
-      </div>
-
-      <select [(ngModel)]="selectedStatus" (change)="filterByStatus(selectedStatus())" class="status-filter">
-        <option *ngFor="let option of statusOptions" [value]="option.value">
-          {{ option.label }}
-        </option>
-      </select>
-    </div>
-
-    <div class="toolbar-actions">
-      <select [(ngModel)]="sortBy" (change)="changeSortBy(sortBy())" class="sort-select">
-        <option value="createdAt">Date Created</option>
-        <option value="title">Title</option>
-        <option value="basePrice">Price</option>
-        <option value="bookingCount">Bookings</option>
-      </select>
-
-      <div class="view-toggle">
-        <button 
-          [class.active]="viewMode() === 'grid'"
-          (click)="viewMode.set('grid')">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-          </svg>
-        </button>
-        <button 
-          [class.active]="viewMode() === 'list'"
-          (click)="viewMode.set('list')">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Loading State -->
-  <div class="loading-state" *ngIf="loading()">
-    <div class="spinner"></div>
-    <p>Loading listings...</p>
-  </div>
-
-  <!-- Error State -->
-  <div class="error-state" *ngIf="error() && !loading()">
-    <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>
-    <p>{{ error() }}</p>
-    <button class="retry-button" (click)="loadListings()">Try again</button>
-  </div>
-
-  <!-- Listings Grid -->
-  <div class="listings-container" *ngIf="!loading() && !error()">
-    <div class="listings-grid" [class.list-view]="viewMode() === 'list'">
-      <div *ngFor="let listing of filteredListings()" class="listing-card" (click)="viewListing(listing.publicId)">
+    <!-- Listings Grid View -->
+    @if (!loading() && !error() && filteredListings().length > 0 && viewMode() === 'grid') {
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (listing of filteredListings(); track listing.publicId) {
+      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
         <!-- Image -->
-        <div class="listing-image">
-          <img [src]="listing.coverImage || listing.images[0]?.imageUrl || '/images/default-listing.jpg'" 
-               [alt]="listing.title">
-          <span class="status-badge" [class]="getStatusClass(listing.status)">
-            {{ listingStatusLabels[listing.status] }}
-          </span>
-          
-          <!-- Quick Actions Overlay -->
-          <div class="quick-actions">
-            <button class="action-icon" (click)="editListing(listing.publicId, $event)" title="Edit">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-              </svg>
-            </button>
-            <button class="action-icon" (click)="duplicateListing(listing.publicId, $event)" title="Duplicate">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
-                <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
-              </svg>
-            </button>
-            <button class="action-icon delete" (click)="deleteListing(listing.publicId, $event)" title="Delete">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-              </svg>
-            </button>
+        <div class="relative h-48 bg-gray-200">
+          @if (listing.coverImage || (listing.images && listing.images.length > 0)) {
+          <img [src]="listing.coverImage || listing.images[0].imageUrl"
+               [alt]="listing.title"
+               class="w-full h-full object-cover">
+          } @else {
+          <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#005461] to-[#018790]">
+            <svg class="w-16 h-16 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </div>
+          }
+
+          <!-- Status Badge -->
+          <div class="absolute top-3 right-3">
+            <span [class]="getStatusClass(listing.status)" class="px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm">
+              {{ listingStatusLabels[listing.status] }}
+            </span>
           </div>
         </div>
 
         <!-- Content -->
-        <div class="listing-content">
-          <div class="listing-header">
-            <h3>{{ listing.title }}</h3>
-            <div class="listing-type">
-              <span class="type-badge">{{ propertyTypeLabels[listing.propertyType] }}</span>
-              <span class="room-badge">{{ roomTypeLabels[listing.roomType] }}</span>
-            </div>
-          </div>
+        <div class="p-6">
+          <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-1">{{ listing.title }}</h3>
 
-          <p class="listing-location">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+          <div class="flex items-center text-sm text-gray-600 mb-3">
+            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            {{ listing.city }}, {{ listing.state }}, {{ listing.country }}
-          </p>
+            {{ listing.city }}, {{ listing.country }}
+          </div>
 
-          <div class="listing-details">
-            <span>
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+          <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
+            <span class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
               </svg>
-              {{ listing.bedrooms }} bed{{ listing.bedrooms !== 1 ? 's' : '' }}
+              {{ listing.bedrooms }} beds
             </span>
-            <span>
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z" clip-rule="evenodd"/>
+            <span class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
-              {{ listing.bathrooms }} bath{{ listing.bathrooms !== 1 ? 's' : '' }}
-            </span>
-            <span>
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-              </svg>
-              {{ listing.maxGuests }} guest{{ listing.maxGuests !== 1 ? 's' : '' }}
+              {{ listing.maxGuests }} guests
             </span>
           </div>
 
-          <div class="listing-stats">
-            <span>
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-              </svg>
-              {{ listing.viewCount }} views
-            </span>
-            <span>
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-              </svg>
-              {{ listing.bookingCount }} booking{{ listing.bookingCount !== 1 ? 's' : '' }}
-            </span>
-            <span *ngIf="listing.averageRating > 0">
-              <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-              {{ listing.averageRating.toFixed(1) }} ({{ listing.totalReviews }})
-            </span>
-          </div>
-
-          <div class="listing-footer">
-            <div class="price">
-              {{ formatPrice(listing.basePrice) }}<span>/night</span>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <span class="text-2xl font-bold text-[#005461]">${{ listing.basePrice }}</span>
+              <span class="text-sm text-gray-600">/night</span>
             </div>
-            <button 
-              class="status-action-btn"
-              [class]="getStatusClass(listing.status)"
-              (click)="toggleListingStatus(listing, $event)">
-              {{ getActionButtonText(listing.status) }}
-            </button>
+            @if (listing.bookingCount) {
+            <div class="text-sm text-gray-600">
+              {{ listing.bookingCount }} bookings
+            </div>
+            }
           </div>
 
-          <div class="listing-date">
-            Created: {{ formatDate(listing.createdAt) }}
+          <!-- Actions -->
+          <div class="flex gap-2">
+            <button [routerLink]="['/listing', listing.publicId]"
+                    class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+              View
+            </button>
+            <button [routerLink]="['/listing', listing.publicId, 'edit']"
+                    class="flex-1 px-4 py-2 bg-[#005461] text-white rounded-lg hover:bg-[#018790] transition-colors text-sm font-medium">
+              Edit
+            </button>
           </div>
         </div>
       </div>
+      }
     </div>
+    }
 
-    <!-- Empty State -->
-    <div class="empty-state" *ngIf="filteredListings().length === 0">
-      <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-      </svg>
-      <h3>No listings found</h3>
-      <p *ngIf="searchKeyword() || selectedStatus() !== 'ALL'">
-        Try adjusting your filters or search criteria
-      </p>
-      <p *ngIf="!searchKeyword() && selectedStatus() === 'ALL'">
-        Start by creating your first listing
-      </p>
-      <button class="create-first-btn" (click)="createListing()">
-        Create Your First Listing
-      </button>
+    <!-- Listings List View -->
+    @if (!loading() && !error() && filteredListings().length > 0 && viewMode() === 'list') {
+    <div class="space-y-4">
+      @for (listing of filteredListings(); track listing.publicId) {
+      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+        <div class="flex flex-col md:flex-row">
+          <!-- Image -->
+          <div class="md:w-64 h-48 md:h-auto bg-gray-200 flex-shrink-0">
+            @if (listing.coverImage || (listing.images && listing.images.length > 0)) {
+            <img [src]="listing.coverImage || listing.images[0].imageUrl"
+                 [alt]="listing.title"
+                 class="w-full h-full object-cover">
+            } @else {
+            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#005461] to-[#018790]">
+              <svg class="w-16 h-16 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </div>
+            }
+          </div>
+
+          <!-- Content -->
+          <div class="flex-1 p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ listing.title }}</h3>
+                <div class="flex items-center text-gray-600 mb-2">
+                  <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  {{ listing.city }}, {{ listing.country }}
+                </div>
+              </div>
+              <span [class]="getStatusClass(listing.status)" class="px-3 py-1.5 rounded-full text-xs font-medium">
+                {{ listingStatusLabels[listing.status] }}
+              </span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-4">
+              <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                {{ listing.bedrooms }} Bedrooms
+              </span>
+              <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                {{ listing.bathrooms }} Bathrooms
+              </span>
+              <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                {{ listing.maxGuests }} Guests
+              </span>
+              @if (listing.bookingCount) {
+              <span class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                {{ listing.bookingCount }} Bookings
+              </span>
+              }
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-3xl font-bold text-[#005461]">${{ listing.basePrice }}</span>
+                <span class="text-gray-600">/night</span>
+              </div>
+              <div class="flex gap-3">
+                <button [routerLink]="['/listing', listing.publicId]"
+                        class="px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                  View
+                </button>
+                <button [routerLink]="['/listing', listing.publicId, 'edit']"
+                        class="px-6 py-2 bg-[#005461] text-white rounded-lg hover:bg-[#018790] transition-colors font-medium">
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
     </div>
+    }
   </div>
 </div>

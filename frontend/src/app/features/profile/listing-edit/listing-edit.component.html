@@ -1,37 +1,44 @@
-<div class="edit-listing-container" *ngIf="!loading()">
+@if (!loading()) {
+<div class="edit-listing-container">
   <!-- Progress Header -->
   <div class="progress-header">
     <div class="header-content">
       <h1>Edit Listing</h1>
       <button class="cancel-btn" (click)="cancel()">Cancel</button>
     </div>
-    
+
     <div class="progress-bar">
       <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
     </div>
-    
+
     <div class="step-indicators">
-      <div *ngFor="let step of [1, 2, 3, 4, 5, 6, 7]" 
-           class="step-indicator" 
+      @for (step of [1, 2, 3, 4, 5, 6, 7]; track step) {
+      <div class="step-indicator"
            [class.active]="step === currentStep()"
            [class.completed]="step < currentStep()"
-           (click)="goToStep(step)">
+           tabindex="0"
+           role="button"
+           (click)="goToStep(step)"
+           (keydown.enter)="goToStep(step)"
+           (keydown.space)="goToStep(step)">
         <div class="step-number">{{ step }}</div>
         <div class="step-label">
-          <span *ngIf="step === 1">Basics</span>
-          <span *ngIf="step === 2">Details</span>
-          <span *ngIf="step === 3">Photos</span>
-          <span *ngIf="step === 4">Description</span>
-          <span *ngIf="step === 5">Pricing</span>
-          <span *ngIf="step === 6">Policies</span>
-          <span *ngIf="step === 7">Preview</span>
+          @if (step === 1) { <span>Basics</span> }
+          @if (step === 2) { <span>Details</span> }
+          @if (step === 3) { <span>Photos</span> }
+          @if (step === 4) { <span>Description</span> }
+          @if (step === 5) { <span>Pricing</span> }
+          @if (step === 6) { <span>Policies</span> }
+          @if (step === 7) { <span>Preview</span> }
         </div>
       </div>
+      }
     </div>
   </div>
 
   <!-- Error Message -->
-  <div *ngIf="error()" class="error-banner">
+  @if (error()) {
+  <div class="error-banner">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="12" cy="12" r="10"/>
       <line x1="12" y1="8" x2="12" y2="12"/>
@@ -39,85 +46,107 @@
     </svg>
     {{ error() }}
   </div>
+  }
 
   <!-- Step Content - Reusing same structure as create component -->
   <div class="step-content">
     <!-- Step 1: Property Basics -->
-    <div *ngIf="currentStep() === 1" class="step-panel">
+    @if (currentStep() === 1) {
+    <div class="step-panel">
       <h2>Property Basics</h2>
       <p class="step-description">Update your property information</p>
 
       <div class="form-group">
-        <label class="form-label required">Property Type</label>
-        <div class="selection-grid">
-          <div *ngFor="let type of [PropertyType.APARTMENT, PropertyType.HOUSE, PropertyType.VILLA, PropertyType.CONDO, PropertyType.TOWNHOUSE, PropertyType.COTTAGE, PropertyType.CABIN, PropertyType.BUNGALOW, PropertyType.STUDIO, PropertyType.LOFT]"
-               class="selection-card"
-               [class.selected]="formData().propertyType === type"
-               (click)="selectPropertyType(type)">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="4" y="4" width="16" height="16" rx="2"/>
-            </svg>
-            <span>{{ propertyTypeLabels[type] }}</span>
+        <fieldset>
+          <legend class="form-label required">Property Type</legend>
+          <div class="selection-grid">
+            @for (type of [PropertyType.APARTMENT, PropertyType.HOUSE, PropertyType.VILLA, PropertyType.CONDO, PropertyType.TOWNHOUSE, PropertyType.COTTAGE, PropertyType.CABIN, PropertyType.STUDIO, PropertyType.LOFT]; track type) {
+            <div class="selection-card"
+                 [class.selected]="formData().propertyType === type"
+                 tabindex="0"
+                 role="button"
+                 (click)="selectPropertyType(type)"
+                 (keydown.enter)="selectPropertyType(type)"
+                 (keydown.space)="selectPropertyType(type)">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+              </svg>
+              <span>{{ getPropertyTypeLabel(type) }}</span>
+            </div>
+            }
           </div>
-        </div>
+        </fieldset>
       </div>
 
       <div class="form-group">
-        <label class="form-label required">Room Type</label>
-        <div class="selection-grid">
-          <div *ngFor="let type of [RoomType.ENTIRE_PLACE, RoomType.PRIVATE_ROOM, RoomType.SHARED_ROOM]"
-               class="selection-card"
-               [class.selected]="formData().roomType === type"
-               (click)="selectRoomType(type)">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            </svg>
-            <span>{{ roomTypeLabels[type] }}</span>
+        <fieldset>
+          <legend class="form-label required">Room Type</legend>
+          <div class="selection-grid">
+            @for (type of [RoomType.ENTIRE_PLACE, RoomType.PRIVATE_ROOM, RoomType.SHARED_ROOM]; track type) {
+            <div class="selection-card"
+                 [class.selected]="formData().roomType === type"
+                 tabindex="0"
+                 role="button"
+                 (click)="selectRoomType(type)"
+                 (keydown.enter)="selectRoomType(type)"
+                 (keydown.space)="selectRoomType(type)">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              </svg>
+              <span>{{ getRoomTypeLabel(type) }}</span>
+            </div>
+            }
           </div>
-        </div>
+        </fieldset>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label required">City</label>
-          <input type="text" 
-                 class="form-input" 
+          <label for="city" class="form-label required">City</label>
+          <input type="text"
+                 id="city"
+                 class="form-input"
                  [(ngModel)]="formData().city"
                  placeholder="Enter city">
         </div>
         <div class="form-group">
-          <label class="form-label required">Country</label>
-          <input type="text" 
-                 class="form-input" 
+          <label for="country" class="form-label required">Country</label>
+          <input type="text"
+                 id="country"
+                 class="form-input"
                  [(ngModel)]="formData().country"
                  placeholder="Enter country">
         </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Street Address</label>
-        <input type="text" 
-               class="form-input" 
+        <label for="address" class="form-label">Street Address</label>
+        <input type="text"
+               id="address"
+               class="form-input"
                [(ngModel)]="formData().address"
                placeholder="Enter street address">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Zip Code</label>
-        <input type="text" 
-               class="form-input" 
+        <label for="zipCode" class="form-label">Zip Code</label>
+        <input type="text"
+               id="zipCode"
+               class="form-input"
                [(ngModel)]="formData().zipCode"
                placeholder="Enter zip code">
       </div>
     </div>
+    }
 
     <!-- Step 2: Property Details -->
-    <div *ngIf="currentStep() === 2" class="step-panel">
+    @if (currentStep() === 2) {
+    <div class="step-panel">
       <h2>Property Details</h2>
       <p class="step-description">Update your property details</p>
 
       <div class="form-group">
-        <label class="form-label required">Bedrooms</label>
+        <label for="bedrooms" class="form-label required">Bedrooms</label>
         <div class="counter-input">
           <button type="button" (click)="formData().bedrooms > 1 && updateFormField('bedrooms', formData().bedrooms - 1)">-</button>
           <span>{{ formData().bedrooms }}</span>
@@ -126,7 +155,7 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label required">Bathrooms</label>
+        <label for="bathrooms" class="form-label required">Bathrooms</label>
         <div class="counter-input">
           <button type="button" (click)="formData().bathrooms > 1 && updateFormField('bathrooms', formData().bathrooms - 1)">-</button>
           <span>{{ formData().bathrooms }}</span>
@@ -135,7 +164,7 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label required">Maximum Guests</label>
+        <label for="maxGuests" class="form-label required">Maximum Guests</label>
         <div class="counter-input">
           <button type="button" (click)="formData().maxGuests > 1 && updateFormField('maxGuests', formData().maxGuests - 1)">-</button>
           <span>{{ formData().maxGuests }}</span>
@@ -144,51 +173,58 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Property Size (sq ft)</label>
-        <input type="number" 
-               class="form-input" 
-               [(ngModel)]="formData().propertySize"
-               placeholder="Enter property size">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Amenities</label>
+        <label for="amenities" class="form-label">Amenities</label>
         <div class="checkbox-grid">
-          <label *ngFor="let amenity of availableAmenities" class="checkbox-label">
-            <input type="checkbox" 
+          @for (amenity of availableAmenities; track amenity) {
+          <label class="checkbox-label">
+            <input type="checkbox"
                    [checked]="formData().amenities.includes(amenity)"
                    (change)="toggleAmenity(amenity)">
             <span>{{ amenity }}</span>
           </label>
+          }
         </div>
       </div>
     </div>
+    }
 
     <!-- Step 3: Photos -->
-    <div *ngIf="currentStep() === 3" class="step-panel">
+    @if (currentStep() === 3) {
+    <div class="step-panel">
       <h2>Update Photos</h2>
       <p class="step-description">Manage your property photos</p>
 
       <!-- Existing Images -->
-      <div *ngIf="formData().existingImages.length > 0">
+      @if (formData().existingImages.length > 0) {
+      <div>
         <h3 class="subsection-title">Current Photos</h3>
         <div class="image-grid">
-          <div *ngFor="let image of formData().existingImages; let i = index" class="image-preview">
-            <img [src]="image.imageUrl" [alt]="'Photo ' + (i + 1)">
+          @for (image of formData().existingImages; track image.id) {
+          <div class="image-preview">
+            <img [src]="image.imageUrl" [alt]="'Photo ' + ($index + 1)">
             <button class="remove-image" (click)="removeExistingImage(image.id)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="18" y1="6" x2="6" y2="18"/>
                 <line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
-            <div *ngIf="i === 0" class="primary-badge">Primary</div>
+            @if ($index === 0) {
+            <div class="primary-badge">Primary</div>
+            }
           </div>
+          }
         </div>
       </div>
+      }
 
       <!-- Upload New Images -->
       <h3 class="subsection-title" style="margin-top: 24px;">Add New Photos</h3>
-      <div class="upload-zone" (click)="fileInput.click()">
+      <div class="upload-zone"
+           tabindex="0"
+           role="button"
+           (click)="fileInput.click()"
+           (keydown.enter)="fileInput.click()"
+           (keydown.space)="fileInput.click()">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
           <circle cx="8.5" cy="8.5" r="1.5"/>
@@ -196,41 +232,48 @@
         </svg>
         <h3>Click to upload new photos</h3>
         <p>Or drag and drop</p>
-        <input #fileInput 
-               type="file" 
-               multiple 
-               accept="image/*" 
+        <input #fileInput
+               type="file"
+               multiple
+               accept="image/*"
                style="display: none"
                (change)="onFileSelect($event)">
       </div>
 
       <!-- New Images Preview -->
-      <div *ngIf="formData().imagePreviewUrls.length > 0">
+      @if (formData().imagePreviewUrls.length > 0) {
+      <div>
         <h3 class="subsection-title" style="margin-top: 24px;">New Photos (Not Saved Yet)</h3>
         <div class="image-grid">
-          <div *ngFor="let url of formData().imagePreviewUrls; let i = index" class="image-preview">
-            <img [src]="url" [alt]="'New preview ' + (i + 1)">
-            <button class="remove-image" (click)="removeImage(i)">
+          @for (url of formData().imagePreviewUrls; track $index) {
+          <div class="image-preview">
+            <img [src]="url" [alt]="'New preview ' + ($index + 1)">
+            <button class="remove-image" (click)="removeImage($index)">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="18" y1="6" x2="6" y2="18"/>
                 <line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </button>
           </div>
+          }
         </div>
       </div>
+      }
     </div>
+    }
 
     <!-- Steps 4-7: Same as create component -->
     <!-- Step 4: Title & Description -->
-    <div *ngIf="currentStep() === 4" class="step-panel">
+    @if (currentStep() === 4) {
+    <div class="step-panel">
       <h2>Title and Description</h2>
       <p class="step-description">Update your listing information</p>
 
       <div class="form-group">
-        <label class="form-label required">Title</label>
-        <input type="text" 
-               class="form-input" 
+        <label for="title" class="form-label required">Title</label>
+        <input type="text"
+               id="title"
+               class="form-input"
                [(ngModel)]="formData().title"
                placeholder="e.g., Beautiful 2BR Apartment with Ocean View"
                maxlength="100">
@@ -238,8 +281,8 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label required">Description</label>
-        <textarea class="form-textarea" 
+        <label for="description" class="form-label required">Description</label>
+        <textarea id="description" class="form-textarea"
                   [(ngModel)]="formData().description"
                   placeholder="Describe your property..."
                   rows="8"
@@ -248,32 +291,36 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">House Rules</label>
-        <textarea class="form-textarea" 
+        <label for="houseRules" class="form-label">House Rules</label>
+        <textarea id="houseRules" class="form-textarea"
                   [(ngModel)]="formData().houseRules"
                   placeholder="e.g., No smoking, No pets..."
                   rows="4"></textarea>
       </div>
     </div>
+    }
 
     <!-- Step 5: Pricing -->
-    <div *ngIf="currentStep() === 5" class="step-panel">
+    @if (currentStep() === 5) {
+    <div class="step-panel">
       <h2>Pricing</h2>
       <p class="step-description">Update your pricing</p>
 
       <div class="form-group">
-        <label class="form-label required">Base Price per Night ($)</label>
-        <input type="number" 
-               class="form-input" 
+        <label for="basePrice" class="form-label required">Base Price per Night ($)</label>
+        <input type="number"
+               id="basePrice"
+               class="form-input"
                [(ngModel)]="formData().basePrice"
                placeholder="0"
                min="0">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Cleaning Fee ($)</label>
-        <input type="number" 
-               class="form-input" 
+        <label for="cleaningFee" class="form-label">Cleaning Fee ($)</label>
+        <input type="number"
+               id="cleaningFee"
+               class="form-input"
                [(ngModel)]="formData().cleaningFee"
                placeholder="0"
                min="0">
@@ -281,18 +328,20 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Weekly Discount (%)</label>
-          <input type="number" 
-                 class="form-input" 
+          <label for="weeklyDiscount" class="form-label">Weekly Discount (%)</label>
+          <input type="number"
+                 id="weeklyDiscount"
+                 class="form-input"
                  [(ngModel)]="formData().weeklyDiscount"
                  placeholder="0"
                  min="0"
                  max="100">
         </div>
         <div class="form-group">
-          <label class="form-label">Monthly Discount (%)</label>
-          <input type="number" 
-                 class="form-input" 
+          <label for="monthlyDiscount" class="form-label">Monthly Discount (%)</label>
+          <input type="number"
+                 id="monthlyDiscount"
+                 class="form-input"
                  [(ngModel)]="formData().monthlyDiscount"
                  placeholder="0"
                  min="0"
@@ -306,78 +355,81 @@
           <span>Base price</span>
           <span class="price">${{ formData().basePrice }}</span>
         </div>
-        <div class="summary-row" *ngIf="formData().cleaningFee">
+        @if (formData().cleaningFee) {
+        <div class="summary-row">
           <span>Cleaning fee</span>
           <span class="price">${{ formData().cleaningFee }}</span>
         </div>
+        }
       </div>
     </div>
+    }
 
     <!-- Step 6: Policies -->
-    <div *ngIf="currentStep() === 6" class="step-panel">
+    @if (currentStep() === 6) {
+    <div class="step-panel">
       <h2>House Rules and Policies</h2>
       <p class="step-description">Update your policies</p>
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Check-in Time</label>
-          <input type="time" 
-                 class="form-input" 
+          <label for="checkInTime" class="form-label">Check-in Time</label>
+          <input type="time"
+                 id="checkInTime"
+                 class="form-input"
                  [(ngModel)]="formData().checkInTime">
         </div>
         <div class="form-group">
-          <label class="form-label">Check-out Time</label>
-          <input type="time" 
-                 class="form-input" 
+          <label for="checkOutTime" class="form-label">Check-out Time</label>
+          <input type="time"
+                 id="checkOutTime"
+                 class="form-input"
                  [(ngModel)]="formData().checkOutTime">
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Minimum Nights</label>
-          <input type="number" 
-                 class="form-input" 
+          <label for="minNights" class="form-label">Minimum Nights</label>
+          <input type="number"
+                 id="minNights"
+                 class="form-input"
                  [(ngModel)]="formData().minNights"
                  min="1">
         </div>
         <div class="form-group">
-          <label class="form-label">Maximum Nights</label>
-          <input type="number" 
-                 class="form-input" 
+          <label for="maxNights" class="form-label">Maximum Nights</label>
+          <input type="number"
+                 id="maxNights"
+                 class="form-input"
                  [(ngModel)]="formData().maxNights"
                  min="1">
         </div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Cancellation Policy</label>
-        <select class="form-input" [(ngModel)]="formData().cancellationPolicy">
-          <option *ngFor="let policy of cancellationPolicies" [value]="policy.value">
-            {{ policy.label }}
-          </option>
-        </select>
-      </div>
     </div>
+    }
 
     <!-- Step 7: Preview -->
-    <div *ngIf="currentStep() === 7" class="step-panel">
+    @if (currentStep() === 7) {
+    <div class="step-panel">
       <h2>Preview Changes</h2>
       <p class="step-description">Review your updates</p>
 
       <div class="preview-card">
-        <div class="preview-images" *ngIf="getAllImages().length > 0">
+        @if (getAllImages().length > 0) {
+        <div class="preview-images">
           <img [src]="getAllImages()[0]" alt="Main photo">
         </div>
+        }
 
         <div class="preview-content">
           <h3>{{ formData().title }}</h3>
           <p class="preview-type">
-            {{ propertyTypeLabels[formData().propertyType!] }} · 
-            {{ roomTypeLabels[formData().roomType!] }}
+            {{ getPropertyTypeLabel(formData().propertyType!) }} ·
+            {{ getRoomTypeLabel(formData().roomType!) }}
           </p>
           <p class="preview-location">{{ formData().city }}, {{ formData().country }}</p>
-          
+
           <div class="preview-details">
             <span>{{ formData().bedrooms }} beds</span>
             <span>{{ formData().bathrooms }} baths</span>
@@ -391,47 +443,58 @@
             <span class="label">per night</span>
           </div>
 
-          <div class="preview-amenities" *ngIf="formData().amenities.length">
+          @if (formData().amenities.length) {
+          <div class="preview-amenities">
             <h4>Amenities</h4>
             <div class="amenity-tags">
-              <span *ngFor="let amenity of formData().amenities" class="amenity-tag">{{ amenity }}</span>
+              @for (amenity of formData().amenities; track amenity) {
+              <span class="amenity-tag">{{ amenity }}</span>
+              }
             </div>
           </div>
+          }
         </div>
       </div>
     </div>
+    }
   </div>
 
   <!-- Navigation Buttons -->
   <div class="navigation-buttons">
-    <button *ngIf="currentStep() > 1" 
-            class="btn-secondary" 
+    @if (currentStep() > 1) {
+    <button class="btn-secondary"
             (click)="previousStep()"
             [disabled]="saving()">
       Back
     </button>
-    
+    }
+
     <div class="right-buttons">
-      <button *ngIf="currentStep() < totalSteps" 
-              class="btn-primary" 
+      @if (currentStep() < totalSteps) {
+      <button class="btn-primary"
               (click)="nextStep()"
               [disabled]="saving()">
         Next
       </button>
-      
-      <button *ngIf="currentStep() === totalSteps" 
-              class="btn-primary" 
+      }
+
+      @if (currentStep() === totalSteps) {
+      <button class="btn-primary"
               (click)="saveChanges()"
               [disabled]="saving()">
-        <span *ngIf="!saving()">Save Changes</span>
-        <span *ngIf="saving()">Saving...</span>
+        @if (!saving()) { <span>Save Changes</span> }
+        @if (saving()) { <span>Saving...</span> }
       </button>
+      }
     </div>
   </div>
 </div>
+}
 
 <!-- Loading State -->
-<div *ngIf="loading()" class="loading-state">
+@if (loading()) {
+<div class="loading-state">
   <div class="spinner"></div>
   <p>Loading listing...</p>
 </div>
+}

@@ -43,9 +43,6 @@ export class HeaderComponent implements OnInit {
   selectedEndDate = signal<Date | null>(null);
 
   ngOnInit() {
-    console.log('Header Component ngOnInit called');
-    console.log('Is Browser?', isPlatformBrowser(this.platformId));
-
     // Only initialize auth state in browser
     if (isPlatformBrowser(this.platformId)) {
       // Small delay to ensure localStorage is accessible
@@ -54,7 +51,6 @@ export class HeaderComponent implements OnInit {
 
         // Subscribe to user changes
         this.authService.currentUser$.subscribe(user => {
-          console.log('Header - User changed:', user);
           this.updateAuthState();
         });
       }, 0);
@@ -214,14 +210,23 @@ export class HeaderComponent implements OnInit {
 
   // Search action
   performSearch() {
-    console.log('Search:', {
-      destination: this.searchDestination(),
-      checkIn: this.checkInDate(),
-      checkOut: this.checkOutDate(),
-      guests: this.guests()
-    });
+    const queryParams: any = {};
+
+    if (this.searchDestination()) {
+      queryParams.location = this.searchDestination();
+    }
+    if (this.checkInDate()) {
+      queryParams.checkIn = this.checkInDate()?.toISOString();
+    }
+    if (this.checkOutDate()) {
+      queryParams.checkOut = this.checkOutDate()?.toISOString();
+    }
+    if (this.guests()) {
+      queryParams.guests = this.guests();
+    }
+
     this.closeSearch();
-    // Navigate to listings with search params
-    this.router.navigate(['/listings']);
+    // Navigate to listings search with query params
+    this.router.navigate(['/listing/search'], { queryParams });
   }
 }

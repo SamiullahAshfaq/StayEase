@@ -2,11 +2,13 @@
   <div class="review-form-wrapper">
     <!-- Header -->
     <div class="review-header">
-      <button class="back-button" (click)="previousStep()" *ngIf="currentStep() > 1">
+      @if (currentStep() > 1) {
+      <button class="back-button" (click)="previousStep()">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
       </button>
+      }
       <h1 class="review-title">{{ currentStep() === 4 ? 'Preview your review' : 'Share your experience' }}</h1>
       <div class="step-indicator">Step {{ currentStep() }} of 4</div>
     </div>
@@ -17,23 +19,28 @@
     </div>
 
     <!-- Error Message -->
-    <div class="error-message" *ngIf="error()">
+    @if (error()) {
+    <div class="error-message">
       <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
       </svg>
       {{ error() }}
     </div>
+    }
 
     <!-- Success Message -->
-    <div class="success-message" *ngIf="success()">
+    @if (success()) {
+    <div class="success-message">
       <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
       </svg>
       Review submitted successfully! Redirecting...
     </div>
+    }
 
     <!-- Step 1: Ratings -->
-    <div class="step-content" *ngIf="currentStep() === 1">
+    @if (currentStep() === 1) {
+    <div class="step-content">
       <div class="step-intro">
         <h2>How was your stay at {{ propertyTitle() }}?</h2>
         <p>Rate your experience with {{ revieweeName() }}</p>
@@ -45,8 +52,8 @@
           <h3>{{ getOverallRatingText() }}</h3>
         </div>
         <div class="star-rating large">
-          <button 
-            *ngFor="let star of [1, 2, 3, 4, 5]" 
+          @for (star of [1, 2, 3, 4, 5]; track star) {
+          <button
             class="star"
             [class.filled]="getDisplayRating('overall') >= star"
             (click)="setRating('overall', star)"
@@ -56,22 +63,26 @@
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
             </svg>
           </button>
+          }
         </div>
       </div>
 
       <!-- Category Ratings -->
       <div class="rating-categories">
-        <div class="rating-category" *ngFor="let category of ['cleanliness', 'accuracy', 'checkIn', 'communication', 'location', 'value']">
+        @for (category of ['cleanliness', 'accuracy', 'checkIn', 'communication', 'location', 'value']; track category) {
+        <div class="rating-category">
           <div class="rating-header">
             <div>
               <h4>{{ getCategoryLabel(category) }}</h4>
               <p class="rating-description">{{ getCategoryDescription(category) }}</p>
             </div>
-            <span class="rating-value" *ngIf="ratings()[category] > 0">{{ ratings()[category] }}</span>
+            @if (getRatingValue(category) > 0) {
+            <span class="rating-value">{{ getRatingValue(category) }}</span>
+            }
           </div>
           <div class="star-rating">
-            <button 
-              *ngFor="let star of [1, 2, 3, 4, 5]" 
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+            <button
               class="star"
               [class.filled]="getDisplayRating(category) >= star"
               (click)="setRating(category, star)"
@@ -81,13 +92,17 @@
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
               </svg>
             </button>
+            }
           </div>
         </div>
+        }
       </div>
     </div>
+    }
 
     <!-- Step 2: Written Review -->
-    <div class="step-content" *ngIf="currentStep() === 2">
+    @if (currentStep() === 2) {
+    <div class="step-content">
       <div class="step-intro">
         <h2>Describe your experience</h2>
         <p>Help others know what to expect</p>
@@ -95,9 +110,9 @@
 
       <div class="form-group">
         <label for="title">Title (optional)</label>
-        <input 
-          type="text" 
-          id="title" 
+        <input
+          type="text"
+          id="title"
           class="form-input"
           placeholder="Sum up your stay in a few words"
           [(ngModel)]="title"
@@ -109,8 +124,8 @@
         <label for="comment">
           Your review <span class="required">*</span>
         </label>
-        <textarea 
-          id="comment" 
+        <textarea
+          id="comment"
           class="form-textarea"
           placeholder="Share details about your experience..."
           [(ngModel)]="comment"
@@ -133,10 +148,11 @@
         </button>
       </div>
 
-      <div class="form-group" *ngIf="showPrivateComment()">
+      @if (showPrivateComment()) {
+      <div class="form-group">
         <label for="privateComment">Private feedback (only visible to {{ revieweeName() }})</label>
-        <textarea 
-          id="privateComment" 
+        <textarea
+          id="privateComment"
           class="form-textarea"
           placeholder="Share constructive feedback privately..."
           [(ngModel)]="privateComment"
@@ -144,32 +160,40 @@
           maxlength="1000"></textarea>
         <span class="char-count">{{ privateComment().length }}/1000</span>
       </div>
+      }
     </div>
+    }
 
     <!-- Step 3: Photos (Optional) -->
-    <div class="step-content" *ngIf="currentStep() === 3">
+    @if (currentStep() === 3) {
+    <div class="step-content">
       <div class="step-intro">
         <h2>Add photos (optional)</h2>
         <p>Photos help others see what your experience was like</p>
       </div>
 
       <div class="photo-upload-section">
-        <div class="photo-grid" *ngIf="photos().length > 0">
-          <div class="photo-item" *ngFor="let photo of photos(); let i = index">
+        @if (photos().length > 0) {
+        <div class="photo-grid">
+          @for (photo of photos(); track $index) {
+          <div class="photo-item">
             <img [src]="photo" alt="Review photo">
-            <button class="remove-photo" (click)="removePhoto(i)">
+            <button class="remove-photo" (click)="removePhoto($index)">
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
               </svg>
             </button>
           </div>
+          }
         </div>
+        }
 
-        <label class="photo-upload-label" *ngIf="photos().length < 10">
-          <input 
-            type="file" 
-            accept="image/*" 
-            multiple 
+        @if (photos().length < 10) {
+        <label class="photo-upload-label">
+          <input
+            type="file"
+            accept="image/*"
+            multiple
             (change)="onPhotoSelect($event)"
             hidden>
           <div class="upload-placeholder">
@@ -180,11 +204,14 @@
             <span>{{ photos().length }}/10 photos</span>
           </div>
         </label>
+        }
       </div>
     </div>
+    }
 
     <!-- Step 4: Preview -->
-    <div class="step-content" *ngIf="currentStep() === 4">
+    @if (currentStep() === 4) {
+    <div class="step-content">
       <div class="step-intro">
         <h2>Review preview</h2>
         <p>This is how your review will appear</p>
@@ -193,31 +220,41 @@
       <div class="review-preview">
         <div class="preview-rating">
           <div class="stars">
-            <svg *ngFor="let star of [1, 2, 3, 4, 5]" 
-              width="20" height="20" 
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+            <svg
+              width="20" height="20"
               [class.filled]="ratings().overall >= star"
-              fill="currentColor" 
+              fill="currentColor"
               viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
             </svg>
+            }
           </div>
         </div>
 
-        <h3 class="preview-title" *ngIf="title()">{{ title() }}</h3>
+        @if (title()) {
+        <h3 class="preview-title">{{ title() }}</h3>
+        }
         <p class="preview-comment">{{ comment() }}</p>
 
-        <div class="preview-photos" *ngIf="photos().length > 0">
-          <img *ngFor="let photo of photos()" [src]="photo" alt="Review photo">
+        @if (photos().length > 0) {
+        <div class="preview-photos">
+          @for (photo of photos(); track $index) {
+          <img [src]="photo" alt="Review photo">
+          }
         </div>
+        }
 
         <div class="preview-category-ratings">
-          <div class="category-rating" *ngFor="let category of ['cleanliness', 'accuracy', 'checkIn', 'communication', 'location', 'value']">
+          @for (category of ['cleanliness', 'accuracy', 'checkIn', 'communication', 'location', 'value']; track category) {
+          <div class="category-rating">
             <span>{{ getCategoryLabel(category) }}</span>
             <div class="rating-bar">
-              <div class="rating-fill" [style.width.%]="(ratings()[category] / 5) * 100"></div>
+              <div class="rating-fill" [style.width.%]="(getRatingValue(category) / 5) * 100"></div>
             </div>
-            <span class="rating-number">{{ ratings()[category] }}</span>
+            <span class="rating-number">{{ getRatingValue(category) }}</span>
           </div>
+          }
         </div>
 
         <div class="preview-note">
@@ -228,30 +265,36 @@
         </div>
       </div>
     </div>
+    }
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-      <button 
-        type="button" 
-        class="btn btn-secondary" 
-        (click)="previousStep()"
-        *ngIf="currentStep() > 1 && !loading()">
+      @if (currentStep() > 1 && !loading()) {
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="previousStep()">
         Back
       </button>
-      <button 
-        type="button" 
-        class="btn btn-primary" 
+      }
+      <button
+        type="button"
+        class="btn btn-primary"
         (click)="currentStep() === 4 ? submitReview() : nextStep()"
         [disabled]="loading()">
-        <span *ngIf="!loading()">
+        @if (!loading()) {
+        <span>
           {{ currentStep() === 4 ? 'Submit Review' : 'Continue' }}
         </span>
-        <span *ngIf="loading()" class="loading-spinner">
+        }
+        @if (loading()) {
+        <span class="loading-spinner">
           <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-dashoffset="8" opacity="0.25"/>
           </svg>
           Submitting...
         </span>
+        }
       </button>
     </div>
   </div>

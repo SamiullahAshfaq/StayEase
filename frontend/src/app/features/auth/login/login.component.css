@@ -1,20 +1,19 @@
-/* Login component theme and animation overrides for StayEase */
-.animate-fadeInUp {
-  animation: fadeInUp 0.6s ease-out;
+/* Login Page - Tailwind v4 Compatible */
+/* Only custom animations that can't be done with utilities */
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.animate-shake {
-  animation: shake 0.5s ease-in-out;
-}
-
-@keyframes fadeInUp {
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -22,48 +21,45 @@
   }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.login-container {
+  background: linear-gradient(135deg,
+    var(--primary-dark) 0%,
+    var(--primary) 50%,
+    var(--primary-light) 100%);
+  animation: gradientShift 15s ease infinite;
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
+.login-card {
+  animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Theme colors for login */
-.bg-primary {
-  background-color: #005461;
+.logo-icon {
+  color: var(--primary);
+  filter: drop-shadow(0 4px 8px rgba(0, 183, 181, 0.3));
 }
-.bg-secondary {
-  background-color: #018790;
+
+.login-title {
+  color: var(--text-primary);
 }
-.bg-accent {
-  background-color: #00B7B5;
+
+.login-subtitle {
+  color: var(--text-secondary);
 }
-.bg-light {
-  background-color: #F4F4F4;
+
+.oauth-button {
+  border-color: #E5E7EB;
+  background: white;
+  color: var(--text-primary);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.text-primary {
-  color: #005461;
+
+.oauth-button:hover {
+  border-color: var(--primary);
+  background: rgba(0, 183, 181, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 183, 181, 0.1);
 }
-.text-secondary {
-  color: #018790;
-}
-.text-accent {
-  color: #00B7B5;
-}
-.text-light {
-  color: #F4F4F4;
-}
-.border-primary {
-  border-color: #005461;
-}
-.border-secondary {
-  border-color: #018790;
-}
-.border-accent {
-  border-color: #00B7B5;
+
+.divider-text {
+  color: var(--text-secondary);
 }

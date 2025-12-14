@@ -1,0 +1,115 @@
+/* Login Page with Custom Theme */
+
+.login-container {
+  @apply min-h-screen flex items-center justify-center px-4;
+  background: linear-gradient(135deg,
+    var(--primary-dark) 0%,
+    var(--primary) 50%,
+    var(--primary-light) 100%);
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.login-card {
+  @apply bg-white rounded-3xl shadow-2xl p-8 sm:p-12 w-full max-w-md;
+  animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-section {
+  @apply text-center mb-8;
+}
+
+.logo-icon {
+  @apply w-16 h-16 mx-auto mb-4;
+  color: var(--primary);
+  filter: drop-shadow(0 4px 8px rgba(0, 183, 181, 0.3));
+}
+
+.login-title {
+  @apply text-3xl font-bold mb-2;
+  color: var(--text-primary);
+}
+
+.login-subtitle {
+  @apply text-base;
+  color: var(--text-secondary);
+}
+
+.form-container {
+  @apply space-y-6;
+}
+
+.oauth-section {
+  @apply mb-6;
+}
+
+.oauth-buttons {
+  @apply space-y-3;
+}
+
+.oauth-button {
+  @apply w-full flex items-center justify-center gap-3 px-6 py-3 font-semibold rounded-xl border-2 cursor-pointer;
+  border-color: #E5E7EB;
+  background: white;
+  color: var(--text-primary);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.oauth-button:hover {
+  border-color: var(--primary);
+  background: rgba(0, 183, 181, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 183, 181, 0.1);
+}
+
+.oauth-icon {
+  @apply w-5 h-5;
+}
+
+.divider-section {
+  @apply flex items-center gap-4 my-8;
+}
+
+.divider-line {
+  @apply flex-1 h-px bg-gray-300;
+}
+
+.divider-text {
+  @apply text-sm font-medium;
+  color: var(--text-secondary);
+}
+
+.forgot-password {
+  @apply text-right;
+}
+
+.submit-button {
+  @apply w-full btn-primary text-lg;
+}
+
+.signup-link {
+  @apply text-center mt-6;
+}
+
+.loading-overlay {
+  @apply absolute inset-0 bg-white/90 flex items-center justify-center rounded-3xl;
+}

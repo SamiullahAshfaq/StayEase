@@ -2,7 +2,6 @@ import { Component, OnInit, ApplicationRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookingService } from '../services/booking.service';
-import { MockBookingService } from '../services/mock-booking.service';
 import { Booking, BookingStatus } from '../models/booking.model';
 import { FormsModule } from '@angular/forms';
 
@@ -10,22 +9,19 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-booking-detail',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './booking-detail.component.html',
-  providers: [
-    { provide: BookingService, useClass: MockBookingService }
-  ]
+  templateUrl: './booking-detail.component.html'
 })
 export class BookingDetailComponent implements OnInit {
     get currentUrl(): string {
       return window.location.href;
     }
-    
+
     get minCheckInDate(): string {
       // Minimum check-in date is 2 days from now
       const date = new Date(Date.now() + 86400000 * 2);
       return date.toISOString().split('T')[0];
     }
-    
+
   booking: Booking | null = null;
   loading = false;
   error: string | null = null;
@@ -118,11 +114,11 @@ export class BookingDetailComponent implements OnInit {
 
   canCancel(): boolean {
     if (!this.booking) return false;
-    
+
     const checkInDate = new Date(this.booking.checkInDate);
     const now = new Date();
-    
-    return checkInDate > now && 
+
+    return checkInDate > now &&
            this.booking.bookingStatus !== BookingStatus.CANCELLED &&
            this.booking.bookingStatus !== BookingStatus.REJECTED &&
            this.booking.bookingStatus !== BookingStatus.CHECKED_OUT;
@@ -213,7 +209,7 @@ export class BookingDetailComponent implements OnInit {
   // Edit booking methods
   openEditModal(): void {
     if (!this.booking) return;
-    
+
     this.editCheckIn = this.booking.checkInDate;
     this.editCheckOut = this.booking.checkOutDate;
     this.editGuests = this.booking.numberOfGuests;
@@ -231,14 +227,14 @@ export class BookingDetailComponent implements OnInit {
 
   canEdit(): boolean {
     if (!this.booking) return false;
-    
+
     const checkInDate = new Date(this.booking.checkInDate);
     const now = new Date();
-    
+
     // Can edit if check-in is at least 2 days away and booking is confirmed
     const twoDaysFromNow = new Date(now.getTime() + (2 * 24 * 60 * 60 * 1000));
-    
-    return checkInDate > twoDaysFromNow && 
+
+    return checkInDate > twoDaysFromNow &&
            this.booking.bookingStatus === BookingStatus.CONFIRMED;
   }
 
@@ -270,11 +266,11 @@ export class BookingDetailComponent implements OnInit {
         this.booking.checkInDate = this.editCheckIn;
         this.booking.checkOutDate = this.editCheckOut;
         this.booking.numberOfGuests = this.editGuests;
-        
+
         // Recalculate nights
         const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
         this.booking.numberOfNights = nights;
-        
+
         this.closeEditModal();
       }
       this.editing = false;
