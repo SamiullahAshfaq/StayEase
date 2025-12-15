@@ -59,9 +59,23 @@ public class AuthService {
                 .lastLoginAt(LocalDateTime.now())
                 .build();
 
-        // Assign default USER authority
-        Authority userAuthority = authorityRepository.findByName(AuthorityConstant.ROLE_TENANT)
-                .orElseThrow(() -> new NotFoundException("Authority not found: " + AuthorityConstant.ROLE_TENANT));
+        // Assign authority based on user type (default to ROLE_TENANT if not specified)
+        String requestedRole = (createUserDTO.getUserType() != null && !createUserDTO.getUserType().isEmpty())
+                ? createUserDTO.getUserType()
+                : AuthorityConstant.ROLE_TENANT;
+
+        // Validate role name (must be final for lambda)
+        final String roleName;
+        if (!requestedRole.equals(AuthorityConstant.ROLE_TENANT)
+                && !requestedRole.equals(AuthorityConstant.ROLE_LANDLORD)) {
+            log.warn("Invalid role requested: {}. Defaulting to ROLE_TENANT", requestedRole);
+            roleName = AuthorityConstant.ROLE_TENANT;
+        } else {
+            roleName = requestedRole;
+        }
+
+        Authority userAuthority = authorityRepository.findByName(roleName)
+                .orElseThrow(() -> new NotFoundException("Authority not found: " + roleName));
         user.addAuthority(userAuthority);
 
         User savedUser = userRepository.save(user);
@@ -108,14 +122,14 @@ public class AuthService {
                 .build();
     }
 
-    public AuthResponseDTO loginWithOAuth(String provider, String providerId, String email, 
-                                          String firstName, String lastName, String profileImageUrl) {
+    public AuthResponseDTO loginWithOAuth(String provider, String providerId, String email,
+            String firstName, String lastName, String profileImageUrl) {
         log.info("OAuth login attempt for provider: {}, providerId: {}", provider, providerId);
 
         User user = userRepository.findByOauthProviderAndOauthProviderId(provider, providerId)
                 .orElseGet(() -> {
                     log.info("Creating new OAuth user for email: {}", email);
-                    
+
                     User newUser = User.builder()
                             .email(email)
                             .firstName(firstName)
@@ -130,7 +144,8 @@ public class AuthService {
                             .build();
 
                     Authority userAuthority = authorityRepository.findByName(AuthorityConstant.ROLE_TENANT)
-                            .orElseThrow(() -> new NotFoundException("Authority not found: " + AuthorityConstant.ROLE_TENANT));
+                            .orElseThrow(() -> new NotFoundException(
+                                    "Authority not found: " + AuthorityConstant.ROLE_TENANT));
                     newUser.addAuthority(userAuthority);
 
                     return userRepository.save(newUser);
@@ -155,7 +170,6 @@ public class AuthService {
                 .user(userDTO)
                 .build();
     }
-
 
     public void changePassword(UUID publicId, String oldPassword, String newPassword) {
         log.info("Password change request for user publicId: {}", publicId);
@@ -200,8 +214,8 @@ public class AuthService {
      * Returns AuthResponseDTO with local JWT token
      */
     public AuthResponseDTO syncAuth0User(String sub, String email, Boolean emailVerified,
-                                  String name, String nickname, String picture,
-                                  String givenName, String familyName) {
+            String name, String nickname, String picture,
+            String givenName, String familyName) {
         log.info("Syncing Auth0 user with sub: {}", sub);
 
         User user = userRepository.findByOauthProviderAndOauthProviderId("auth0", sub)
@@ -233,7 +247,8 @@ public class AuthService {
 
                     // Assign default TENANT authority
                     Authority userAuthority = authorityRepository.findByName(AuthorityConstant.ROLE_TENANT)
-                            .orElseThrow(() -> new NotFoundException("Authority not found: " + AuthorityConstant.ROLE_TENANT));
+                            .orElseThrow(() -> new NotFoundException(
+                                    "Authority not found: " + AuthorityConstant.ROLE_TENANT));
                     newUser.addAuthority(userAuthority);
 
                     return userRepository.save(newUser);

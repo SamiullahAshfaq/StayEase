@@ -75,6 +75,11 @@ export class BookingCreateComponent implements OnInit {
     this.bookingForm.valueChanges.subscribe(() => {
       this.calculatePricing();
     });
+
+    // Calculate pricing on init if dates are already set
+    if (params['checkIn'] && params['checkOut']) {
+      setTimeout(() => this.calculatePricing(), 100);
+    }
   }
 
   loadListingDetails(): void {
@@ -170,15 +175,32 @@ export class BookingCreateComponent implements OnInit {
     this.bookingService.createBooking(bookingData).subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.successMessage = '🎉 Booking created successfully! Redirecting to your bookings...';
-          this.error = null;
+          const bookingId = response.data.publicId;
+          
+          // Immediately confirm the payment
+          this.bookingService.confirmPayment(bookingId).subscribe({
+            next: (confirmResponse) => {
+              this.successMessage = '🎉 Booking confirmed successfully! Redirecting to your bookings...';
+              this.error = null;
+              this.loading = false;
 
-          // Wait 2 seconds to show success message, then redirect
-          setTimeout(() => {
-            this.router.navigate(['/booking/list']);
-          }, 2000);
+              // Wait 2 seconds to show success message, then redirect
+              setTimeout(() => {
+                this.router.navigate(['/booking/list']);
+              }, 2000);
+            },
+            error: (confirmError) => {
+              this.error = 'Booking created but payment confirmation failed. Please contact support.';
+              this.loading = false;
+              console.error('Error confirming payment:', confirmError);
+            }
+          });
+        } else {
+          // Handle unexpected response format
+          this.error = 'Unexpected response from server. Please try again.';
+          this.loading = false;
+          console.error('Invalid response:', response);
         }
-        this.loading = false;
       },
       error: (error) => {
         this.error = error.error?.message || 'Failed to create booking. Please try again.';

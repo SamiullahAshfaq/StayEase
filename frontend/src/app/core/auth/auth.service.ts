@@ -16,6 +16,7 @@ export interface RegisterRequest {
   password: string;
   firstName: string;
   lastName: string;
+  userType: string; // ROLE_TENANT or ROLE_LANDLORD
 }
 
 export interface AuthResponse {

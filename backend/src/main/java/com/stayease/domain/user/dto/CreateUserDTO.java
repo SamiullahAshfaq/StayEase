@@ -14,28 +14,32 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreateUserDTO {
-    
+
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
-    
+
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
-    
+
     @NotBlank(message = "First name is required")
     @Size(max = 100, message = "First name must not exceed 100 characters")
     private String firstName;
-    
+
     @NotBlank(message = "Last name is required")
     @Size(max = 100, message = "Last name must not exceed 100 characters")
     private String lastName;
-    
+
     @Size(max = 20, message = "Phone number must not exceed 20 characters")
     private String phoneNumber;
-    
+
     private String profileImageUrl;
-    
+
     @Size(max = 1000, message = "Bio must not exceed 1000 characters")
     private String bio;
+
+    // Role/UserType for registration (ROLE_TENANT or ROLE_LANDLORD)
+    @NotBlank(message = "User type is required")
+    private String userType;
 }

@@ -245,7 +245,7 @@
     <div class="right-menu">
       @if (isAuthenticated) {
         <div class="user-menu">
-          <button class="menu-button" (click)="toggleMenu()">
+          <button class="menu-button" (click)="toggleMenu()" aria-label="User menu" aria-expanded="{{ isMenuOpen }}">
             <svg class="menu-icon" viewBox="0 0 32 32" fill="none">
               <rect x="6" y="8" width="20" height="2" fill="currentColor"/>
               <rect x="6" y="15" width="20" height="2" fill="currentColor"/>
@@ -262,21 +262,100 @@
 
           @if (isMenuOpen) {
             <div class="user-dropdown">
+              <!-- User Info Header -->
               <div class="user-dropdown-header">
-                {{ (currentUser?.firstName && currentUser?.lastName) ? (currentUser?.firstName + ' ' + currentUser?.lastName) : currentUser?.email }}
+                <div class="user-dropdown-name">
+                  {{ (currentUser?.firstName && currentUser?.lastName) ? (currentUser?.firstName + ' ' + currentUser?.lastName) : 'User' }}
+                </div>
+                <div class="user-dropdown-email">
+                  {{ currentUser?.email || '' }}
+                </div>
               </div>
+              
               <div class="dropdown-divider"></div>
-              <a routerLink="/profile" class="dropdown-item">Profile</a>
-              <a routerLink="/my-listings" class="dropdown-item">My Listings</a>
+              
+              <!-- Account Options -->
+              <div class="dropdown-section">
+                <button (click)="navigateToBookings()" class="dropdown-item">
+                  <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span>My Bookings</span>
+                </button>
+                
+                <button (click)="navigateToMyListings()" class="dropdown-item">
+                  <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span>My Listings</span>
+                </button>
+                
+                <button (click)="navigateToProfile()" class="dropdown-item">
+                  <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span>Profile</span>
+                </button>
+              </div>
+              
               <div class="dropdown-divider"></div>
-              <button (click)="logout()" class="dropdown-item logout-item">Log out</button>
+              
+              <!-- Logout -->
+              <button (click)="logout()" class="dropdown-item logout-item">
+                <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Log out</span>
+              </button>
             </div>
           }
         </div>
       } @else {
-        <div class="auth-buttons">
-          <button (click)="login()" class="auth-link">Log in</button>
-          <button (click)="signup()" class="auth-button">Sign up</button>
+        <div class="auth-menu">
+          <button class="menu-button guest-menu" (click)="toggleMenu()" aria-label="User menu" aria-expanded="{{ isMenuOpen }}">
+            <svg class="menu-icon" viewBox="0 0 32 32" fill="none">
+              <rect x="6" y="8" width="20" height="2" fill="currentColor"/>
+              <rect x="6" y="15" width="20" height="2" fill="currentColor"/>
+              <rect x="6" y="22" width="20" height="2" fill="currentColor"/>
+            </svg>
+            <div class="user-avatar-placeholder guest-avatar">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="width: 18px; height: 18px;">
+                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+          </button>
+
+          @if (isMenuOpen) {
+            <div class="user-dropdown">
+              <!-- Guest Options -->
+              <div class="dropdown-section">
+                <button (click)="login()" class="dropdown-item">
+                  <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span>Log in</span>
+                </button>
+                
+                <button (click)="signup()" class="dropdown-item">
+                  <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span>Sign up</span>
+                </button>
+              </div>
+              
+              <div class="dropdown-divider"></div>
+              
+              <div class="dropdown-section">
+                <button (click)="navigateToBookings()" class="dropdown-item">
+                  <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span>My Bookings</span>
+                </button>
+              </div>
+            </div>
+          }
         </div>
       }
     </div>

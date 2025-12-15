@@ -46,23 +46,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
                 UUID userId = jwtTokenProvider.getUserIdFromToken(jwt);
-                
-                // Load user details
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userId.toString());
-                
+
+                // Load user details by publicId (UUID) instead of email
+                // Cast to UserService to access loadUserByPublicId method
+                UserDetails userDetails;
+                if (userDetailsService instanceof com.stayease.domain.user.service.UserService) {
+                    userDetails = ((com.stayease.domain.user.service.UserService) userDetailsService)
+                            .loadUserByPublicId(userId);
+                } else {
+                    // Fallback (should not happen in production)
+                    log.warn("UserDetailsService is not UserService, falling back to loadUserByUsername");
+                    userDetails = userDetailsService.loadUserByUsername(userId.toString());
+                }
+
                 // Create authentication token
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-                
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
+
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                
+
                 // Set authentication in security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                
+
                 log.debug("Set Authentication for user: {}", userId);
             }
         } catch (Exception ex) {
@@ -74,11 +81,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        
+
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        
+
         return null;
     }
 }

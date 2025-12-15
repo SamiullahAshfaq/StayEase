@@ -147,14 +147,15 @@ export class RegisterComponent implements OnInit {
     this.errorMessage.set(null);
     this.successMessage.set(null);
 
-    const { firstName, lastName, email, password } = this.registerForm.value;
+    const { firstName, lastName, email, password, userType } = this.registerForm.value;
 
-    // Call backend API with correct field names
+    // Call backend API with correct field names including userType
     this.authService.register({
       email,
       password,
       firstName,
-      lastName
+      lastName,
+      userType  // ✅ Now sending the selected role
     }).subscribe({
       next: (response) => {
         console.log('Registration successful:', response);

@@ -58,7 +58,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers(HttpMethod.GET, "/api/listings/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/listings/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/services/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/services/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/legacy/auth/**").permitAll()
@@ -72,10 +74,12 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated())
                 // Add custom JWT filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // Keep OAuth2 resource server for external OAuth (optional)
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .authenticationEntryPoint(customAuthenticationEntryPoint))
+                // DISABLED: OAuth2 resource server conflicts with custom JWT filter
+                // Using custom JwtAuthenticationFilter instead which properly handles
+                // UUID-based authentication
+                // .oauth2ResourceServer(oauth2 -> oauth2
+                // .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                // .authenticationEntryPoint(customAuthenticationEntryPoint))
                 // Add custom authentication provider for username/password
                 .authenticationProvider(authenticationProvider())
                 .exceptionHandling(ex -> ex
@@ -87,8 +91,10 @@ public class SecurityConfiguration {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("permissions");
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        // Use "authorities" claim name (matching JwtTokenProvider)
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
+        // Don't add prefix since authorities already have "ROLE_" prefix
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
@@ -98,43 +104,39 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
+
         // Allow frontend origins
         configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:4200",
-            "http://localhost:4201",
-            "http://127.0.0.1:4200"
-        ));
-        
+                "http://localhost:4200",
+                "http://localhost:4201",
+                "http://127.0.0.1:4200"));
+
         // Allow all HTTP methods
         configuration.setAllowedMethods(Arrays.asList(
-            "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"
-        ));
-        
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
+
         // Allow common headers (cannot use * with credentials)
         configuration.setAllowedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "Accept",
-            "Origin",
-            "X-Requested-With",
-            "Cache-Control",
-            "Pragma",
-            "Expires"
-        ));
-        
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With",
+                "Cache-Control",
+                "Pragma",
+                "Expires"));
+
         // Expose headers that the client can access
         configuration.setExposedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "Content-Disposition",
-            "Link",
-            "X-Total-Count"
-        ));
-        
+                "Authorization",
+                "Content-Type",
+                "Content-Disposition",
+                "Link",
+                "X-Total-Count"));
+
         // Allow credentials (cookies, authorization headers)
         configuration.setAllowCredentials(true);
-        
+
         // Set max age for preflight requests (in seconds)
         configuration.setMaxAge(3600L);
 

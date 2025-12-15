@@ -45,15 +45,16 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     // Only initialize auth state in browser
     if (isPlatformBrowser(this.platformId)) {
-      // Small delay to ensure localStorage is accessible
-      setTimeout(() => {
-        this.updateAuthState();
+      // Initial state
+      this.updateAuthState();
 
-        // Subscribe to user changes
-        this.authService.currentUser$.subscribe(user => {
+      // Subscribe to user changes with ChangeDetectorRef to prevent NG0100
+      this.authService.currentUser$.subscribe(user => {
+        // Use setTimeout to defer state update to next change detection cycle
+        setTimeout(() => {
           this.updateAuthState();
-        });
-      }, 0);
+        }, 0);
+      });
     }
   }
 
@@ -81,8 +82,15 @@ export class HeaderComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
+    
+    // Close search if clicking outside
     if (!target.closest('.search-container')) {
       this.closeSearch();
+    }
+    
+    // Close menu if clicking outside
+    if (!target.closest('.user-menu') && !target.closest('.auth-menu') && this.isMenuOpen) {
+      this.isMenuOpen = false;
     }
   }
 
@@ -198,14 +206,33 @@ export class HeaderComponent implements OnInit {
 
   login() {
     this.router.navigate(['/auth/login']);
+    this.isMenuOpen = false;
   }
 
   signup() {
     this.router.navigate(['/auth/register']);
+    this.isMenuOpen = false;
+  }
+
+  navigateToBookings() {
+    this.router.navigate(['/booking/list']);
+    this.isMenuOpen = false;
+  }
+
+  navigateToProfile() {
+    this.router.navigate(['/profile']);
+    this.isMenuOpen = false;
+  }
+
+  navigateToMyListings() {
+    this.router.navigate(['/landlord/listings']);
+    this.isMenuOpen = false;
   }
 
   logout() {
     this.authService.logout();
+    this.isMenuOpen = false;
+    this.router.navigate(['/']);
   }
 
   // Search action

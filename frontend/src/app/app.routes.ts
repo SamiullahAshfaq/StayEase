@@ -129,7 +129,7 @@ export const routes: Routes = [
   // Booking routes (auth required)
   {
     path: 'booking',
-    canActivate: [authGuard, profileCompleteGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: 'list',

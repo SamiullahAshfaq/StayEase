@@ -1,8 +1,8 @@
-import { Component, OnInit, ApplicationRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookingService } from '../services/booking.service';
-import { Booking, BookingStatus } from '../models/booking.model';
+import { Booking, BookingStatus, BookingAddon } from '../models/booking.model';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -40,13 +40,13 @@ export class BookingDetailComponent implements OnInit {
   editCheckIn = '';
   editCheckOut = '';
   editGuests = 1;
+  editAddons: BookingAddon[] = [];
   editing = false;
 
   constructor(
     private bookingService: BookingService,
     private route: ActivatedRoute,
-    private router: Router,
-    private appRef: ApplicationRef
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -71,19 +71,16 @@ export class BookingDetailComponent implements OnInit {
         if (response.success && response.data) {
           this.booking = response.data;
           console.log('Booking loaded successfully:', this.booking);
+          this.loading = false;
         } else {
           this.error = 'Booking not found';
           console.error('Booking not found in response');
+          this.loading = false;
         }
-        this.loading = false;
-        console.log('Loading set to false');
-        this.appRef.tick(); // Trigger change detection
       },
       error: (error) => {
         this.error = 'Failed to load booking details. Please try again.';
         this.loading = false;
-        console.log('Loading set to false (error)');
-        this.appRef.tick(); // Trigger change detection
         console.error('Error loading booking:', error);
       }
     });
@@ -213,6 +210,8 @@ export class BookingDetailComponent implements OnInit {
     this.editCheckIn = this.booking.checkInDate;
     this.editCheckOut = this.booking.checkOutDate;
     this.editGuests = this.booking.numberOfGuests;
+    // Deep copy addons to avoid modifying original
+    this.editAddons = this.booking.addons ? JSON.parse(JSON.stringify(this.booking.addons)) : [];
     this.showEditModal = true;
     document.body.style.overflow = 'hidden';
   }
@@ -222,6 +221,8 @@ export class BookingDetailComponent implements OnInit {
     this.editCheckIn = '';
     this.editCheckOut = '';
     this.editGuests = 1;
+    this.editAddons = [];
+    this.error = null;
     document.body.style.overflow = 'auto';
   }
 
@@ -231,11 +232,42 @@ export class BookingDetailComponent implements OnInit {
     const checkInDate = new Date(this.booking.checkInDate);
     const now = new Date();
 
-    // Can edit if check-in is at least 2 days away and booking is confirmed
-    const twoDaysFromNow = new Date(now.getTime() + (2 * 24 * 60 * 60 * 1000));
+    // Can edit if check-in is in the future and booking is confirmed or pending
+    // (Cannot edit if already checked in, checked out, cancelled, or rejected)
+    return checkInDate > now &&
+           (this.booking.bookingStatus === BookingStatus.CONFIRMED ||
+            this.booking.bookingStatus === BookingStatus.PENDING);
+  }
 
-    return checkInDate > twoDaysFromNow &&
-           this.booking.bookingStatus === BookingStatus.CONFIRMED;
+  toggleAddon(addon: BookingAddon): void {
+    const index = this.editAddons.findIndex(a => a.name === addon.name);
+    if (index > -1) {
+      // Remove addon
+      this.editAddons.splice(index, 1);
+    } else {
+      // Add addon
+      this.editAddons.push({ ...addon });
+    }
+  }
+
+  isAddonSelected(addon: BookingAddon): boolean {
+    return this.editAddons.some(a => a.name === addon.name);
+  }
+
+  calculateEditTotal(): number {
+    if (!this.booking) return 0;
+
+    // Calculate base price (nights * price per night)
+    const checkIn = new Date(this.editCheckIn);
+    const checkOut = new Date(this.editCheckOut);
+    const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+    const pricePerNight = this.booking.totalPrice / this.booking.numberOfNights;
+    const basePrice = nights * pricePerNight;
+
+    // Add addons total
+    const addonsTotal = this.editAddons.reduce((sum, addon) => sum + (addon.price * addon.quantity), 0);
+
+    return basePrice + addonsTotal;
   }
 
   confirmEdit(): void {
@@ -266,10 +298,14 @@ export class BookingDetailComponent implements OnInit {
         this.booking.checkInDate = this.editCheckIn;
         this.booking.checkOutDate = this.editCheckOut;
         this.booking.numberOfGuests = this.editGuests;
+        this.booking.addons = [...this.editAddons];
 
         // Recalculate nights
         const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
         this.booking.numberOfNights = nights;
+
+        // Recalculate total price
+        this.booking.totalPrice = this.calculateEditTotal();
 
         this.closeEditModal();
       }

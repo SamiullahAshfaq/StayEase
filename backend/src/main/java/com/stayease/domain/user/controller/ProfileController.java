@@ -35,7 +35,7 @@ public class ProfileController {
      * Get current user's profile
      */
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'LANDLORD', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<UserDTO>> getProfile() {
         log.info("GET request to fetch current user's profile");
         UUID currentUserId = SecurityUtils.getCurrentUserId();
@@ -47,7 +47,7 @@ public class ProfileController {
      * Update current user's profile
      */
     @PutMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'LANDLORD', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<UserDTO>> updateProfile(
             @Valid @RequestBody UpdateUserDTO updateUserDTO) {
         log.info("PUT request to update current user's profile");
@@ -62,45 +62,44 @@ public class ProfileController {
      * TODO: Implement proper file upload to cloud storage (S3, Cloudinary, etc.)
      */
     @PostMapping("/image")
-    @PreAuthorize("hasAnyAuthority('USER', 'LANDLORD', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadProfileImage(
             @RequestBody Map<String, String> request) {
         log.info("POST request to upload profile image");
         UUID currentUserId = SecurityUtils.getCurrentUserId();
-        
+
         String imageUrl = request.get("imageUrl");
         if (imageUrl == null || imageUrl.isEmpty()) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.error("Image URL is required"));
         }
-        
+
         // Update user with new profile image
         UpdateUserDTO updateDTO = UpdateUserDTO.builder()
                 .profileImageUrl(imageUrl)
                 .build();
         userService.updateUser(currentUserId, updateDTO);
-        
+
         return ResponseEntity.ok(ApiResponse.success(
                 Map.of("imageUrl", imageUrl),
-                "Profile image uploaded successfully"
-        ));
+                "Profile image uploaded successfully"));
     }
 
     /**
      * Delete profile image
      */
     @DeleteMapping("/image")
-    @PreAuthorize("hasAnyAuthority('USER', 'LANDLORD', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteProfileImage() {
         log.info("DELETE request to delete profile image");
         UUID currentUserId = SecurityUtils.getCurrentUserId();
-        
+
         // Update user to remove profile image
         UpdateUserDTO updateDTO = UpdateUserDTO.builder()
                 .profileImageUrl(null)
                 .build();
         userService.updateUser(currentUserId, updateDTO);
-        
+
         return ResponseEntity.ok(ApiResponse.success(null, "Profile image deleted successfully"));
     }
 }

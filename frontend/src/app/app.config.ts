@@ -1,5 +1,5 @@
 // src/app/app.config.ts
-import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -14,7 +14,7 @@ import * as echarts from 'echarts/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZonelessChangeDetection(),
+    // REMOVED: provideZonelessChangeDetection() - This was causing change detection issues
     provideRouter(routes),
     provideEchartsCore({ echarts }),
     provideHttpClient(

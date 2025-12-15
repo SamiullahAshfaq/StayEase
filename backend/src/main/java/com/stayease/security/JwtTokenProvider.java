@@ -36,7 +36,7 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject(user.getId().toString())
+                .setSubject(user.getPublicId().toString()) // ✅ Use publicId (UUID) instead of id (Long)
                 .claim("email", user.getEmail())
                 .claim("authorities", authorities)
                 .setIssuedAt(now)

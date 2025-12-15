@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -121,7 +121,8 @@ export class ListingDetailComponent implements OnInit {
     private listingService: ListingService,
     private route: ActivatedRoute,
     private router: Router,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
+    private cdr: ChangeDetectorRef
   ) {
     this.today = new Date().toISOString().split('T')[0];
     this.currentUrl = this.document.location.href;
@@ -143,13 +144,17 @@ export class ListingDetailComponent implements OnInit {
         if (response.success && response.data) {
           this.listing = response.data;
           this.loadSimilarListings();
+          console.log('Listing loaded:', this.listing.publicId);
         }
         this.loading = false;
+        // Trigger change detection to ensure UI updates
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this.error = 'Failed to load listing. Please try again.';
         this.loading = false;
         console.error('Error loading listing:', error);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -169,6 +174,9 @@ export class ListingDetailComponent implements OnInit {
           this.similarListings = response.data.content
             .filter(l => l.publicId !== this.listing?.publicId)
             .slice(0, 3);
+          console.log('Similar listings loaded:', this.similarListings.length);
+          // Trigger change detection for similar listings
+          this.cdr.detectChanges();
         }
       },
       error: (error) => {

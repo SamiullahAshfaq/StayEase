@@ -50,6 +50,17 @@ public class UserService implements UserDetailsService {
         return UserPrincipal.create(user);
     }
 
+    /**
+     * Load user by publicId (UUID) - used for JWT authentication
+     */
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByPublicId(UUID publicId) throws UsernameNotFoundException {
+        log.debug("Authenticating user with publicId: {}", publicId);
+        User user = userRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with publicId: " + publicId));
+        return UserPrincipal.create(user);
+    }
+
     public UserDTO createUser(CreateUserDTO createUserDTO) {
         log.info("Creating new user with email: {}", createUserDTO.getEmail());
 
@@ -112,7 +123,6 @@ public class UserService implements UserDetailsService {
                 .map(userMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
 
     public UserDTO updateUser(UUID publicId, UpdateUserDTO updateUserDTO) {
         log.info("Updating user with publicId: {}", publicId);

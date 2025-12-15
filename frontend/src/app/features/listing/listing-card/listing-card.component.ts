@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Listing } from '../models/listing.model';
@@ -8,9 +8,10 @@ import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
   selector: 'app-listing-card',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './listing-card.component.html'
+  templateUrl: './listing-card.component.html',
+  changeDetection: ChangeDetectionStrategy.Default
 })
-export class ListingCardComponent {
+export class ListingCardComponent implements OnInit {
   @Input() listing!: Listing;
 
   currentImageIndex = 0;
@@ -18,9 +19,17 @@ export class ListingCardComponent {
 
   constructor(private router: Router) {}
 
+  ngOnInit(): void {
+    // Ensure images are available on init
+    if (this.listing) {
+      console.log('Listing card initialized:', this.listing.publicId, 'Images:', this.listing.images?.length);
+    }
+  }
+
   navigateToListing(): void {
-    console.log('Navigating to listing:', this.listing.publicId);
-    this.router.navigate(['/listings', this.listing.publicId]);
+    console.log('Navigating to listing detail:', this.listing.publicId);
+    // Navigate to listing detail page where user can view full details and book
+    this.router.navigate(['/listing', this.listing.publicId]);
   }
 
   nextImage(event: Event): void {

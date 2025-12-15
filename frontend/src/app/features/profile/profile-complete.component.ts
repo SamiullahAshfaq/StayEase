@@ -276,8 +276,12 @@ export class ProfileCompleteComponent implements OnInit {
                 // The response.data is correctly typed as the User from auth.service
                 this.authService.updateCurrentUser(response.data);
 
-                // Navigate based on role
-                this.navigateBasedOnRole();
+                // Small delay to ensure localStorage is written before navigation
+                setTimeout(() => {
+                  this.loading.set(false);
+                  // Navigate based on role
+                  this.navigateBasedOnRole();
+                }, 100);
               }
             },
             error: (error) => {

@@ -1,5 +1,5 @@
-import { Component, OnInit, PLATFORM_ID, inject, NgZone } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, inject, NgZone, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -10,7 +10,7 @@ import { Listing } from '../listing/models/listing.model';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, FormsModule, ListingCardComponent],
+  imports: [CommonModule, RouterLink, FormsModule, ListingCardComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   animations: [
@@ -80,6 +80,7 @@ export class HomeComponent implements OnInit {
   private listingService = inject(ListingService);
   private router = inject(Router);
   private ngZone = inject(NgZone);
+  private cdr = inject(ChangeDetectorRef);
   private platformId = inject(PLATFORM_ID);
 
   ngOnInit(): void {
@@ -94,18 +95,18 @@ export class HomeComponent implements OnInit {
     this.loadingListings = true;
     this.listingService.getAllListings(0, 8).subscribe({
       next: (response) => {
-        this.ngZone.run(() => {
-          if (response.success && response.data) {
-            this.featuredListings = response.data.content;
-          }
-          this.loadingListings = false;
-        });
+        console.log('Featured listings loaded:', response);
+        if (response.success && response.data) {
+          this.featuredListings = response.data.content;
+        }
+        this.loadingListings = false;
+        // Force change detection
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        this.ngZone.run(() => {
-          console.error('Error loading featured listings:', error);
-          this.loadingListings = false;
-        });
+        console.error('Error loading featured listings:', error);
+        this.loadingListings = false;
+        this.cdr.detectChanges();
       }
     });
   }

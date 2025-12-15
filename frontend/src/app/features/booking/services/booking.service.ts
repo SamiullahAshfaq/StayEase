@@ -67,4 +67,11 @@ export class BookingService {
       `${this.apiUrl}/listing/${listingPublicId}/unavailable-dates`
     );
   }
+
+  confirmPayment(bookingPublicId: string): Observable<ApiResponse<Booking>> {
+    return this.http.post<ApiResponse<Booking>>(
+      `${this.apiUrl}/${bookingPublicId}/confirm-payment`,
+      null
+    );
+  }
 }

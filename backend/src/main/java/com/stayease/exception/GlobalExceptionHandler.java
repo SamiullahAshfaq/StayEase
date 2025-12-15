@@ -19,137 +19,143 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorDTO> handleNotFoundException(
-            NotFoundException ex, WebRequest request) {
-        log.error("NotFoundException: {}", ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder()
-                .message(ex.getMessage())
-                .status(HttpStatus.NOT_FOUND.value())
-                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
+        @ExceptionHandler(NotFoundException.class)
+        public ResponseEntity<ErrorDTO> handleNotFoundException(
+                        NotFoundException ex, WebRequest request) {
+                log.error("NotFoundException: {}", ex.getMessage());
+                ErrorDTO error = ErrorDTO.builder()
+                                .message(ex.getMessage())
+                                .status(HttpStatus.NOT_FOUND.value())
+                                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
 
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorDTO> handleConflictException(
-            ConflictException ex, WebRequest request) {
-        log.error("ConflictException: {}", ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder()
-                .message(ex.getMessage())
-                .status(HttpStatus.CONFLICT.value())
-                .error(HttpStatus.CONFLICT.getReasonPhrase())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
+        @ExceptionHandler(ConflictException.class)
+        public ResponseEntity<ErrorDTO> handleConflictException(
+                        ConflictException ex, WebRequest request) {
+                log.error("ConflictException: {}", ex.getMessage());
+                ErrorDTO error = ErrorDTO.builder()
+                                .message(ex.getMessage())
+                                .status(HttpStatus.CONFLICT.value())
+                                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+        }
 
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorDTO> handleUnauthorizedException(
-            UnauthorizedException ex, WebRequest request) {
-        log.error("UnauthorizedException: {}", ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder()
-                .message(ex.getMessage())
-                .status(HttpStatus.UNAUTHORIZED.value())
-                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
-    }
+        @ExceptionHandler(UnauthorizedException.class)
+        public ResponseEntity<ErrorDTO> handleUnauthorizedException(
+                        UnauthorizedException ex, WebRequest request) {
+                log.error("UnauthorizedException: {}", ex.getMessage());
+                ErrorDTO error = ErrorDTO.builder()
+                                .message(ex.getMessage())
+                                .status(HttpStatus.UNAUTHORIZED.value())
+                                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+        }
 
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ErrorDTO> handleForbiddenException(
-            ForbiddenException ex, WebRequest request) {
-        log.error("ForbiddenException: {}", ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder()
-                .message(ex.getMessage())
-                .status(HttpStatus.FORBIDDEN.value())
-                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
-    }
+        @ExceptionHandler(ForbiddenException.class)
+        public ResponseEntity<ErrorDTO> handleForbiddenException(
+                        ForbiddenException ex, WebRequest request) {
+                log.error("ForbiddenException: {}", ex.getMessage());
+                ErrorDTO error = ErrorDTO.builder()
+                                .message(ex.getMessage())
+                                .status(HttpStatus.FORBIDDEN.value())
+                                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+        }
 
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorDTO> handleBadRequestException(
-            BadRequestException ex, WebRequest request) {
-        log.error("BadRequestException: {}", ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder()
-                .message(ex.getMessage())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
+        @ExceptionHandler(BadRequestException.class)
+        public ResponseEntity<ErrorDTO> handleBadRequestException(
+                        BadRequestException ex, WebRequest request) {
+                log.error("BadRequestException: {}", ex.getMessage());
+                ErrorDTO error = ErrorDTO.builder()
+                                .message(ex.getMessage())
+                                .status(HttpStatus.BAD_REQUEST.value())
+                                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
 
-    @ExceptionHandler(PaymentException.class)
-    public ResponseEntity<ErrorDTO> handlePaymentException(
-            PaymentException ex, WebRequest request) {
-        log.error("PaymentException: {}", ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder()
-                .message(ex.getMessage())
-                .status(HttpStatus.PAYMENT_REQUIRED.value())
-                .error("Payment Required")
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.PAYMENT_REQUIRED);
-    }
+        @ExceptionHandler(PaymentException.class)
+        public ResponseEntity<ErrorDTO> handlePaymentException(
+                        PaymentException ex, WebRequest request) {
+                log.error("PaymentException: {}", ex.getMessage());
+                ErrorDTO error = ErrorDTO.builder()
+                                .message(ex.getMessage())
+                                .status(HttpStatus.PAYMENT_REQUIRED.value())
+                                .error("Payment Required")
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.PAYMENT_REQUIRED);
+        }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorDTO> handleAccessDeniedException(
-            AccessDeniedException ex, WebRequest request) {
-        log.error("AccessDeniedException: {}", ex.getMessage());
-        ErrorDTO error = ErrorDTO.builder()
-                .message("Access denied: You don't have permission to access this resource")
-                .status(HttpStatus.FORBIDDEN.value())
-                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
-    }
+        @ExceptionHandler(AccessDeniedException.class)
+        public ResponseEntity<ErrorDTO> handleAccessDeniedException(
+                        AccessDeniedException ex, WebRequest request) {
+                log.error("AccessDeniedException: {}", ex.getMessage());
+                ErrorDTO error = ErrorDTO.builder()
+                                .message("Access denied: You don't have permission to access this resource")
+                                .status(HttpStatus.FORBIDDEN.value())
+                                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+        }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDTO> handleValidationException(
-            MethodArgumentNotValidException ex, WebRequest request) {
-        log.error("ValidationException: {}", ex.getMessage());
-        
-        List<String> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(FieldError::getDefaultMessage)
-                .collect(Collectors.toList());
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<ErrorDTO> handleValidationException(
+                        MethodArgumentNotValidException ex, WebRequest request) {
+                log.error("ValidationException: {}", ex.getMessage());
 
-        ErrorDTO error = ErrorDTO.builder()
-                .message("Validation failed")
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .details(errors)
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
+                List<String> errors = ex.getBindingResult()
+                                .getFieldErrors()
+                                .stream()
+                                .map(FieldError::getDefaultMessage)
+                                .collect(Collectors.toList());
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDTO> handleGlobalException(
-            Exception ex, WebRequest request) {
-        log.error("Unhandled exception: ", ex);
-        ErrorDTO error = ErrorDTO.builder()
-                .message("An unexpected error occurred")
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .timestamp(LocalDateTime.now())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+                ErrorDTO error = ErrorDTO.builder()
+                                .message("Validation failed")
+                                .status(HttpStatus.BAD_REQUEST.value())
+                                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .details(errors)
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ErrorDTO> handleGlobalException(
+                        Exception ex, WebRequest request) {
+                log.error("==================== UNHANDLED EXCEPTION ====================");
+                log.error("Exception Type: {}", ex.getClass().getName());
+                log.error("Exception Message: {}", ex.getMessage());
+                log.error("Request: {}", request.getDescription(true));
+                log.error("Stack Trace: ", ex);
+                log.error("============================================================");
+
+                ErrorDTO error = ErrorDTO.builder()
+                                .message("An unexpected error occurred: " + ex.getMessage())
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                                .path(request.getDescription(false).replace("uri=", ""))
+                                .timestamp(LocalDateTime.now())
+                                .build();
+                return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 }

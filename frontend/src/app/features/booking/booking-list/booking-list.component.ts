@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { BookingService } from '../services/booking.service';
@@ -35,8 +35,7 @@ export class BookingListComponent implements OnInit {
 
   constructor(
     private bookingService: BookingService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
+    private router: Router
   ) {
     // Subscribe to route changes to reload bookings
     this.router.events
@@ -59,7 +58,6 @@ export class BookingListComponent implements OnInit {
     console.log('loadBookings() called');
     this.loading = true;
     this.error = null;
-    this.cdr.detectChanges(); // Force update to show spinner
 
     this.bookingService.getMyBookings(this.currentPage, this.pageSize).subscribe({
       next: (response) => {
@@ -73,14 +71,9 @@ export class BookingListComponent implements OnInit {
           this.totalElements = response.data.totalElements;
           this.filterBookings();
           console.log('Filtered bookings:', this.filteredBookings.length);
-
-          // Force loading to false and trigger change detection
           this.loading = false;
-          console.log('Loading set to false, triggering change detection');
-          this.cdr.detectChanges();
         } else {
           this.loading = false;
-          this.cdr.detectChanges();
           console.log('Loading set to false (no data)');
         }
       },
@@ -88,7 +81,6 @@ export class BookingListComponent implements OnInit {
         console.error('Error loading bookings:', error);
         this.error = 'Failed to load bookings. Please try again.';
         this.loading = false;
-        this.cdr.detectChanges();
       }
     });
   }
