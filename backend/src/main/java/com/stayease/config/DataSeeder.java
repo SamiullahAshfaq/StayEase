@@ -87,9 +87,9 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedAuthorities() {
         log.info("🔐 Seeding authorities...");
-        
-        List<String> roles = Arrays.asList("ROLE_USER", "ROLE_LANDLORD", "ROLE_ADMIN");
-        
+
+        List<String> roles = Arrays.asList("ROLE_USER", "ROLE_LANDLORD", "ROLE_ADMIN", "ROLE_SERVICE_PROVIDER");
+
         for (String roleName : roles) {
             if (authorityRepository.findByName(roleName).isEmpty()) {
                 Authority authority = Authority.builder()
@@ -145,7 +145,7 @@ public class DataSeeder implements CommandLineRunner {
             "Richard", "Isabella", "Charles", "Mia", "Thomas", "Charlotte", "Daniel", "Amelia", "Matthew", "Harper",
             "Christopher", "Evelyn", "Andrew", "Abigail", "Joshua", "Emily", "Kevin", "Elizabeth", "Brian", "Sofia",
             "George", "Avery", "Kenneth", "Ella", "Steven", "Scarlett", "Edward", "Grace", "Ronald", "Chloe"};
-        
+
         for (int i = 0; i < 40; i++) {
             User landlord = createUser(
                     "landlord" + (i + 1) + "@stayease.com",
@@ -161,7 +161,26 @@ public class DataSeeder implements CommandLineRunner {
             users.put("landlord" + (i + 1), landlord);
         }
 
-        log.info("Created {} users ({} landlords, {} guests, 1 admin)", users.size(), 40, 5);
+        // Service Providers - 10 service providers for service offerings
+        String[] serviceProviderFirstNames = {"Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Avery", "Quinn", "Skyler", "Cameron"};
+        String[] serviceProviderLastNames = {"Service", "Provider", "Expert", "Pro", "Specialist", "Professional", "Consultant", "Advisor", "Guide", "Helper"};
+
+        for (int i = 0; i < 10; i++) {
+            User serviceProvider = createUser(
+                    "serviceprovider" + (i + 1) + "@stayease.com",
+                    serviceProviderFirstNames[i],
+                    serviceProviderLastNames[i],
+                    "+1555020" + String.format("%02d", i + 1),
+                    "/images/profiles/serviceprovider-" + (i + 1) + ".jpg",
+                    "Professional service provider offering quality services.",
+                    true
+            );
+            serviceProvider = userRepository.save(serviceProvider);
+            assignAuthorities(serviceProvider, "ROLE_SERVICE_PROVIDER", "ROLE_USER");
+            users.put("serviceprovider" + (i + 1), serviceProvider);
+        }
+
+        log.info("Created {} users ({} landlords, {} service providers, {} guests, 1 admin)", users.size(), 40, 10, 5);
         return users;
     }
 
@@ -380,67 +399,67 @@ public class DataSeeder implements CommandLineRunner {
         
         // Service data: category, title, description, pricingType, basePrice, city, country, provider
         Object[][] serviceData = {
-            {ServiceCategory.HOME_CHEF, "Professional Home Chef Service", "Enjoy gourmet meals prepared in your home by experienced chefs. Perfect for dinner parties, meal prep, or special occasions.", PricingType.PER_SESSION, 150.0, "Malibu", "United States", "landlord1"},
-            {ServiceCategory.HOME_CHEF, "Italian Cuisine Expert", "Authentic Italian cooking with fresh ingredients. Specializing in pasta, risotto, and traditional Italian desserts.", PricingType.PER_SESSION, 180.0, "New York", "United States", "landlord3"},
-            {ServiceCategory.HOME_CHEF, "Asian Fusion Chef", "Modern Asian fusion cuisine combining traditional flavors with contemporary techniques.", PricingType.PER_SESSION, 165.0, "San Francisco", "United States", "landlord40"},
-            
-            {ServiceCategory.TOUR_GUIDE, "Local City Explorer", "Discover hidden gems and local favorites with an experienced tour guide. Customized tours based on your interests.", PricingType.PER_HOUR, 45.0, "Paris", "France", "landlord5"},
-            {ServiceCategory.TOUR_GUIDE, "Historical Walking Tours", "Expert-led walking tours through historic districts with fascinating stories and insider knowledge.", PricingType.PER_PERSON, 35.0, "Charleston", "United States", "landlord39"},
-            {ServiceCategory.TOUR_GUIDE, "Adventure Tour Guide", "Exciting outdoor adventures including hiking, kayaking, and wildlife spotting with certified guides.", PricingType.PER_DAY, 200.0, "Queenstown", "New Zealand", "landlord30"},
-            
-            {ServiceCategory.CAR_RENTAL, "Luxury Vehicle Rental", "Premium car rental service featuring high-end vehicles for special occasions or business needs.", PricingType.PER_DAY, 150.0, "Beverly Hills", "United States", "landlord15"},
-            {ServiceCategory.CAR_RENTAL, "SUV and Family Vehicles", "Spacious SUVs perfect for family trips and group travel. Clean, well-maintained vehicles.", PricingType.PER_DAY, 85.0, "Aspen", "United States", "landlord2"},
-            {ServiceCategory.CAR_RENTAL, "Eco-Friendly Car Rental", "Electric and hybrid vehicles for environmentally conscious travelers.", PricingType.PER_DAY, 95.0, "Portland", "United States", "landlord33"},
-            
-            {ServiceCategory.AIRPORT_TRANSFER, "Premium Airport Transfer", "Professional airport pickup and drop-off service with comfortable vehicles and experienced drivers.", PricingType.CUSTOM, 75.0, "Dubai", "United Arab Emirates", "landlord31"},
-            {ServiceCategory.AIRPORT_TRANSFER, "Group Airport Shuttle", "Reliable airport transfer service for groups. Spacious vehicles with luggage space.", PricingType.PER_PERSON, 25.0, "Monaco", "Monaco", "landlord32"},
-            
-            {ServiceCategory.LAUNDRY_SERVICE, "Express Laundry & Dry Cleaning", "Professional laundry and dry cleaning service with same-day delivery available.", PricingType.PER_ITEM, 8.0, "Manhattan", "United States", "landlord3"},
-            {ServiceCategory.LAUNDRY_SERVICE, "Eco-Friendly Laundry Service", "Green laundry service using environmentally friendly detergents and processes.", PricingType.PER_ITEM, 10.0, "Ubud", "Indonesia", "landlord4"},
-            
-            {ServiceCategory.HOUSE_CLEANING, "Professional Deep Cleaning", "Thorough house cleaning service with attention to detail. Licensed and insured cleaners.", PricingType.PER_SESSION, 120.0, "Los Angeles", "United States", "landlord15"},
-            {ServiceCategory.HOUSE_CLEANING, "Regular Maintenance Cleaning", "Weekly or bi-weekly cleaning service to keep your space spotless.", PricingType.PER_SESSION, 85.0, "San Francisco", "United States", "landlord40"},
-            
-            {ServiceCategory.MASSAGE_SPA, "Luxury In-Home Spa Experience", "Premium massage and spa treatments in the comfort of your accommodation. Certified therapists.", PricingType.PER_SESSION, 180.0, "Maldives", "Maldives", "landlord12"},
-            {ServiceCategory.MASSAGE_SPA, "Therapeutic Massage Service", "Professional therapeutic massage for relaxation and muscle recovery.", PricingType.PER_HOUR, 95.0, "Santorini", "Greece", "landlord6"},
-            {ServiceCategory.MASSAGE_SPA, "Couples Spa Package", "Romantic couples massage and spa treatments. Perfect for special occasions.", PricingType.PER_SESSION, 300.0, "Bali", "Indonesia", "landlord4"},
-            
-            {ServiceCategory.PHOTOGRAPHY, "Professional Event Photography", "Capture your special moments with professional photography services.", PricingType.PER_HOUR, 125.0, "Paris", "France", "landlord5"},
-            {ServiceCategory.PHOTOGRAPHY, "Portrait & Family Photography", "Beautiful portrait sessions for individuals, couples, and families.", PricingType.PER_SESSION, 250.0, "Ibiza", "Spain", "landlord19"},
-            {ServiceCategory.PHOTOGRAPHY, "Travel & Adventure Photography", "Document your adventures with professional travel photography.", PricingType.PER_DAY, 450.0, "Iceland", "Iceland", "landlord11"},
-            
-            {ServiceCategory.EVENT_PLANNING, "Full-Service Event Planning", "Complete event planning and coordination for parties, weddings, and corporate events.", PricingType.CUSTOM, 800.0, "Monaco", "Monaco", "landlord32"},
-            {ServiceCategory.EVENT_PLANNING, "Party Decoration & Setup", "Professional party decoration and setup service for all occasions.", PricingType.PER_SESSION, 350.0, "Dubai", "United Arab Emirates", "landlord31"},
-            
-            {ServiceCategory.BABY_SITTING, "Certified Childcare Provider", "Experienced and certified babysitters for your peace of mind. Background checked.", PricingType.PER_HOUR, 25.0, "New York", "United States", "landlord3"},
-            {ServiceCategory.BABY_SITTING, "Evening Babysitting Service", "Reliable evening babysitting so you can enjoy a night out.", PricingType.PER_HOUR, 22.0, "Charleston", "United States", "landlord39"},
-            
-            {ServiceCategory.PET_CARE, "Professional Pet Sitting", "Loving pet care in your home while you're away. All pets welcome.", PricingType.PER_DAY, 45.0, "Stowe", "United States", "landlord38"},
-            {ServiceCategory.PET_CARE, "Dog Walking Service", "Daily dog walking service with flexible schedules. Active and engaging walks.", PricingType.PER_SESSION, 20.0, "Portland", "United States", "landlord33"},
-            {ServiceCategory.PET_CARE, "Pet Grooming Service", "Professional pet grooming in your home. Stress-free for your pets.", PricingType.PER_SESSION, 65.0, "San Francisco", "United States", "landlord40"},
-            
-            {ServiceCategory.GROCERY_DELIVERY, "Fresh Grocery Delivery", "Personal grocery shopping and delivery service. Fresh produce and quality products.", PricingType.CUSTOM, 30.0, "Manhattan", "United States", "landlord3"},
-            {ServiceCategory.GROCERY_DELIVERY, "Organic & Local Produce Delivery", "Delivery of organic and locally sourced groceries to your door.", PricingType.CUSTOM, 35.0, "Stowe", "United States", "landlord38"},
-            
-            {ServiceCategory.PERSONAL_TRAINER, "Personal Fitness Training", "One-on-one fitness training sessions customized to your goals.", PricingType.PER_SESSION, 75.0, "Los Angeles", "United States", "landlord15"},
-            {ServiceCategory.PERSONAL_TRAINER, "Group Fitness Classes", "Energetic group fitness classes for all fitness levels.", PricingType.PER_PERSON, 25.0, "Dubai", "United Arab Emirates", "landlord31"},
-            {ServiceCategory.PERSONAL_TRAINER, "Outdoor Boot Camp", "High-intensity outdoor training sessions in beautiful locations.", PricingType.PER_SESSION, 65.0, "Big Sur", "United States", "landlord9"},
-            
-            {ServiceCategory.YOGA_MEDITATION, "Private Yoga Sessions", "Personalized yoga instruction for all levels in your accommodation.", PricingType.PER_SESSION, 80.0, "Bali", "Indonesia", "landlord4"},
-            {ServiceCategory.YOGA_MEDITATION, "Meditation & Mindfulness Classes", "Guided meditation and mindfulness practices for relaxation and stress relief.", PricingType.PER_SESSION, 60.0, "Ubud", "Indonesia", "landlord4"},
-            {ServiceCategory.YOGA_MEDITATION, "Sunrise Beach Yoga", "Refreshing yoga sessions on the beach at sunrise.", PricingType.PER_SESSION, 70.0, "Phuket", "Thailand", "landlord20"},
-            
-            {ServiceCategory.LANGUAGE_TUTOR, "English Language Tutoring", "Professional English language instruction for all levels.", PricingType.PER_HOUR, 45.0, "Tokyo", "Japan", "landlord17"},
-            {ServiceCategory.LANGUAGE_TUTOR, "French Language Lessons", "Learn French from native speakers with customized lessons.", PricingType.PER_HOUR, 50.0, "Paris", "France", "landlord5"},
-            {ServiceCategory.LANGUAGE_TUTOR, "Spanish Conversation Practice", "Improve your Spanish through conversation with experienced tutors.", PricingType.PER_HOUR, 40.0, "Ibiza", "Spain", "landlord19"},
-            
-            {ServiceCategory.BIKE_RENTAL, "City Bike Rental", "Quality bicycles for exploring the city. Daily and weekly rentals available.", PricingType.PER_DAY, 25.0, "Paris", "France", "landlord5"},
-            {ServiceCategory.BIKE_RENTAL, "Mountain Bike Adventures", "High-performance mountain bikes for trail riding and adventures.", PricingType.PER_DAY, 45.0, "Whistler", "Canada", "landlord27"},
-            {ServiceCategory.BIKE_RENTAL, "E-Bike Tours", "Electric bicycle rentals for effortless exploration of scenic areas.", PricingType.PER_DAY, 55.0, "Santorini", "Greece", "landlord6"},
-            
-            {ServiceCategory.EQUIPMENT_RENTAL, "Camping Equipment Rental", "Complete camping gear rental including tents, sleeping bags, and cooking equipment.", PricingType.PER_DAY, 35.0, "Yosemite", "United States", "landlord29"},
-            {ServiceCategory.EQUIPMENT_RENTAL, "Water Sports Equipment", "Kayaks, paddleboards, and snorkeling gear for water adventures.", PricingType.PER_DAY, 40.0, "Bahamas", "Bahamas", "landlord21"},
-            {ServiceCategory.EQUIPMENT_RENTAL, "Winter Sports Equipment", "Ski and snowboard rentals with latest equipment.", PricingType.PER_DAY, 50.0, "Chamonix", "France", "landlord28"}
+            {ServiceCategory.HOME_CHEF, "Professional Home Chef Service", "Enjoy gourmet meals prepared in your home by experienced chefs. Perfect for dinner parties, meal prep, or special occasions.", PricingType.PER_SESSION, 150.0, "Malibu", "United States", "serviceprovider1"},
+            {ServiceCategory.HOME_CHEF, "Italian Cuisine Expert", "Authentic Italian cooking with fresh ingredients. Specializing in pasta, risotto, and traditional Italian desserts.", PricingType.PER_SESSION, 180.0, "New York", "United States", "serviceprovider2"},
+            {ServiceCategory.HOME_CHEF, "Asian Fusion Chef", "Modern Asian fusion cuisine combining traditional flavors with contemporary techniques.", PricingType.PER_SESSION, 165.0, "San Francisco", "United States", "serviceprovider3"},
+
+            {ServiceCategory.TOUR_GUIDE, "Local City Explorer", "Discover hidden gems and local favorites with an experienced tour guide. Customized tours based on your interests.", PricingType.PER_HOUR, 45.0, "Paris", "France", "serviceprovider4"},
+            {ServiceCategory.TOUR_GUIDE, "Historical Walking Tours", "Expert-led walking tours through historic districts with fascinating stories and insider knowledge.", PricingType.PER_PERSON, 35.0, "Charleston", "United States", "serviceprovider5"},
+            {ServiceCategory.TOUR_GUIDE, "Adventure Tour Guide", "Exciting outdoor adventures including hiking, kayaking, and wildlife spotting with certified guides.", PricingType.PER_DAY, 200.0, "Queenstown", "New Zealand", "serviceprovider6"},
+
+            {ServiceCategory.CAR_RENTAL, "Luxury Vehicle Rental", "Premium car rental service featuring high-end vehicles for special occasions or business needs.", PricingType.PER_DAY, 150.0, "Beverly Hills", "United States", "serviceprovider7"},
+            {ServiceCategory.CAR_RENTAL, "SUV and Family Vehicles", "Spacious SUVs perfect for family trips and group travel. Clean, well-maintained vehicles.", PricingType.PER_DAY, 85.0, "Aspen", "United States", "serviceprovider8"},
+            {ServiceCategory.CAR_RENTAL, "Eco-Friendly Car Rental", "Electric and hybrid vehicles for environmentally conscious travelers.", PricingType.PER_DAY, 95.0, "Portland", "United States", "serviceprovider9"},
+
+            {ServiceCategory.AIRPORT_TRANSFER, "Premium Airport Transfer", "Professional airport pickup and drop-off service with comfortable vehicles and experienced drivers.", PricingType.CUSTOM, 75.0, "Dubai", "United Arab Emirates", "serviceprovider10"},
+            {ServiceCategory.AIRPORT_TRANSFER, "Group Airport Shuttle", "Reliable airport transfer service for groups. Spacious vehicles with luggage space.", PricingType.PER_PERSON, 25.0, "Monaco", "Monaco", "serviceprovider1"},
+
+            {ServiceCategory.LAUNDRY_SERVICE, "Express Laundry & Dry Cleaning", "Professional laundry and dry cleaning service with same-day delivery available.", PricingType.PER_ITEM, 8.0, "Manhattan", "United States", "serviceprovider2"},
+            {ServiceCategory.LAUNDRY_SERVICE, "Eco-Friendly Laundry Service", "Green laundry service using environmentally friendly detergents and processes.", PricingType.PER_ITEM, 10.0, "Ubud", "Indonesia", "serviceprovider3"},
+
+            {ServiceCategory.HOUSE_CLEANING, "Professional Deep Cleaning", "Thorough house cleaning service with attention to detail. Licensed and insured cleaners.", PricingType.PER_SESSION, 120.0, "Los Angeles", "United States", "serviceprovider4"},
+            {ServiceCategory.HOUSE_CLEANING, "Regular Maintenance Cleaning", "Weekly or bi-weekly cleaning service to keep your space spotless.", PricingType.PER_SESSION, 85.0, "San Francisco", "United States", "serviceprovider5"},
+
+            {ServiceCategory.MASSAGE_SPA, "Luxury In-Home Spa Experience", "Premium massage and spa treatments in the comfort of your accommodation. Certified therapists.", PricingType.PER_SESSION, 180.0, "Maldives", "Maldives", "serviceprovider6"},
+            {ServiceCategory.MASSAGE_SPA, "Therapeutic Massage Service", "Professional therapeutic massage for relaxation and muscle recovery.", PricingType.PER_HOUR, 95.0, "Santorini", "Greece", "serviceprovider7"},
+            {ServiceCategory.MASSAGE_SPA, "Couples Spa Package", "Romantic couples massage and spa treatments. Perfect for special occasions.", PricingType.PER_SESSION, 300.0, "Bali", "Indonesia", "serviceprovider8"},
+
+            {ServiceCategory.PHOTOGRAPHY, "Professional Event Photography", "Capture your special moments with professional photography services.", PricingType.PER_HOUR, 125.0, "Paris", "France", "serviceprovider9"},
+            {ServiceCategory.PHOTOGRAPHY, "Portrait & Family Photography", "Beautiful portrait sessions for individuals, couples, and families.", PricingType.PER_SESSION, 250.0, "Ibiza", "Spain", "serviceprovider10"},
+            {ServiceCategory.PHOTOGRAPHY, "Travel & Adventure Photography", "Document your adventures with professional travel photography.", PricingType.PER_DAY, 450.0, "Iceland", "Iceland", "serviceprovider1"},
+
+            {ServiceCategory.EVENT_PLANNING, "Full-Service Event Planning", "Complete event planning and coordination for parties, weddings, and corporate events.", PricingType.CUSTOM, 800.0, "Monaco", "Monaco", "serviceprovider2"},
+            {ServiceCategory.EVENT_PLANNING, "Party Decoration & Setup", "Professional party decoration and setup service for all occasions.", PricingType.PER_SESSION, 350.0, "Dubai", "United Arab Emirates", "serviceprovider3"},
+
+            {ServiceCategory.BABY_SITTING, "Certified Childcare Provider", "Experienced and certified babysitters for your peace of mind. Background checked.", PricingType.PER_HOUR, 25.0, "New York", "United States", "serviceprovider4"},
+            {ServiceCategory.BABY_SITTING, "Evening Babysitting Service", "Reliable evening babysitting so you can enjoy a night out.", PricingType.PER_HOUR, 22.0, "Charleston", "United States", "serviceprovider5"},
+
+            {ServiceCategory.PET_CARE, "Professional Pet Sitting", "Loving pet care in your home while you're away. All pets welcome.", PricingType.PER_DAY, 45.0, "Stowe", "United States", "serviceprovider6"},
+            {ServiceCategory.PET_CARE, "Dog Walking Service", "Daily dog walking service with flexible schedules. Active and engaging walks.", PricingType.PER_SESSION, 20.0, "Portland", "United States", "serviceprovider7"},
+            {ServiceCategory.PET_CARE, "Pet Grooming Service", "Professional pet grooming in your home. Stress-free for your pets.", PricingType.PER_SESSION, 65.0, "San Francisco", "United States", "serviceprovider8"},
+
+            {ServiceCategory.GROCERY_DELIVERY, "Fresh Grocery Delivery", "Personal grocery shopping and delivery service. Fresh produce and quality products.", PricingType.CUSTOM, 30.0, "Manhattan", "United States", "serviceprovider9"},
+            {ServiceCategory.GROCERY_DELIVERY, "Organic & Local Produce Delivery", "Delivery of organic and locally sourced groceries to your door.", PricingType.CUSTOM, 35.0, "Stowe", "United States", "serviceprovider10"},
+
+            {ServiceCategory.PERSONAL_TRAINER, "Personal Fitness Training", "One-on-one fitness training sessions customized to your goals.", PricingType.PER_SESSION, 75.0, "Los Angeles", "United States", "serviceprovider1"},
+            {ServiceCategory.PERSONAL_TRAINER, "Group Fitness Classes", "Energetic group fitness classes for all fitness levels.", PricingType.PER_PERSON, 25.0, "Dubai", "United Arab Emirates", "serviceprovider2"},
+            {ServiceCategory.PERSONAL_TRAINER, "Outdoor Boot Camp", "High-intensity outdoor training sessions in beautiful locations.", PricingType.PER_SESSION, 65.0, "Big Sur", "United States", "serviceprovider3"},
+
+            {ServiceCategory.YOGA_MEDITATION, "Private Yoga Sessions", "Personalized yoga instruction for all levels in your accommodation.", PricingType.PER_SESSION, 80.0, "Bali", "Indonesia", "serviceprovider4"},
+            {ServiceCategory.YOGA_MEDITATION, "Meditation & Mindfulness Classes", "Guided meditation and mindfulness practices for relaxation and stress relief.", PricingType.PER_SESSION, 60.0, "Ubud", "Indonesia", "serviceprovider5"},
+            {ServiceCategory.YOGA_MEDITATION, "Sunrise Beach Yoga", "Refreshing yoga sessions on the beach at sunrise.", PricingType.PER_SESSION, 70.0, "Phuket", "Thailand", "serviceprovider6"},
+
+            {ServiceCategory.LANGUAGE_TUTOR, "English Language Tutoring", "Professional English language instruction for all levels.", PricingType.PER_HOUR, 45.0, "Tokyo", "Japan", "serviceprovider7"},
+            {ServiceCategory.LANGUAGE_TUTOR, "French Language Lessons", "Learn French from native speakers with customized lessons.", PricingType.PER_HOUR, 50.0, "Paris", "France", "serviceprovider8"},
+            {ServiceCategory.LANGUAGE_TUTOR, "Spanish Conversation Practice", "Improve your Spanish through conversation with experienced tutors.", PricingType.PER_HOUR, 40.0, "Ibiza", "Spain", "serviceprovider9"},
+
+            {ServiceCategory.BIKE_RENTAL, "City Bike Rental", "Quality bicycles for exploring the city. Daily and weekly rentals available.", PricingType.PER_DAY, 25.0, "Paris", "France", "serviceprovider10"},
+            {ServiceCategory.BIKE_RENTAL, "Mountain Bike Adventures", "High-performance mountain bikes for trail riding and adventures.", PricingType.PER_DAY, 45.0, "Whistler", "Canada", "serviceprovider1"},
+            {ServiceCategory.BIKE_RENTAL, "E-Bike Tours", "Electric bicycle rentals for effortless exploration of scenic areas.", PricingType.PER_DAY, 55.0, "Santorini", "Greece", "serviceprovider2"},
+
+            {ServiceCategory.EQUIPMENT_RENTAL, "Camping Equipment Rental", "Complete camping gear rental including tents, sleeping bags, and cooking equipment.", PricingType.PER_DAY, 35.0, "Yosemite", "United States", "serviceprovider3"},
+            {ServiceCategory.EQUIPMENT_RENTAL, "Water Sports Equipment", "Kayaks, paddleboards, and snorkeling gear for water adventures.", PricingType.PER_DAY, 40.0, "Bahamas", "Bahamas", "serviceprovider4"},
+            {ServiceCategory.EQUIPMENT_RENTAL, "Winter Sports Equipment", "Ski and snowboard rentals with latest equipment.", PricingType.PER_DAY, 50.0, "Chamonix", "France", "serviceprovider5"}
         };
         
         int serviceCounter = 1;
@@ -462,7 +481,7 @@ public class DataSeeder implements CommandLineRunner {
             }
             
             User provider = users.get(providerKey);
-            
+
             ServiceOffering service = ServiceOffering.builder()
                     .publicId(UUID.randomUUID().toString())
                     .category(category)
@@ -478,21 +497,20 @@ public class DataSeeder implements CommandLineRunner {
                     .isInstantBooking(true)
                     .availableDays(Arrays.asList("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"))
                     .build();
-            
-            service = serviceOfferingRepository.save(service);
-            
+
             // Add service images based on category
             String categoryPrefix = category.name().toLowerCase().replace("_", "-");
             for (int i = 1; i <= 3; i++) {
                 ServiceImage image = ServiceImage.builder()
-                        .serviceOffering(service)
                         .imageUrl("/images/services/" + categoryPrefix + "-" + i + ".jpg")
                         .caption(title + " - Image " + i)
                         .isPrimary(i == 1)
                         .displayOrder(i)
                         .build();
-                serviceImageRepository.save(image);
+                service.addImage(image);  // Add to service's images list
             }
+
+            service = serviceOfferingRepository.save(service);  // Saves service and images due to cascade
             
             services.put("service-" + serviceCounter++, service);
             

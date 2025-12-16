@@ -28,7 +28,8 @@ export class RegisterComponent implements OnInit {
 
   userTypeOptions = [
     { label: 'Find a Place (Tenant)', value: 'ROLE_TENANT' },
-    { label: 'List My Property (Landlord)', value: 'ROLE_LANDLORD' }
+    { label: 'List My Property (Landlord)', value: 'ROLE_LANDLORD' },
+    { label: 'Offer Services (Service Provider)', value: 'ROLE_SERVICE_PROVIDER' }
   ];
 
   constructor() {

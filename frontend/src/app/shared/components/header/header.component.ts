@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit {
       this.updateAuthState();
 
       // Subscribe to user changes with ChangeDetectorRef to prevent NG0100
-      this.authService.currentUser$.subscribe(user => {
+      this.authService.currentUser$.subscribe(() => {
         // Use setTimeout to defer state update to next change detection cycle
         setTimeout(() => {
           this.updateAuthState();
@@ -82,12 +82,12 @@ export class HeaderComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    
+
     // Close search if clicking outside
     if (!target.closest('.search-container')) {
       this.closeSearch();
     }
-    
+
     // Close menu if clicking outside
     if (!target.closest('.user-menu') && !target.closest('.auth-menu') && this.isMenuOpen) {
       this.isMenuOpen = false;
@@ -234,6 +234,16 @@ export class HeaderComponent implements OnInit {
     this.isMenuOpen = false;
   }
 
+  navigateToMyServices() {
+    this.router.navigate(['/service-offering/dashboard']);
+    this.isMenuOpen = false;
+  }
+
+  navigateToAddService() {
+    this.router.navigate(['/service-offering/create']);
+    this.isMenuOpen = false;
+  }
+
   // Check if user is landlord or admin
   isLandlordOrAdmin(): boolean {
     if (!this.currentUser || !this.currentUser.authorities) {
@@ -241,6 +251,15 @@ export class HeaderComponent implements OnInit {
     }
     const authorities = this.currentUser.authorities;
     return authorities.includes('ROLE_LANDLORD') || authorities.includes('ROLE_ADMIN');
+  }
+
+  // Check if user is service provider
+  isServiceProvider(): boolean {
+    if (!this.currentUser || !this.currentUser.authorities) {
+      return false;
+    }
+    const authorities = this.currentUser.authorities;
+    return authorities.includes('ROLE_SERVICE_PROVIDER') || authorities.includes('ROLE_ADMIN');
   }
 
   logout() {
@@ -255,17 +274,19 @@ export class HeaderComponent implements OnInit {
       return 'User';
     }
 
-    // Priority order: ADMIN > LANDLORD > TENANT
+    // Priority order: ADMIN > LANDLORD > SERVICE_PROVIDER > TENANT
     const authorities = this.currentUser.authorities;
-    
+
     if (authorities.includes('ROLE_ADMIN')) {
       return 'Admin';
     } else if (authorities.includes('ROLE_LANDLORD')) {
       return 'Landlord';
+    } else if (authorities.includes('ROLE_SERVICE_PROVIDER')) {
+      return 'Service Provider';
     } else if (authorities.includes('ROLE_TENANT')) {
       return 'Tenant';
     }
-    
+
     // Fallback: format the first authority
     const firstAuthority = authorities[0];
     return firstAuthority.replace('ROLE_', '')
@@ -276,19 +297,19 @@ export class HeaderComponent implements OnInit {
 
   // Search action
   performSearch() {
-    const queryParams: any = {};
+    const queryParams: Record<string, unknown> = {};
 
     if (this.searchDestination()) {
-      queryParams.location = this.searchDestination();
+      queryParams['location'] = this.searchDestination();
     }
     if (this.checkInDate()) {
-      queryParams.checkIn = this.checkInDate()?.toISOString();
+      queryParams['checkIn'] = this.checkInDate()?.toISOString();
     }
     if (this.checkOutDate()) {
-      queryParams.checkOut = this.checkOutDate()?.toISOString();
+      queryParams['checkOut'] = this.checkOutDate()?.toISOString();
     }
     if (this.guests()) {
-      queryParams.guests = this.guests();
+      queryParams['guests'] = this.guests();
     }
 
     this.closeSearch();

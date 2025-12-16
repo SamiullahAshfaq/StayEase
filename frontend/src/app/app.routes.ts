@@ -28,11 +28,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent),
         title: 'Register - StayEase'
       },
-      {
-        path: 'forgot-password',
-        loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
-        title: 'Forgot Password - StayEase'
-      },
+      // {
+      //   path: 'forgot-password',
+      //   loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
+      //   title: 'Forgot Password - StayEase'
+      // },
       {
         path: '',
         redirectTo: 'login',

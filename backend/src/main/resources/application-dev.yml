@@ -14,14 +14,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update # Let Hibernate update schema automatically
-    show-sql: true
+    show-sql: false  # Changed to false to reduce console spam
     properties:
       hibernate:
         format_sql: true
         jdbc:
-          batch_size: 20
+          batch_size: 50  # Increased from 20 to 50 for better performance
         order_inserts: true
         order_updates: true
+        # Enable batch versioned data for better performance
+        jdbc.batch_versioned_data: true
 
   flyway:
     enabled: false # Keep Flyway disabled since using Hibernate auto-update
@@ -30,50 +32,54 @@ spring:
     baseline-on-migrate: true
 
   # OAuth2 Development Credentials
-# NOTE: Dummy values used. For real credentials, use environment variables.
-security:
-  oauth2:
-    client:
-      registration:
-        google:
-          client-id: dummy-google-client-id-1234567890.apps.googleusercontent.com
-          client-secret: dummy-google-client-secret-1234567890
-          scope:
-            - email
-            - profile
-          redirect-uri: "{baseUrl}/oauth2/callback/google"
-          client-name: Google
-        facebook:
-          client-id: dummy-facebook-client-id-1234567890
-          client-secret: dummy-facebook-client-secret-1234567890
-          scope:
-            - email
-            - public_profile
-          redirect-uri: "{baseUrl}/oauth2/callback/facebook"
-          client-name: Facebook
-      provider:
-        google:
-          authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-          token-uri: https://oauth2.googleapis.com/token
-          user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-          user-name-attribute: sub
-        facebook:
-          authorization-uri: https://www.facebook.com/v18.0/dialog/oauth
-          token-uri: https://graph.facebook.com/v18.0/oauth/access_token
-          user-info-uri: https://graph.facebook.com/me?fields=id,name,email,picture
-          user-name-attribute: id
-    resourceserver:
-      jwt:
-        issuer-uri: https://dev-k03ztn804p2l0zs8.us.auth0.com/
-        audiences: https://stayease-api
+  # NOTE: Dummy values used. For real credentials, use environment variables.
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: dummy-google-client-id-1234567890.apps.googleusercontent.com
+            client-secret: dummy-google-client-secret-1234567890
+            scope:
+              - email
+              - profile
+            redirect-uri: "{baseUrl}/oauth2/callback/google"
+            client-name: Google
+          facebook:
+            client-id: dummy-facebook-client-id-1234567890
+            client-secret: dummy-facebook-client-secret-1234567890
+            scope:
+              - email
+              - public_profile
+            redirect-uri: "{baseUrl}/oauth2/callback/facebook"
+            client-name: Facebook
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+          facebook:
+            authorization-uri: https://www.facebook.com/v18.0/dialog/oauth
+            token-uri: https://graph.facebook.com/v18.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/me?fields=id,name,email,picture
+            user-name-attribute: id
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-k03ztn804p2l0zs8.us.auth0.com/
+          audiences: https://stayease-api
 
+# Optimized logging configuration for development
 logging:
   level:
     root: INFO
-    com.stayease: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.stayease: INFO  # Changed from DEBUG to INFO
+    org.springframework.web: INFO  # Changed from DEBUG to INFO
+    org.hibernate.SQL: WARN  # Changed from DEBUG to WARN (only shows warnings/errors)
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN  # Changed to WARN
+    org.hibernate.orm.jdbc.bind: WARN  # Suppress parameter binding logs
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %clr(%-5level) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} : %msg%n"
 
 server:
   port: 8080

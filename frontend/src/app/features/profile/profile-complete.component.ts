@@ -311,16 +311,15 @@ export class ProfileCompleteComponent implements OnInit {
       return;
     }
 
-    // For now, all users go to home page since landlord/admin dashboards are not implemented
-    // TODO: Implement role-based navigation when dashboards are ready
-    // if (user.authorities.includes('ROLE_ADMIN')) {
-    //   this.router.navigate(['/admin/dashboard']);
-    // } else if (user.authorities.includes('ROLE_LANDLORD')) {
-    //   this.router.navigate(['/landlord/dashboard']);
-    // } else {
-    //   this.router.navigate(['/']);
-    // }
-
-    this.router.navigate(['/']);
+    // Navigate based on primary role
+    if (user.authorities.includes('ROLE_ADMIN')) {
+      this.router.navigate(['/admin/dashboard']);
+    } else if (user.authorities.includes('ROLE_LANDLORD')) {
+      this.router.navigate(['/landlord/dashboard']);
+    } else if (user.authorities.includes('ROLE_SERVICE_PROVIDER')) {
+      this.router.navigate(['/service-offering/dashboard']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }

@@ -67,7 +67,8 @@ public class AuthService {
         // Validate role name (must be final for lambda)
         final String roleName;
         if (!requestedRole.equals(AuthorityConstant.ROLE_TENANT)
-                && !requestedRole.equals(AuthorityConstant.ROLE_LANDLORD)) {
+                && !requestedRole.equals(AuthorityConstant.ROLE_LANDLORD)
+                && !requestedRole.equals(AuthorityConstant.ROLE_SERVICE_PROVIDER)) {
             log.warn("Invalid role requested: {}. Defaulting to ROLE_TENANT", requestedRole);
             roleName = AuthorityConstant.ROLE_TENANT;
         } else {
