@@ -229,10 +229,49 @@ export class HeaderComponent implements OnInit {
     this.isMenuOpen = false;
   }
 
+  navigateToAddListing() {
+    this.router.navigate(['/listing/create']);
+    this.isMenuOpen = false;
+  }
+
+  // Check if user is landlord or admin
+  isLandlordOrAdmin(): boolean {
+    if (!this.currentUser || !this.currentUser.authorities) {
+      return false;
+    }
+    const authorities = this.currentUser.authorities;
+    return authorities.includes('ROLE_LANDLORD') || authorities.includes('ROLE_ADMIN');
+  }
+
   logout() {
     this.authService.logout();
     this.isMenuOpen = false;
     this.router.navigate(['/']);
+  }
+
+  // Get primary role for display
+  getPrimaryRole(): string {
+    if (!this.currentUser || !this.currentUser.authorities || this.currentUser.authorities.length === 0) {
+      return 'User';
+    }
+
+    // Priority order: ADMIN > LANDLORD > TENANT
+    const authorities = this.currentUser.authorities;
+    
+    if (authorities.includes('ROLE_ADMIN')) {
+      return 'Admin';
+    } else if (authorities.includes('ROLE_LANDLORD')) {
+      return 'Landlord';
+    } else if (authorities.includes('ROLE_TENANT')) {
+      return 'Tenant';
+    }
+    
+    // Fallback: format the first authority
+    const firstAuthority = authorities[0];
+    return firstAuthority.replace('ROLE_', '')
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
 
   // Search action

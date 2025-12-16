@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookingService } from '../services/booking.service';
@@ -46,7 +46,8 @@ export class BookingDetailComponent implements OnInit {
   constructor(
     private bookingService: BookingService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -217,6 +218,10 @@ export class BookingDetailComponent implements OnInit {
   }
 
   closeEditModal(): void {
+    console.log('=== CLOSE EDIT MODAL CALLED ===');
+    console.log('Current showEditModal:', this.showEditModal);
+    console.log('Current editing:', this.editing);
+    
     this.showEditModal = false;
     this.editCheckIn = '';
     this.editCheckOut = '';
@@ -224,6 +229,13 @@ export class BookingDetailComponent implements OnInit {
     this.editAddons = [];
     this.error = null;
     document.body.style.overflow = 'auto';
+    
+    console.log('Modal closed, showEditModal set to:', this.showEditModal);
+    
+    // Force change detection to update the template
+    this.cdr.detectChanges();
+    console.log('Change detection triggered');
+    console.log('=== CLOSE EDIT MODAL COMPLETE ===');
   }
 
   canEdit(): boolean {
@@ -273,6 +285,15 @@ export class BookingDetailComponent implements OnInit {
   confirmEdit(): void {
     if (!this.booking) return;
 
+    console.log('=== CONFIRM EDIT START ===');
+    console.log('Current booking:', this.booking);
+    console.log('Edit values:', {
+      checkIn: this.editCheckIn,
+      checkOut: this.editCheckOut,
+      guests: this.editGuests,
+      addons: this.editAddons
+    });
+
     // Validate dates
     const checkIn = new Date(this.editCheckIn);
     const checkOut = new Date(this.editCheckOut);
@@ -280,36 +301,67 @@ export class BookingDetailComponent implements OnInit {
 
     if (checkIn <= now) {
       this.error = 'Check-in date must be in the future';
+      console.error('Validation failed: Check-in date in past');
       return;
     }
 
     if (checkOut <= checkIn) {
       this.error = 'Check-out date must be after check-in date';
+      console.error('Validation failed: Check-out before check-in');
       return;
     }
 
+    console.log('Validation passed, setting editing = true');
     this.editing = true;
     this.error = null;
 
-    // For now, we'll just show a message since we don't have an update endpoint
-    // In a real app, you would call bookingService.updateBooking()
-    setTimeout(() => {
-      if (this.booking) {
-        this.booking.checkInDate = this.editCheckIn;
-        this.booking.checkOutDate = this.editCheckOut;
-        this.booking.numberOfGuests = this.editGuests;
-        this.booking.addons = [...this.editAddons];
+    // Call the real API to update booking
+    const updateData = {
+      checkInDate: this.editCheckIn,
+      checkOutDate: this.editCheckOut,
+      numberOfGuests: this.editGuests,
+      specialRequests: this.booking.specialRequests,
+      addons: this.editAddons
+    };
 
-        // Recalculate nights
-        const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-        this.booking.numberOfNights = nights;
+    console.log('Sending update request with data:', updateData);
+    console.log('Booking publicId:', this.booking.publicId);
 
-        // Recalculate total price
-        this.booking.totalPrice = this.calculateEditTotal();
-
-        this.closeEditModal();
+    this.bookingService.updateBooking(this.booking.publicId, updateData).subscribe({
+      next: (response) => {
+        console.log('=== API RESPONSE RECEIVED ===');
+        console.log('Response:', response);
+        console.log('Response.success:', response.success);
+        console.log('Response.data:', response.data);
+        
+        if (response.success && response.data) {
+          console.log('Response is successful, updating booking');
+          // Update the booking with the response from server
+          this.booking = response.data;
+          
+          console.log('Setting editing = false');
+          this.editing = false;
+          
+          console.log('Calling closeEditModal()');
+          this.closeEditModal();
+          
+          console.log('=== EDIT COMPLETE SUCCESS ===');
+        } else {
+          console.error('Response success is false or no data');
+          this.editing = false;
+        }
+      },
+      error: (err) => {
+        console.error('=== API ERROR ===');
+        console.error('Error updating booking:', err);
+        console.error('Error status:', err.status);
+        console.error('Error message:', err.error?.message);
+        this.error = err.error?.message || 'Failed to update booking. Please try again.';
+        this.editing = false;
+        console.log('=== EDIT COMPLETE ERROR ===');
       }
-      this.editing = false;
-    }, 500);
+    });
+    
+    console.log('Subscribe called, waiting for response...');
   }
 }

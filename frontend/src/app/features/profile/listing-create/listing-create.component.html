@@ -1,484 +1,781 @@
+<!-- ============================================
+     AIRBNB-STYLE LISTING CREATION
+     Modern, Beautiful, Professional Design
+     ============================================ -->
+
 <div class="create-listing-container">
-  <!-- Progress Header -->
+  <!-- === STICKY PROGRESS HEADER === -->
   <div class="progress-header">
     <div class="header-content">
-      <h1>Create a New Listing</h1>
+      <h1>Create Your Listing</h1>
       <button class="cancel-btn" (click)="cancel()">Cancel</button>
     </div>
-
     <div class="progress-bar">
       <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
     </div>
+  </div>
 
-    <div class="step-indicators">
-      @for (step of [1, 2, 3, 4, 5, 6, 7]; track step) {
-      <div class="step-indicator"
-           [class.active]="step === currentStep()"
-           [class.completed]="step < currentStep()"
-           tabindex="0"
-           role="button"
-           [attr.aria-label]="'Go to step ' + step"
-           (click)="goToStep(step)"
-           (keyup.enter)="goToStep(step)"
-           (keyup.space)="goToStep(step)">
-        <div class="step-number">{{ step }}</div>
-        <div class="step-label">
-          @if (step === 1) { <span>Basics</span> }
-          @if (step === 2) { <span>Details</span> }
-          @if (step === 3) { <span>Photos</span> }
-          @if (step === 4) { <span>Description</span> }
-          @if (step === 5) { <span>Pricing</span> }
-          @if (step === 6) { <span>Policies</span> }
-          @if (step === 7) { <span>Preview</span> }
-        </div>
-      </div>
-      }
+  <!-- === STEP INDICATORS === -->
+  <div class="step-indicators">
+    <div
+      class="step-indicator"
+      [class.active]="currentStep() === 1"
+      [class.completed]="currentStep() > 1"
+      (click)="goToStep(1)">
+      <div class="step-number">1</div>
+      <div class="step-label">Basics</div>
+    </div>
+    <div
+      class="step-indicator"
+      [class.active]="currentStep() === 2"
+      [class.completed]="currentStep() > 2"
+      (click)="goToStep(2)">
+      <div class="step-number">2</div>
+      <div class="step-label">Details</div>
+    </div>
+    <div
+      class="step-indicator"
+      [class.active]="currentStep() === 3"
+      [class.completed]="currentStep() > 3"
+      (click)="goToStep(3)">
+      <div class="step-number">3</div>
+      <div class="step-label">Photos</div>
+    </div>
+    <div
+      class="step-indicator"
+      [class.active]="currentStep() === 4"
+      [class.completed]="currentStep() > 4"
+      (click)="goToStep(4)">
+      <div class="step-number">4</div>
+      <div class="step-label">Description</div>
+    </div>
+    <div
+      class="step-indicator"
+      [class.active]="currentStep() === 5"
+      [class.completed]="currentStep() > 5"
+      (click)="goToStep(5)">
+      <div class="step-number">5</div>
+      <div class="step-label">Pricing</div>
+    </div>
+    <div
+      class="step-indicator"
+      [class.active]="currentStep() === 6"
+      [class.completed]="currentStep() > 6"
+      (click)="goToStep(6)">
+      <div class="step-number">6</div>
+      <div class="step-label">Rules</div>
+    </div>
+    <div
+      class="step-indicator"
+      [class.active]="currentStep() === 7"
+      [class.completed]="currentStep() > 7"
+      (click)="goToStep(7)">
+      <div class="step-number">7</div>
+      <div class="step-label">Review</div>
     </div>
   </div>
 
-  <!-- Error Message -->
+  <!-- === ERROR BANNER === -->
   @if (error()) {
-  <div class="error-banner">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="12" y1="8" x2="12" y2="12"/>
-      <line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>
-    {{ error() }}
-  </div>
+    <div class="error-banner">
+      <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+      </svg>
+      <span>{{ error() }}</span>
+    </div>
   }
 
-  <!-- Step Content -->
+  <!-- === STEP CONTENT === -->
   <div class="step-content">
-    <!-- Step 1: Property Basics -->
+    <!-- ==================== STEP 1: PROPERTY BASICS ==================== -->
     @if (currentStep() === 1) {
-    <div class="step-panel">
-      <h2>Tell us about your property</h2>
-      <p class="step-description">Let's start with the basics</p>
+      <div class="step-panel">
+        <h2>Let's start with the basics</h2>
+        <p class="step-description">Tell us about your property type and location</p>
 
-      <div class="form-group">
-        <div class="form-label required">Property Type</div>
-        <div class="selection-grid">
-          @for (type of [PropertyType.APARTMENT, PropertyType.HOUSE, PropertyType.VILLA, PropertyType.CONDO, PropertyType.TOWNHOUSE, PropertyType.COTTAGE, PropertyType.CABIN, PropertyType.STUDIO, PropertyType.LOFT]; track type) {
-          <div class="selection-card"
-               [class.selected]="formData().propertyType === type"
-               tabindex="0"
-               role="button"
-               [attr.aria-label]="getPropertyTypeLabel(type)"
-               (click)="selectPropertyType(type)"
-               (keyup.enter)="selectPropertyType(type)"
-               (keyup.space)="selectPropertyType(type)">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="4" y="4" width="16" height="16" rx="2"/>
-            </svg>
-            <span>{{ getPropertyTypeLabel(type) }}</span>
-          </div>
-          }
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="form-label required">Room Type</div>
-        <div class="selection-grid">
-          @for (type of [RoomType.ENTIRE_PLACE, RoomType.PRIVATE_ROOM, RoomType.SHARED_ROOM]; track type) {
-          <div class="selection-card"
-               [class.selected]="formData().roomType === type"
-               tabindex="0"
-               role="button"
-               [attr.aria-label]="getRoomTypeLabel(type)"
-               (click)="selectRoomType(type)"
-               (keyup.enter)="selectRoomType(type)"
-               (keyup.space)="selectRoomType(type)">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            </svg>
-            <span>{{ getRoomTypeLabel(type) }}</span>
-          </div>
-          }
-        </div>
-      </div>
-
-      <div class="form-row">
+        <!-- Property Type -->
         <div class="form-group">
-          <label for="city-input" class="form-label required">City</label>
-          <input id="city-input"
-                 type="text"
-                 class="form-input"
-                 [(ngModel)]="formData().city"
-                 placeholder="Enter city">
+          <label class="form-label required">Property Type</label>
+          <div class="selection-grid">
+            <div
+              class="selection-card"
+              [class.selected]="formData().propertyType === PropertyType.APARTMENT"
+              (click)="selectPropertyType(PropertyType.APARTMENT)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17 11V3H7v4H3v14h8v-4h2v4h8V11h-4zM7 19H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V9h2v2zm4 4H9v-2h2v2zm0-4H9V9h2v2zm0-4H9V5h2v2zm4 8h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2zm4 12h-2v-2h2v2zm0-4h-2v-2h2v2z"/>
+              </svg>
+              <span>{{ getPropertyTypeLabel(PropertyType.APARTMENT) }}</span>
+            </div>
+            <div
+              class="selection-card"
+              [class.selected]="formData().propertyType === PropertyType.HOUSE"
+              (click)="selectPropertyType(PropertyType.HOUSE)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              </svg>
+              <span>{{ getPropertyTypeLabel(PropertyType.HOUSE) }}</span>
+            </div>
+            <div
+              class="selection-card"
+              [class.selected]="formData().propertyType === PropertyType.CONDO"
+              (click)="selectPropertyType(PropertyType.CONDO)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 15.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              <span>{{ getPropertyTypeLabel(PropertyType.CONDO) }}</span>
+            </div>
+            <div
+              class="selection-card"
+              [class.selected]="formData().propertyType === PropertyType.VILLA"
+              (click)="selectPropertyType(PropertyType.VILLA)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 10c0-3.87-3.13-7-7-7S5 6.13 5 10c0 1.34.38 2.59 1.03 3.66L12 22l5.97-8.34C18.62 12.59 19 11.34 19 10zm-7 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+              </svg>
+              <span>{{ getPropertyTypeLabel(PropertyType.VILLA) }}</span>
+            </div>
+            <div
+              class="selection-card"
+              [class.selected]="formData().propertyType === PropertyType.STUDIO"
+              (click)="selectPropertyType(PropertyType.STUDIO)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 2h5v13h-5V5zM5 19V5h5v14H5z"/>
+              </svg>
+              <span>{{ getPropertyTypeLabel(PropertyType.STUDIO) }}</span>
+            </div>
+            <div
+              class="selection-card"
+              [class.selected]="formData().propertyType === PropertyType.TOWNHOUSE"
+              (click)="selectPropertyType(PropertyType.TOWNHOUSE)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7 10h2v2H7v-2zm0 4h2v2H7v-2zm4-4h2v2h-2v-2zm0 4h2v2h-2v-2zm4-4h2v2h-2v-2zm0 4h2v2h-2v-2z"/>
+                <path d="M20 20h-5V4l-1-1H4l-1 1v16H1v2h22v-2h-3zM5 20V5h10v15H5z"/>
+              </svg>
+              <span>{{ getPropertyTypeLabel(PropertyType.TOWNHOUSE) }}</span>
+            </div>
+          </div>
         </div>
+
+        <!-- Room Type -->
         <div class="form-group">
-          <label for="country-input" class="form-label required">Country</label>
-          <input id="country-input"
-                 type="text"
-                 class="form-input"
-                 [(ngModel)]="formData().country"
-                 placeholder="Enter country">
+          <label class="form-label required">Room Type</label>
+          <div class="selection-grid">
+            <div
+              class="selection-card"
+              [class.selected]="formData().roomType === RoomType.ENTIRE_PLACE"
+              (click)="selectRoomType(RoomType.ENTIRE_PLACE)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              </svg>
+              <span>{{ getRoomTypeLabel(RoomType.ENTIRE_PLACE) }}</span>
+            </div>
+            <div
+              class="selection-card"
+              [class.selected]="formData().roomType === RoomType.PRIVATE_ROOM"
+              (click)="selectRoomType(RoomType.PRIVATE_ROOM)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V7H1v10h22v-6c0-2.21-1.79-4-4-4z"/>
+              </svg>
+              <span>{{ getRoomTypeLabel(RoomType.PRIVATE_ROOM) }}</span>
+            </div>
+            <div
+              class="selection-card"
+              [class.selected]="formData().roomType === RoomType.SHARED_ROOM"
+              (click)="selectRoomType(RoomType.SHARED_ROOM)">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+              </svg>
+              <span>{{ getRoomTypeLabel(RoomType.SHARED_ROOM) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+          <label class="form-label required">Location</label>
+          <div class="location-grid">
+            <input
+              type="text"
+              class="form-input"
+              placeholder="Street address"
+              [(ngModel)]="formData().address"
+            />
+            <input
+              type="text"
+              class="form-input"
+              placeholder="City *"
+              [(ngModel)]="formData().city"
+            />
+            <input
+              type="text"
+              class="form-input"
+              placeholder="Country *"
+              [(ngModel)]="formData().country"
+            />
+            <input
+              type="text"
+              class="form-input"
+              placeholder="ZIP / Postal code"
+              [(ngModel)]="formData().zipCode"
+            />
+          </div>
         </div>
       </div>
-
-      <div class="form-group">
-        <label for="address-input" class="form-label">Street Address</label>
-        <input id="address-input"
-               type="text"
-               class="form-input"
-               [(ngModel)]="formData().address"
-               placeholder="Enter street address">
-      </div>
-
-      <div class="form-group">
-        <label for="zipcode-input" class="form-label">Zip Code</label>
-        <input id="zipcode-input"
-               type="text"
-               class="form-input"
-               [(ngModel)]="formData().zipCode"
-               placeholder="Enter zip code">
-      </div>
-    </div>
     }
 
-    <!-- Step 2: Property Details -->
+    <!-- ==================== STEP 2: PROPERTY DETAILS ==================== -->
     @if (currentStep() === 2) {
-    <div class="step-panel">
-      <h2>Share some details about your place</h2>
-      <p class="step-description">Tell guests what your property has to offer</p>
+      <div class="step-panel">
+        <h2>Share some basics about your place</h2>
+        <p class="step-description">You'll add more details later, like bed types</p>
 
-      <div class="form-group">
-        <div class="form-label required">Bedrooms</div>
-        <div class="counter-input">
-          <button type="button" aria-label="Decrease bedrooms" (click)="formData().bedrooms > 1 && updateFormField('bedrooms', formData().bedrooms - 1)">-</button>
-          <span>{{ formData().bedrooms }}</span>
-          <button type="button" aria-label="Increase bedrooms" (click)="updateFormField('bedrooms', formData().bedrooms + 1)">+</button>
+        <!-- Guests, Bedrooms, Bathrooms -->
+        <div class="form-group">
+          <div class="counter-group">
+            <div class="counter-label">
+              <div class="counter-title">Guests</div>
+              <div class="counter-subtitle">Maximum number of guests</div>
+            </div>
+            <div class="counter-controls">
+              <button
+                class="counter-btn"
+                [disabled]="formData().maxGuests <= 1"
+                (click)="updateFormField('maxGuests', formData().maxGuests - 1)">
+                −
+              </button>
+              <span class="counter-value">{{ formData().maxGuests }}</span>
+              <button
+                class="counter-btn"
+                (click)="updateFormField('maxGuests', formData().maxGuests + 1)">
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="counter-group">
+            <div class="counter-label">
+              <div class="counter-title">Bedrooms</div>
+              <div class="counter-subtitle">Number of bedrooms</div>
+            </div>
+            <div class="counter-controls">
+              <button
+                class="counter-btn"
+                [disabled]="formData().bedrooms <= 1"
+                (click)="updateFormField('bedrooms', formData().bedrooms - 1)">
+                −
+              </button>
+              <span class="counter-value">{{ formData().bedrooms }}</span>
+              <button
+                class="counter-btn"
+                (click)="updateFormField('bedrooms', formData().bedrooms + 1)">
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="counter-group">
+            <div class="counter-label">
+              <div class="counter-title">Bathrooms</div>
+              <div class="counter-subtitle">Number of bathrooms</div>
+            </div>
+            <div class="counter-controls">
+              <button
+                class="counter-btn"
+                [disabled]="formData().bathrooms <= 1"
+                (click)="updateFormField('bathrooms', formData().bathrooms - 1)">
+                −
+              </button>
+              <span class="counter-value">{{ formData().bathrooms }}</span>
+              <button
+                class="counter-btn"
+                (click)="updateFormField('bathrooms', formData().bathrooms + 1)">
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Property Size -->
+        <div class="form-group">
+          <label class="form-label">Property Size (sq ft)</label>
+          <input
+            type="number"
+            class="form-input"
+            placeholder="e.g., 1200"
+            [(ngModel)]="formData().propertySize"
+            min="0"
+          />
+        </div>
+
+        <!-- Amenities -->
+        <div class="form-group">
+          <label class="form-label">Amenities</label>
+          <p class="text-muted mb-4">Select all amenities that your place offers</p>
+          <div class="amenities-grid">
+            @for (amenity of availableAmenities; track amenity) {
+              <div class="amenity-checkbox" [class.checked]="formData().amenities.includes(amenity)">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="amenity-icon">
+                  @if (amenity === 'WiFi') {
+                    <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+                  } @else if (amenity === 'TV') {
+                    <path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/>
+                  } @else if (amenity === 'Kitchen') {
+                    <path d="M18 2.01L6 2c-1.1 0-2 .89-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.11-.9-1.99-2-1.99zM18 20H6v-9.02h12V20zm0-11H6V4h12v5zM8 5h2v3H8zm0 7h2v5H8z"/>
+                  } @else if (amenity === 'Washing Machine') {
+                    <path d="M9.17 16.83L10.58 18.24L15.59 13.23L14.17 11.82L10.58 15.41L9.17 14M18 2.01L6 2C4.89 2 4 2.89 4 4V20C4 21.11 4.89 22 6 22H18C19.11 22 20 21.11 20 20V4C20 2.89 19.11 2.01 18 2.01M18 20H6L6.01 4H18V20Z"/>
+                  } @else if (amenity === 'Air Conditioning') {
+                    <path d="M6.59 3.41L5 5l7 7 7-7-1.59-1.59L12 8.83 6.59 3.41zM17.41 20.59L19 19l-7-7-7 7 1.59 1.59L12 15.17l5.41 5.42z"/>
+                  } @else if (amenity === 'Heating') {
+                    <path d="M11.71 17.99A5.993 5.993 0 0 1 6 12c0-3.31 2.69-6 6-6 3.22 0 5.84 2.53 5.99 5.71l-2.1-.63a3.999 3.999 0 1 0-4.81 4.81l.63 2.1zM22 12c0 .3-.01.6-.04.9l-1.97-.59c.01-.1.01-.21.01-.31 0-4.42-3.58-8-8-8s-8 3.58-8 8 3.58 8 8 8c.1 0 .21 0 .31-.01l.59 1.97c-.3.03-.6.04-.9.04-5.52 0-10-4.48-10-10S6.48 2 12 2s10 4.48 10 10zm-3.3 4.12l-1.59-1.59c.32-.46.59-.96.78-1.5l1.97.59c-.27.77-.66 1.5-1.16 2.5zm-1.91 1.91l-1.59-1.59c-.54.19-1.04.46-1.5.78l.59 1.97c1-.5 1.73-.89 2.5-1.16z"/>
+                  } @else if (amenity === 'Parking') {
+                    <path d="M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z"/>
+                  } @else if (amenity === 'Pool') {
+                    <path d="M22 21c-1.11 0-1.73-.37-2.18-.64-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.46.27-1.07.64-2.18.64s-1.73-.37-2.18-.64c-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.46.27-1.08.64-2.19.64-1.11 0-1.73-.37-2.18-.64-.37-.23-.6-.36-1.15-.36s-.78.13-1.15.36c-.46.27-1.08.64-2.19.64v-2c.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64s1.73.37 2.18.64c.37.23.59.36 1.15.36.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64 1.11 0 1.73.37 2.18.64.37.22.6.36 1.15.36s.78-.13 1.15-.36c.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.23.59.36 1.15.36v2zm0-4.5c-1.11 0-1.73-.37-2.18-.64-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.45.27-1.07.64-2.18.64s-1.73-.37-2.18-.64c-.37-.22-.6-.36-1.15-.36-.56 0-.78.13-1.15.36-.45.27-1.07.64-2.18.64s-1.73-.37-2.18-.64c-.37-.22-.6-.36-1.15-.36s-.78.13-1.15.36c-.47.27-1.09.64-2.2.64V14c.56 0 .78-.13 1.15-.36.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.22.6.36 1.15.36.56 0 .78-.13 1.15-.36.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.22.6.36 1.15.36s.78-.13 1.15-.36c.45-.27 1.07-.64 2.18-.64s1.73.37 2.18.64c.37.22.6.36 1.15.36v2zM8.67 12c.56 0 .78-.13 1.15-.36.46-.27 1.08-.64 2.19-.64 1.11 0 1.73.37 2.18.64.37.22.6.36 1.15.36s.78-.13 1.15-.36c.12-.07.26-.15.41-.23L10.48 5C8.93 3.45 7.5 2.99 5 3v2.5c1.82-.01 2.89.39 4 1.5l1 1-3.25 3.25c.31.12.56.27.77.39.37.23.59.36 1.15.36z"/>
+                  } @else if (amenity === 'Gym') {
+                    <path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/>
+                  } @else if (amenity === 'Hot Tub') {
+                    <path d="M7 6c1.11 0 2-.89 2-2 0-1.11-.89-2-2-2-1.11 0-2 .89-2 2 0 1.11.89 2 2 2zm8-2c0-1.11-.89-2-2-2-1.11 0-2 .89-2 2 0 1.11.89 2 2 2 1.11 0 2-.89 2-2zm-4 2c1.11 0 2-.89 2-2 0-1.11-.89-2-2-2-1.11 0-2 .89-2 2 0 1.11.89 2 2 2zM5.75 21.5c1.1 0 2-.9 2-2h12.5c0 1.1.9 2 2 2s2-.9 2-2V11c0-1.1-.9-2-2-2h-18c-1.1 0-2 .9-2 2v8.5c0 1.1.9 2 2 2z"/>
+                  } @else if (amenity === 'Workspace') {
+                    <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/>
+                  } @else if (amenity === 'Pets Allowed') {
+                    <path d="M4.5 9.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M9 5.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M15 5.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M19.5 9.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0M17.34 14.86c-.87-1.02-1.6-1.89-2.48-2.91-.46-.54-1.05-1.08-1.75-1.32-.11-.04-.22-.07-.33-.09-.25-.04-.52-.04-.78-.04s-.53 0-.79.05c-.11.02-.22.05-.33.09-.7.24-1.28.78-1.75 1.32-.87 1.02-1.6 1.89-2.48 2.91-1.31 1.31-2.92 2.76-2.62 4.79.29 1.02 1.02 2.03 2.33 2.32.73.15 3.06-.44 5.54-.44h.18c2.48 0 4.81.58 5.54.44 1.31-.29 2.04-1.31 2.33-2.32.31-2.04-1.3-3.49-2.61-4.8z"/>
+                  } @else if (amenity === 'Smoking Allowed') {
+                    <path d="M2 16h15v3H2zm18.5 0H22v3h-1.5zM18 16h1.5v3H18zm.85-8.27c.62-.61 1-1.45 1-2.38C19.85 3.5 18.35 2 16.5 2v1.5c1.02 0 1.85.83 1.85 1.85S17.52 7.2 16.5 7.2v1.5c2.24 0 4 1.83 4 4.07V15H22v-2.24c0-2.22-1.28-4.14-3.15-5.03zm-2.82 2.47H14.5c-1.02 0-1.85-.98-1.85-2s.83-1.75 1.85-1.75v-1.5c-1.85 0-3.35 1.5-3.35 3.35s1.5 3.35 3.35 3.35h1.53c1.05 0 1.97.74 1.97 2.05V15h1.5v-1.64c0-1.81-1.6-3.16-3.47-3.16z"/>
+                  } @else if (amenity === 'Fireplace') {
+                    <path d="M12.01 12.46c-.15.42-.15.82-.08 1.28.1.55.33 1.04.2 1.6-.13.59-.77 1.38-1.53 1.63 1.28 1.05 3.2.62 3.81-.85.23-.57.28-1.17.18-1.74-.04-.22-.1-.42-.18-.61-.18-.44-.47-.83-.84-1.14-.37-.3-.8-.54-1.26-.71.02.16-.02.34-.14.53-.17.24-.35.45-.16 1.01zm-6.91-2.88l2.45 5.4c.14.32.43.54.78.54h.02c.36-.01.65-.24.77-.57l2.47-6.32c.04-.1.06-.21.06-.32 0-.51-.43-.96-.96-.96-.33 0-.63.17-.8.43l-1.63 2.59-.58-.97c-.23-.39-.66-.65-1.16-.65H3.1c-.59 0-1.07.48-1.07 1.07 0 .33.15.63.4.83.56.43 1.31.59 1.67.93z"/>
+                  } @else if (amenity === 'Balcony') {
+                    <path d="M10 10v2H8v-2h2zm6 2v-2h-2v2h2zM4 8v11h3v-2h2v2h6v-2h2v2h3V8H4zm12 8h-2v-2h2v2zm-4 0h-2v-2h2v2zm-4 0H6v-2h2v2z M2 2v2h2v15h16V4h2V2H2z"/>
+                  } @else if (amenity === 'Garden') {
+                    <path d="M13 16.12c3.47-.41 6.17-3.36 6.17-6.95 0-3.87-3.13-7-7-7s-7 3.13-7 7c0 3.47 2.52 6.34 5.83 6.89V20H5v2h14v-2h-6v-3.88zM12 4.15c2.67 0 4.85 2.17 4.85 4.85 0 2.68-2.18 4.85-4.85 4.85S7.15 11.68 7.15 9c0-2.68 2.18-4.85 4.85-4.85zm-1.27 7.2l.47.47.5-.52 1.93-1.93-1.06-1.06-1.37 1.38-.94-.94-1.06 1.06 1.53 1.54z"/>
+                  } @else if (amenity === 'BBQ Grill') {
+                    <path d="M17 22c1.66 0 3-1.34 3-3s-1.34-3-3-3c-1.3 0-2.4.84-2.82 2H9.14l1.99-3.06c.29.04.58.06.87.06s.58-.02.87-.06l1.02 1.57c.42-.53.96-.95 1.6-1.21l-.6-.93C17.31 13.27 19 10.84 19 8H5c0 2.84 1.69 5.27 4.12 6.37l-3.95 6.08c-.3.46-.17 1.08.29 1.38.46.3 1.08.17 1.38-.29l1-1.55h6.34C14.6 21.16 15.7 22 17 22zm0-4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9.41 7h1.01c.28 1.92 2.1 3.5 4.58 3.5s4.3-1.58 4.58-3.5h1.01c-.28 2.37-2.49 4.5-5.59 4.5S9.69 9.37 9.41 7z"/>
+                  } @else if (amenity === 'Beach Access') {
+                    <path d="M13.127 14.56l1.43-1.43 6.44 6.443L19.57 21zm4.293-5.73l2.86-2.86c-3.95-3.95-10.35-3.96-14.3-.02 3.93-1.3 8.31-.25 11.44 2.88zM5.95 5.98c-3.94 3.95-3.93 10.35.02 14.3l2.86-2.86C5.7 14.29 4.65 9.91 5.95 5.98zm.02-.02l-.01.01c-.38 3.01 1.17 6.88 4.3 10.02l5.73-5.73c-3.13-3.13-7.01-4.68-10.02-4.3z"/>
+                  } @else if (amenity === 'Elevator') {
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 18H6V6h2v12zm3.5-7l-2.5 3h5l-2.5-3zm5 7l2.5-3h-5l2.5 3z"/>
+                  }
+                </svg>
+                <input
+                  type="checkbox"
+                  [id]="'amenity-' + amenity"
+                  [checked]="formData().amenities.includes(amenity)"
+                  (change)="toggleAmenity(amenity)"
+                />
+                <label [for]="'amenity-' + amenity">{{ amenity }}</label>
+              </div>
+            }
+          </div>
         </div>
       </div>
-
-      <div class="form-group">
-        <div class="form-label required">Bathrooms</div>
-        <div class="counter-input">
-          <button type="button" aria-label="Decrease bathrooms" (click)="formData().bathrooms > 1 && updateFormField('bathrooms', formData().bathrooms - 1)">-</button>
-          <span>{{ formData().bathrooms }}</span>
-          <button type="button" aria-label="Increase bathrooms" (click)="updateFormField('bathrooms', formData().bathrooms + 1)">+</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="form-label required">Maximum Guests</div>
-        <div class="counter-input">
-          <button type="button" aria-label="Decrease guests" (click)="formData().maxGuests > 1 && updateFormField('maxGuests', formData().maxGuests - 1)">-</button>
-          <span>{{ formData().maxGuests }}</span>
-          <button type="button" aria-label="Increase guests" (click)="updateFormField('maxGuests', formData().maxGuests + 1)">+</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="form-label">Amenities</div>
-        <div class="checkbox-grid">
-          @for (amenity of availableAmenities; track amenity) {
-          <label class="checkbox-label">
-            <input type="checkbox"
-                   [checked]="formData().amenities.includes(amenity)"
-                   (change)="toggleAmenity(amenity)">
-            <span>{{ amenity }}</span>
-          </label>
-          }
-        </div>
-      </div>
-    </div>
     }
 
-    <!-- Step 3: Photos -->
+    <!-- ==================== STEP 3: PHOTOS ==================== -->
     @if (currentStep() === 3) {
-    <div class="step-panel">
-      <h2>Add photos of your property</h2>
-      <p class="step-description">Upload at least 5 high-quality photos</p>
+      <div class="step-panel">
+        <h2>Add some photos of your place</h2>
+        <p class="step-description">You'll need at least one photo to get started. You can add more or make changes later.</p>
 
-      <div class="upload-zone"
-           tabindex="0"
-           role="button"
-           aria-label="Upload photos"
-           (click)="fileInput.click()"
-           (keyup.enter)="fileInput.click()"
-           (keyup.space)="fileInput.click()">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <polyline points="21 15 16 10 5 21"/>
-        </svg>
-        <h3>Click to upload photos</h3>
-        <p>Or drag and drop</p>
-        <input #fileInput
-               type="file"
-               multiple
-               accept="image/*"
-               style="display: none"
-               (change)="onFileSelect($event)">
-      </div>
+        <div class="form-group">
+          <input
+            type="file"
+            #fileInput
+            multiple
+            accept="image/*"
+            (change)="onFileSelect($event)"
+            style="display: none"
+          />
 
-      @if (formData().imagePreviewUrls.length > 0) {
-      <div class="image-grid">
-        @for (url of formData().imagePreviewUrls; track $index) {
-        <div class="image-preview">
-          <img [src]="url" [alt]="'Preview ' + ($index + 1)">
-          <button class="remove-image" (click)="removeImage($index)">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-          @if ($index === 0) {
-          <div class="primary-badge">Primary</div>
+          @if (formData().imagePreviewUrls.length === 0) {
+            <div class="image-upload-zone" (click)="fileInput.click()">
+              <div class="upload-icon">📷</div>
+              <div class="upload-text">Add photos</div>
+              <div class="upload-hint">Drag and drop or click to upload</div>
+            </div>
+          }
+
+          @if (formData().imagePreviewUrls.length > 0) {
+            <div class="image-preview-grid">
+              @for (url of formData().imagePreviewUrls; track url; let i = $index) {
+                <div class="image-preview-item">
+                  <img [src]="url" [alt]="'Property photo ' + (i + 1)" />
+                  <button class="image-remove-btn" (click)="removeImage(i)" type="button">
+                    ✕
+                  </button>
+                </div>
+              }
+              <div class="image-add-more" (click)="fileInput.click()">
+                <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24" class="add-icon">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                <span class="add-text">Add more</span>
+              </div>
+            </div>
           }
         </div>
-        }
       </div>
-      }
-    </div>
     }
 
-    <!-- Step 4: Title & Description -->
+    <!-- ==================== STEP 4: TITLE & DESCRIPTION ==================== -->
     @if (currentStep() === 4) {
-    <div class="step-panel">
-      <h2>Create your listing title and description</h2>
-      <p class="step-description">Make it catchy and informative</p>
+      <div class="step-panel">
+        <h2>Now, let's give your place a title</h2>
+        <p class="step-description">Short titles work best. Have fun with it—you can always change it later.</p>
 
-      <div class="form-group">
-        <label for="title-input" class="form-label required">Title</label>
-        <input id="title-input"
-               type="text"
-               class="form-input"
-               [(ngModel)]="formData().title"
-               placeholder="e.g., Beautiful 2BR Apartment with Ocean View"
-               maxlength="100">
-        <small>{{ formData().title.length }}/100 characters</small>
-      </div>
+        <!-- Title -->
+        <div class="form-group">
+          <label class="form-label required">Title</label>
+          <input
+            type="text"
+            class="form-input"
+            placeholder="e.g., Cozy Downtown Loft with City Views"
+            [(ngModel)]="formData().title"
+            maxlength="100"
+          />
+          <div class="text-muted mt-4">{{ formData().title.length }}/100 characters</div>
+        </div>
 
-      <div class="form-group">
-        <label for="description-input" class="form-label required">Description</label>
-        <textarea id="description-input"
-                  class="form-textarea"
-                  [(ngModel)]="formData().description"
-                  placeholder="Describe your property, the neighborhood, and what makes it special..."
-                  rows="8"
-                  maxlength="1000"></textarea>
-        <small>{{ formData().description.length }}/1000 characters</small>
-      </div>
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label required">Description</label>
+          <textarea
+            class="form-textarea"
+            placeholder="Describe your place to guests..."
+            [(ngModel)]="formData().description"
+            maxlength="1000"
+          ></textarea>
+          <div class="text-muted mt-4">{{ formData().description.length }}/1000 characters</div>
+        </div>
 
-      <div class="form-group">
-        <label for="house-rules-input" class="form-label">House Rules</label>
-        <textarea id="house-rules-input"
-                  class="form-textarea"
-                  [(ngModel)]="formData().houseRules"
-                  placeholder="e.g., No smoking, No pets, Quiet hours after 10 PM..."
-                  rows="4"></textarea>
+        <!-- House Rules -->
+        <div class="form-group">
+          <label class="form-label">House Rules</label>
+          <textarea
+            class="form-textarea"
+            placeholder="e.g., No smoking, No parties, Quiet hours 10pm-8am"
+            [(ngModel)]="formData().houseRules"
+            maxlength="500"
+          ></textarea>
+          <div class="text-muted mt-4">{{ formData().houseRules.length }}/500 characters</div>
+        </div>
       </div>
-    </div>
     }
 
-    <!-- Step 5: Pricing -->
+    <!-- ==================== STEP 5: PRICING ==================== -->
     @if (currentStep() === 5) {
-    <div class="step-panel">
-      <h2>Set your pricing</h2>
-      <p class="step-description">You can always change this later</p>
+      <div class="step-panel">
+        <h2>Now, set your price</h2>
+        <p class="step-description">You can change it anytime</p>
 
-      <div class="form-group">
-        <label for="base-price-input" class="form-label required">Base Price per Night ($)</label>
-        <input id="base-price-input"
-               type="number"
-               class="form-input"
-               [(ngModel)]="formData().basePrice"
-               placeholder="0"
-               min="0">
-      </div>
-
-      <div class="form-group">
-        <label for="cleaning-fee-input" class="form-label">Cleaning Fee ($)</label>
-        <input id="cleaning-fee-input"
-               type="number"
-               class="form-input"
-               [(ngModel)]="formData().cleaningFee"
-               placeholder="0"
-               min="0">
-      </div>
-
-      <div class="form-row">
+        <!-- Base Price -->
         <div class="form-group">
-          <label for="weekly-discount-input" class="form-label">Weekly Discount (%)</label>
-          <input id="weekly-discount-input"
-                 type="number"
-                 class="form-input"
-                 [(ngModel)]="formData().weeklyDiscount"
-                 placeholder="0"
-                 min="0"
-                 max="100">
+          <label class="form-label required">Base price per night</label>
+          <div class="price-input-wrapper">
+            <input
+              type="number"
+              class="form-input price-input"
+              placeholder="0"
+              [(ngModel)]="formData().basePrice"
+              min="0"
+              step="1"
+            />
+          </div>
+          <div class="text-muted mt-4">Guest price before taxes: ${{ formData().basePrice }}</div>
         </div>
-        <div class="form-group">
-          <label for="monthly-discount-input" class="form-label">Monthly Discount (%)</label>
-          <input id="monthly-discount-input"
-                 type="number"
-                 class="form-input"
-                 [(ngModel)]="formData().monthlyDiscount"
-                 placeholder="0"
-                 min="0"
-                 max="100">
-        </div>
-      </div>
 
-      <div class="pricing-summary">
-        <h3>Pricing Summary</h3>
-        <div class="summary-row">
-          <span>Base price</span>
-          <span class="price">${{ formData().basePrice }}</span>
+        <!-- Cleaning Fee -->
+        <div class="form-group">
+          <label class="form-label">Cleaning fee (optional)</label>
+          <div class="price-input-wrapper">
+            <input
+              type="number"
+              class="form-input price-input"
+              placeholder="0"
+              [(ngModel)]="formData().cleaningFee"
+              min="0"
+              step="1"
+            />
+          </div>
         </div>
-        @if (formData().cleaningFee) {
-        <div class="summary-row">
-          <span>Cleaning fee</span>
-          <span class="price">${{ formData().cleaningFee }}</span>
+
+        <!-- Discounts -->
+        <div class="form-group">
+          <label class="form-label">Weekly discount (%)</label>
+          <input
+            type="number"
+            class="form-input"
+            placeholder="0"
+            [(ngModel)]="formData().weeklyDiscount"
+            min="0"
+            max="100"
+          />
         </div>
-        }
-        @if (formData().weeklyDiscount) {
-        <div class="summary-row">
-          <span>Weekly discount</span>
-          <span class="discount">-{{ formData().weeklyDiscount }}%</span>
+
+        <div class="form-group">
+          <label class="form-label">Monthly discount (%)</label>
+          <input
+            type="number"
+            class="form-input"
+            placeholder="0"
+            [(ngModel)]="formData().monthlyDiscount"
+            min="0"
+            max="100"
+          />
         </div>
-        }
-        @if (formData().monthlyDiscount) {
-        <div class="summary-row">
-          <span>Monthly discount</span>
-          <span class="discount">-{{ formData().monthlyDiscount }}%</span>
-        </div>
-        }
       </div>
-    </div>
     }
 
-    <!-- Step 6: Policies -->
+    <!-- ==================== STEP 6: HOUSE RULES & POLICIES ==================== -->
     @if (currentStep() === 6) {
-    <div class="step-panel">
-      <h2>Set your house rules and policies</h2>
-      <p class="step-description">Let guests know what to expect</p>
+      <div class="step-panel">
+        <h2>Set house rules for your guests</h2>
+        <p class="step-description">Guests must agree to your house rules before they book</p>
 
-      <div class="form-row">
+        <!-- Check-in/out times -->
         <div class="form-group">
-          <label for="checkin-time-input" class="form-label">Check-in Time</label>
-          <input id="checkin-time-input"
-                 type="time"
-                 class="form-input"
-                 [(ngModel)]="formData().checkInTime">
+          <div class="location-grid">
+            <div>
+              <label class="form-label">Check-in time</label>
+              <input
+                type="time"
+                class="form-input"
+                [(ngModel)]="formData().checkInTime"
+              />
+            </div>
+            <div>
+              <label class="form-label">Check-out time</label>
+              <input
+                type="time"
+                class="form-input"
+                [(ngModel)]="formData().checkOutTime"
+              />
+            </div>
+          </div>
         </div>
+
+        <!-- Min/Max nights -->
         <div class="form-group">
-          <label for="checkout-time-input" class="form-label">Check-out Time</label>
-          <input id="checkout-time-input"
-                 type="time"
-                 class="form-input"
-                 [(ngModel)]="formData().checkOutTime">
+          <div class="location-grid">
+            <div>
+              <label class="form-label">Minimum nights</label>
+              <input
+                type="number"
+                class="form-input"
+                [(ngModel)]="formData().minNights"
+                min="1"
+              />
+            </div>
+            <div>
+              <label class="form-label">Maximum nights</label>
+              <input
+                type="number"
+                class="form-input"
+                [(ngModel)]="formData().maxNights"
+                min="1"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Cancellation Policy -->
+        <div class="form-group">
+          <label class="form-label">Cancellation policy</label>
+          <select
+            class="form-select"
+            [(ngModel)]="formData().cancellationPolicy">
+            @for (policy of cancellationPolicies; track policy.value) {
+              <option [value]="policy.value">{{ policy.label }}</option>
+            }
+          </select>
         </div>
       </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="min-nights-input" class="form-label">Minimum Nights</label>
-          <input id="min-nights-input"
-                 type="number"
-                 class="form-input"
-                 [(ngModel)]="formData().minNights"
-                 min="1">
-        </div>
-        <div class="form-group">
-          <label for="max-nights-input" class="form-label">Maximum Nights</label>
-          <input id="max-nights-input"
-                 type="number"
-                 class="form-input"
-                 [(ngModel)]="formData().maxNights"
-                 min="1">
-        </div>
-      </div>
-    </div>
     }
 
-    <!-- Step 7: Preview -->
+    <!-- ==================== STEP 7: REVIEW & PUBLISH ==================== -->
     @if (currentStep() === 7) {
-    <div class="step-panel">
-      <h2>Review your listing</h2>
-      <p class="step-description">Make sure everything looks good</p>
+      <div class="step-panel">
+        <h2>Review your listing</h2>
+        <p class="step-description">Here's what we'll show to guests. Make sure everything looks good!</p>
 
-      <div class="preview-card">
-        <div class="preview-images">
-          @if (formData().imagePreviewUrls[0]) {
-          <img [src]="formData().imagePreviewUrls[0]"
-               alt="Main photo">
+        <!-- Property Basics Preview -->
+        <div class="preview-section">
+          <div class="preview-title">Property Basics</div>
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-label">Property Type</div>
+              <div class="preview-value">{{ formData().propertyType ? getPropertyTypeLabel(formData().propertyType!) : 'N/A' }}</div>
+            </div>
+            <div class="preview-item">
+              <div class="preview-label">Room Type</div>
+              <div class="preview-value">{{ formData().roomType ? getRoomTypeLabel(formData().roomType!) : 'N/A' }}</div>
+            </div>
+            <div class="preview-item">
+              <div class="preview-label">Location</div>
+              <div class="preview-value">{{ formData().city }}, {{ formData().country }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Property Details Preview -->
+        <div class="preview-section">
+          <div class="preview-title">Property Details</div>
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-label">Guests</div>
+              <div class="preview-value">{{ formData().maxGuests }} guests</div>
+            </div>
+            <div class="preview-item">
+              <div class="preview-label">Bedrooms</div>
+              <div class="preview-value">{{ formData().bedrooms }} bedrooms</div>
+            </div>
+            <div class="preview-item">
+              <div class="preview-label">Bathrooms</div>
+              <div class="preview-value">{{ formData().bathrooms }} bathrooms</div>
+            </div>
+            @if (formData().propertySize > 0) {
+              <div class="preview-item">
+                <div class="preview-label">Size</div>
+                <div class="preview-value">{{ formData().propertySize }} sq ft</div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Photos Preview -->
+        <div class="preview-section">
+          <div class="preview-title">Photos ({{ formData().images.length }})</div>
+          @if (formData().imagePreviewUrls.length > 0) {
+            <div class="image-preview-grid">
+              @for (url of formData().imagePreviewUrls.slice(0, 6); track url) {
+                <div class="image-preview-item">
+                  <img [src]="url" alt="Property preview" />
+                </div>
+              }
+            </div>
           }
         </div>
 
-        <div class="preview-content">
-          <h3>{{ formData().title }}</h3>
-          <p class="preview-type">
-            {{ getPropertyTypeLabel(formData().propertyType!) }} ·
-            {{ getRoomTypeLabel(formData().roomType!) }}
-          </p>
-          <p class="preview-location">{{ formData().city }}, {{ formData().country }}</p>
-
-          <div class="preview-details">
-            <span>{{ formData().bedrooms }} beds</span>
-            <span>{{ formData().bathrooms }} baths</span>
-            <span>{{ formData().maxGuests }} guests</span>
+        <!-- Title & Description Preview -->
+        <div class="preview-section">
+          <div class="preview-title">Listing Details</div>
+          <div class="preview-item mb-4">
+            <div class="preview-label">Title</div>
+            <div class="preview-value">{{ formData().title || 'No title provided' }}</div>
           </div>
-
-          <p class="preview-description">{{ formData().description }}</p>
-
-          <div class="preview-price">
-            <span class="price">${{ formData().basePrice }}</span>
-            <span class="label">per night</span>
+          <div class="preview-item">
+            <div class="preview-label">Description</div>
+            <div class="preview-value">{{ formData().description || 'No description provided' }}</div>
           </div>
+        </div>
 
-          @if (formData().amenities.length) {
-          <div class="preview-amenities">
-            <h4>Amenities</h4>
-            <div class="amenity-tags">
+        <!-- Pricing Preview -->
+        <div class="preview-section">
+          <div class="preview-title">Pricing</div>
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-label">Base Price</div>
+              <div class="preview-value">${{ formData().basePrice }} / night</div>
+            </div>
+            @if (formData().cleaningFee > 0) {
+              <div class="preview-item">
+                <div class="preview-label">Cleaning Fee</div>
+                <div class="preview-value">${{ formData().cleaningFee }}</div>
+              </div>
+            }
+            @if (formData().weeklyDiscount > 0) {
+              <div class="preview-item">
+                <div class="preview-label">Weekly Discount</div>
+                <div class="preview-value">{{ formData().weeklyDiscount }}%</div>
+              </div>
+            }
+            @if (formData().monthlyDiscount > 0) {
+              <div class="preview-item">
+                <div class="preview-label">Monthly Discount</div>
+                <div class="preview-value">{{ formData().monthlyDiscount }}%</div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Amenities Preview -->
+        @if (formData().amenities.length > 0) {
+          <div class="preview-section">
+            <div class="preview-title">Amenities ({{ formData().amenities.length }})</div>
+            <div class="preview-grid">
               @for (amenity of formData().amenities; track amenity) {
-              <span class="amenity-tag">{{ amenity }}</span>
+                <div class="preview-value">✓ {{ amenity }}</div>
               }
             </div>
           </div>
-          }
+        }
+
+        <!-- Policies Preview -->
+        <div class="preview-section">
+          <div class="preview-title">Policies</div>
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-label">Check-in</div>
+              <div class="preview-value">{{ formData().checkInTime }}</div>
+            </div>
+            <div class="preview-item">
+              <div class="preview-label">Check-out</div>
+              <div class="preview-value">{{ formData().checkOutTime }}</div>
+            </div>
+            <div class="preview-item">
+              <div class="preview-label">Min Nights</div>
+              <div class="preview-value">{{ formData().minNights }}</div>
+            </div>
+            <div class="preview-item">
+              <div class="preview-label">Max Nights</div>
+              <div class="preview-value">{{ formData().maxNights }}</div>
+            </div>
+            <div class="preview-item">
+              <div class="preview-label">Cancellation Policy</div>
+              <div class="preview-value">{{ formData().cancellationPolicy }}</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
     }
-  </div>
 
-  <!-- Navigation Buttons -->
-  <div class="navigation-buttons">
-    @if (currentStep() > 1) {
-    <button class="btn-secondary"
-            (click)="previousStep()"
+    <!-- === NAVIGATION BUTTONS === -->
+    <div class="step-navigation">
+      @if (currentStep() > 1) {
+        <button class="nav-btn nav-btn-secondary" (click)="previousStep()">
+          Back
+        </button>
+      }
+      @if (currentStep() === 1) {
+        <div></div>
+      }
+
+      <div style="display: flex; gap: 12px;">
+        @if (currentStep() === totalSteps) {
+          <button
+            class="nav-btn nav-btn-secondary"
+            (click)="saveDraft()"
             [disabled]="loading()">
-      Back
-    </button>
-    }
-
-    <div class="right-buttons">
-      <button class="btn-outline"
-              (click)="saveDraft()"
-              [disabled]="loading()">
-        Save as Draft
-      </button>
-
-      @if (currentStep() < totalSteps) {
-      <button class="btn-primary"
-              (click)="nextStep()"
-              [disabled]="loading()">
-        Next
-      </button>
-      }
-
-      @if (currentStep() === totalSteps) {
-      <button class="btn-primary"
-              (click)="publishListing()"
-              [disabled]="loading()">
-        @if (!loading()) { <span>Publish Listing</span> }
-        @if (loading()) { <span>Publishing...</span> }
-      </button>
-      }
+            @if (loading()) {
+              <span class="loading-spinner"></span>
+            } @else {
+              Save Draft
+            }
+          </button>
+          <button
+            class="nav-btn nav-btn-primary"
+            (click)="publishListing()"
+            [disabled]="loading()">
+            @if (loading()) {
+              <span class="loading-spinner"></span>
+            } @else {
+              Publish Listing
+            }
+          </button>
+        } @else {
+          <button class="nav-btn nav-btn-primary" (click)="nextStep()">
+            Next
+          </button>
+        }
+      </div>
     </div>
   </div>
 </div>

@@ -548,6 +548,20 @@ input.search-input:focus {
   font-size: 13px;
   opacity: 0.9;
   font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.user-dropdown-role {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.95;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: inline-block;
+  margin-top: 6px;
 }
 
 .dropdown-section {
@@ -599,6 +613,28 @@ input.search-input:focus {
 
 .logout-item:hover {
   background: rgba(193, 53, 21, 0.08);
+}
+
+/* Highlight item for special actions like Add Listing */
+.highlight-item {
+  color: var(--primary-dark);
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(0, 183, 181, 0.08) 0%, rgba(1, 135, 144, 0.08) 100%);
+  border-left: 3px solid var(--primary-bright);
+}
+
+.highlight-item .dropdown-icon {
+  color: var(--primary-bright);
+}
+
+.highlight-item:hover {
+  background: linear-gradient(135deg, rgba(0, 183, 181, 0.15) 0%, rgba(1, 135, 144, 0.15) 100%);
+  border-left-color: var(--primary-dark);
+}
+
+.highlight-item:hover .dropdown-icon {
+  color: var(--primary-dark);
+  transform: scale(1.1);
 }
 
 .dropdown-divider {

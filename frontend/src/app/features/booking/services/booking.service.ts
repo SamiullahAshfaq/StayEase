@@ -62,6 +62,22 @@ export class BookingService {
     );
   }
 
+  updateBooking(
+    publicId: string,
+    data: {
+      checkInDate: string;
+      checkOutDate: string;
+      numberOfGuests: number;
+      specialRequests?: string;
+      addons?: any[];
+    }
+  ): Observable<ApiResponse<Booking>> {
+    return this.http.put<ApiResponse<Booking>>(
+      `${this.apiUrl}/${publicId}`,
+      data
+    );
+  }
+
   getUnavailableDates(listingPublicId: string): Observable<ApiResponse<string[]>> {
     return this.http.get<ApiResponse<string[]>>(
       `${this.apiUrl}/listing/${listingPublicId}/unavailable-dates`

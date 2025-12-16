@@ -103,7 +103,7 @@ export const routes: Routes = [
       },
       {
         path: 'create',
-        canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        canActivate: [authGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
         loadComponent: () => import('./features/profile/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
         title: 'Create Listing - StayEase'
       },
@@ -114,7 +114,7 @@ export const routes: Routes = [
       },
       {
         path: ':id/edit',
-        canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        canActivate: [authGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
         loadComponent: () => import('./features/profile/listing-edit/listing-edit.component').then(m => m.ListingEditComponent),
         title: 'Edit Listing - StayEase'
       },

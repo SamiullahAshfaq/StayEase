@@ -234,6 +234,92 @@ public class BookingService {
         return bookingMapper.toDTO(savedBooking, listing);
     }
 
+    public BookingDTO updateBooking(UUID publicId, UpdateBookingDTO dto, UUID currentUserPublicId) {
+        log.info("Updating booking: {}", publicId);
+
+        Booking booking = bookingRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
+
+        // Verify ownership
+        if (!booking.getGuestPublicId().equals(currentUserPublicId)) {
+            throw new ForbiddenException("You can only update your own bookings");
+        }
+
+        // Can only update confirmed or pending bookings
+        if (booking.getBookingStatus() != Booking.BookingStatus.CONFIRMED &&
+                booking.getBookingStatus() != Booking.BookingStatus.PENDING) {
+            throw new BadRequestException("Cannot update booking with status: " + booking.getBookingStatus());
+        }
+
+        // Validate dates
+        if (dto.getCheckInDate().isBefore(LocalDate.now())) {
+            throw new BadRequestException("Check-in date must be in the future");
+        }
+
+        if (dto.getCheckOutDate().isBefore(dto.getCheckInDate()) ||
+                dto.getCheckOutDate().isEqual(dto.getCheckInDate())) {
+            throw new BadRequestException("Check-out date must be after check-in date");
+        }
+
+        // Check listing still exists
+        Listing listing = listingRepository.findByPublicId(booking.getListingPublicId())
+                .orElseThrow(() -> new NotFoundException("Listing not found"));
+
+        // Validate guest count
+        if (dto.getNumberOfGuests() > listing.getMaxGuests()) {
+            throw new BadRequestException("Number of guests exceeds listing capacity");
+        }
+
+        // Update booking fields
+        booking.setCheckInDate(dto.getCheckInDate());
+        booking.setCheckOutDate(dto.getCheckOutDate());
+        booking.setNumberOfGuests(dto.getNumberOfGuests());
+
+        if (dto.getSpecialRequests() != null) {
+            booking.setSpecialRequests(dto.getSpecialRequests());
+        }
+
+        // Recalculate number of nights
+        long nights = ChronoUnit.DAYS.between(dto.getCheckInDate(), dto.getCheckOutDate());
+        booking.setNumberOfNights((int) nights);
+
+        // Recalculate total price
+        BigDecimal nightlyPrice = listing.getPricePerNight();
+        BigDecimal accommodationTotal = nightlyPrice.multiply(new BigDecimal(nights));
+
+        // Handle addons - clear old ones and add new ones
+        booking.getAddons().clear(); // Clear existing addons (orphan removal will delete them)
+
+        BigDecimal addonsTotal = BigDecimal.ZERO;
+        if (dto.getAddons() != null && !dto.getAddons().isEmpty()) {
+            for (BookingAddonDTO addonDTO : dto.getAddons()) {
+                BookingAddon addon = new BookingAddon();
+                addon.setName(addonDTO.getName());
+                addon.setPrice(addonDTO.getPrice());
+                addon.setQuantity(addonDTO.getQuantity() != null ? addonDTO.getQuantity() : 1);
+                addon.setDescription(addonDTO.getDescription());
+
+                // Use the helper method to properly set the relationship
+                booking.addAddon(addon);
+
+                // Calculate addon cost
+                addonsTotal = addonsTotal.add(
+                        addon.getPrice().multiply(new BigDecimal(addon.getQuantity())));
+            }
+        }
+
+        BigDecimal subtotal = accommodationTotal.add(addonsTotal);
+        BigDecimal serviceFee = subtotal.multiply(new BigDecimal("0.10")); // 10% service fee
+        BigDecimal totalPrice = subtotal.add(serviceFee);
+
+        booking.setTotalPrice(totalPrice);
+
+        Booking savedBooking = bookingRepository.save(booking);
+        log.info("Booking updated successfully: {}", publicId);
+
+        return bookingMapper.toDTO(savedBooking, listing);
+    }
+
     public BookingDTO cancelBooking(UUID publicId, String reason, UUID currentUserPublicId) {
         Booking booking = bookingRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new NotFoundException("Booking not found"));
