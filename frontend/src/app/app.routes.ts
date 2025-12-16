@@ -230,10 +230,22 @@ export const routes: Routes = [
         title: 'Services - StayEase'
       },
       {
+        path: 'my-services',
+        canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/service-offering/provider-dashboard/provider-dashboard.component').then(m => m.ProviderDashboardComponent),
+        title: 'My Services - StayEase'
+      },
+      {
         path: 'create',
         canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN'])],
         loadComponent: () => import('./features/service-offering/service-create/service-create.component').then(m => m.ServiceCreateComponent),
         title: 'Create Service - StayEase'
+      },
+      {
+        path: 'edit/:id',
+        canActivate: [authGuard, profileCompleteGuard, roleGuard(['ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/service-offering/service-edit/service-edit.component').then(m => m.ServiceEditComponent),
+        title: 'Edit Service - StayEase'
       },
       {
         path: ':id',
@@ -246,6 +258,13 @@ export const routes: Routes = [
         pathMatch: 'full'
       }
     ]
+  },
+
+  // Service shortcuts (easier to remember)
+  {
+    path: 'services',
+    redirectTo: 'service-offering',
+    pathMatch: 'prefix'
   },
 
   // Chat routes

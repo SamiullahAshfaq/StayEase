@@ -1,27 +1,31 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ServiceOfferingService } from '../services/service-offering.service';
 import {
   ServiceCategory,
   PricingType,
-  CreateServiceOfferingRequest,
+  UpdateServiceOfferingRequest,
   SERVICE_CATEGORY_LABELS,
   PRICING_TYPE_LABELS
 } from '../models/service-offering.model';
 
 @Component({
-  selector: 'app-service-create',
+  selector: 'app-service-edit',
   standalone: true,
   imports: [CommonModule, RouterModule, ReactiveFormsModule],
-  templateUrl: './service-create.component.html',
-  styleUrls: ['./service-create.component.css']
+  templateUrl: './service-edit.component.html',
+  styleUrls: ['./service-edit.component.css']
 })
-export class ServiceCreateComponent implements OnInit {
+export class ServiceEditComponent implements OnInit {
   private fb = inject(FormBuilder);
   private serviceService = inject(ServiceOfferingService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  // Service ID
+  serviceId = signal<string | null>(null);
 
   // Form
   serviceForm!: FormGroup;
@@ -30,6 +34,7 @@ export class ServiceCreateComponent implements OnInit {
 
   // Loading & Error
   loading = signal(false);
+  loadingService = signal(true);
   error = signal<string | null>(null);
   success = signal(false);
 
@@ -58,6 +63,7 @@ export class ServiceCreateComponent implements OnInit {
 
   ngOnInit() {
     this.initializeForm();
+    this.loadService();
   }
 
   initializeForm() {
@@ -133,6 +139,96 @@ export class ServiceCreateComponent implements OnInit {
 
       licenseNumberControl?.updateValueAndValidity();
       licenseExpiryControl?.updateValueAndValidity();
+    });
+  }
+
+  loadService() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.router.navigate(['/services']);
+      return;
+    }
+
+    this.serviceId.set(id);
+    this.loadingService.set(true);
+
+    this.serviceService.getService(id).subscribe({
+      next: (response) => {
+        const service = response.data;
+
+        // Populate form with service data
+        this.serviceForm.patchValue({
+          category: service.category,
+          title: service.title,
+          description: service.description,
+          highlights: service.highlights,
+          whatIsIncluded: service.whatIsIncluded,
+          whatToExpect: service.whatToExpect,
+          pricingType: service.pricingType,
+          basePrice: service.basePrice,
+          extraPersonPrice: service.extraPersonPrice,
+          weekendSurcharge: service.weekendSurcharge,
+          peakSeasonSurcharge: service.peakSeasonSurcharge,
+          minCapacity: service.minCapacity,
+          maxCapacity: service.maxCapacity,
+          durationMinutes: service.durationMinutes,
+          minBookingHours: service.minBookingHours,
+          isInstantBooking: service.isInstantBooking,
+          availableFrom: service.availableFrom,
+          availableTo: service.availableTo,
+          advanceBookingHours: service.advanceBookingHours,
+          city: service.city,
+          country: service.country,
+          address: service.address,
+          zipCode: service.zipCode,
+          latitude: service.latitude,
+          longitude: service.longitude,
+          serviceRadius: service.serviceRadius,
+          providesMobileService: service.providesMobileService,
+          requirements: service.requirements,
+          cancellationPolicy: service.cancellationPolicy,
+          safetyMeasures: service.safetyMeasures,
+          videoUrl: service.videoUrl,
+          hasInsurance: service.hasInsurance,
+          hasLicense: service.hasLicense,
+          licenseNumber: service.licenseNumber,
+          licenseExpiryDate: service.licenseExpiryDate
+        });
+
+        // Populate arrays
+        if (service.availableDays) {
+          service.availableDays.forEach((day: string) => {
+            this.availableDaysArray.push(this.fb.control(day));
+          });
+        }
+
+        if (service.languages) {
+          service.languages.forEach((lang: string) => {
+            this.languagesArray.push(this.fb.control(lang));
+          });
+        }
+
+        if (service.amenities) {
+          service.amenities.forEach((amenity: string) => {
+            this.amenitiesArray.push(this.fb.control(amenity));
+          });
+        }
+
+        if (service.images) {
+          service.images.forEach((img) => {
+            // If ServiceImage type is available, use it instead of any
+            this.imageUrlsArray.push(this.fb.control(img.imageUrl));
+          });
+          this.imagePreviews.set(service.images.map((img) => img.imageUrl));
+        }
+
+        this.loadingService.set(false);
+      },
+      error: () => {
+        console.error('Error loading service:');
+        this.error.set('Failed to load service. Please try again.');
+        this.loadingService.set(false);
+      }
     });
   }
 
@@ -252,12 +348,16 @@ export class ServiceCreateComponent implements OnInit {
       return;
     }
 
+    if (!this.serviceId()) {
+      this.error.set('Service ID is missing');
+      return;
+    }
+
     this.loading.set(true);
     this.error.set(null);
 
     const formValue = this.serviceForm.value;
-    const request: CreateServiceOfferingRequest = {
-      category: formValue.category,
+    const request: UpdateServiceOfferingRequest = {
       title: formValue.title,
       description: formValue.description,
       highlights: formValue.highlights,
@@ -305,7 +405,7 @@ export class ServiceCreateComponent implements OnInit {
       licenseExpiryDate: formValue.licenseExpiryDate
     };
 
-    this.serviceService.createService(request).subscribe({
+    this.serviceService.updateService(this.serviceId()!, request).subscribe({
       next: (response) => {
         this.success.set(true);
         this.loading.set(false);
@@ -314,10 +414,16 @@ export class ServiceCreateComponent implements OnInit {
         }, 2000);
       },
       error: (err) => {
-        console.error('Error creating service:', err);
-        this.error.set(err.error?.message || 'Failed to create service. Please try again.');
+        console.error('Error updating service:', err);
+        this.error.set(err.error?.message || 'Failed to update service. Please try again.');
         this.loading.set(false);
       }
     });
+  }
+
+  cancel() {
+    if (confirm('Are you sure you want to cancel? Your changes will be lost.')) {
+      this.router.navigate(['/services', this.serviceId()]);
+    }
   }
 }

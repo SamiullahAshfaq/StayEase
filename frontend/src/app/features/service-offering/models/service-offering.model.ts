@@ -67,7 +67,7 @@ export interface ServiceOffering {
   publicId: string;
   category: ServiceCategory;
   status: ServiceStatus;
-  
+
   // Provider info
   providerPublicId: string;
   providerName: string;
@@ -75,36 +75,36 @@ export interface ServiceOffering {
   providerRating?: number;
   providerReviewCount?: number;
   isProviderVerified: boolean;
-  
+
   // Basic info
   title: string;
   description: string;
   highlights?: string;
   whatIsIncluded?: string;
   whatToExpect?: string;
-  
+
   // Pricing
   pricingType: PricingType;
   basePrice: number;
   extraPersonPrice?: number;
   weekendSurcharge?: number;
   peakSeasonSurcharge?: number;
-  
+
   // Capacity
   minCapacity?: number;
   maxCapacity?: number;
-  
+
   // Duration
   durationMinutes?: number;
   minBookingHours?: number;
-  
+
   // Availability
   isActive: boolean;
   isInstantBooking: boolean;
   availableFrom?: string; // LocalTime as string
   availableTo?: string;
   availableDays: string[];
-  
+
   // Location
   city: string;
   country: string;
@@ -114,50 +114,50 @@ export interface ServiceOffering {
   longitude?: number;
   serviceRadius?: number;
   providesMobileService: boolean;
-  
+
   // Requirements & Policies
   requirements?: string;
   cancellationPolicy?: string;
   advanceBookingHours?: number;
   safetyMeasures?: string;
-  
+
   // Languages & Amenities
   languages: string[];
   amenities: string[];
-  
+
   // Media
   images: ServiceImage[];
   videoUrl?: string;
-  
+
   // Reviews & Stats
   averageRating: number;
   totalReviews: number;
   totalBookings: number;
-  
+
   // Verification
   isVerified: boolean;
   hasInsurance: boolean;
   hasLicense: boolean;
   licenseNumber?: string;
   licenseExpiryDate?: string;
-  
+
   // Promotion
   isFeatured: boolean;
   featuredUntil?: string;
   discountPercentage?: number;
   discountValidUntil?: string;
-  
+
   // Statistics
   viewCount: number;
   favoriteCount: number;
   inquiryCount: number;
-  
+
   // Computed fields
   categoryDisplayName: string;
   priceDisplay: string;
   finalPrice: number;
   isBookable: boolean;
-  
+
   // Timestamps
   createdAt: string;
   updatedAt: string;
@@ -171,23 +171,23 @@ export interface CreateServiceOfferingRequest {
   highlights?: string;
   whatIsIncluded?: string;
   whatToExpect?: string;
-  
+
   pricingType: PricingType;
   basePrice: number;
   extraPersonPrice?: number;
   weekendSurcharge?: number;
   peakSeasonSurcharge?: number;
-  
+
   minCapacity?: number;
   maxCapacity?: number;
   durationMinutes?: number;
   minBookingHours?: number;
-  
+
   isInstantBooking: boolean;
   availableFrom?: string;
   availableTo?: string;
   availableDays: string[];
-  
+
   city: string;
   country: string;
   address?: string;
@@ -196,17 +196,65 @@ export interface CreateServiceOfferingRequest {
   longitude?: number;
   serviceRadius?: number;
   providesMobileService: boolean;
-  
+
   requirements?: string;
   cancellationPolicy?: string;
   advanceBookingHours?: number;
   safetyMeasures?: string;
-  
+
   languages: string[];
   amenities: string[];
   imageUrls: string[];
   videoUrl?: string;
-  
+
+  hasInsurance: boolean;
+  hasLicense: boolean;
+  licenseNumber?: string;
+  licenseExpiryDate?: string;
+}
+
+export interface UpdateServiceOfferingRequest {
+  title: string;
+  description: string;
+  highlights?: string;
+  whatIsIncluded?: string;
+  whatToExpect?: string;
+
+  pricingType: PricingType;
+  basePrice: number;
+  extraPersonPrice?: number;
+  weekendSurcharge?: number;
+  peakSeasonSurcharge?: number;
+
+  minCapacity?: number;
+  maxCapacity?: number;
+  durationMinutes?: number;
+  minBookingHours?: number;
+
+  isInstantBooking: boolean;
+  availableFrom?: string;
+  availableTo?: string;
+  availableDays: string[];
+
+  city: string;
+  country: string;
+  address?: string;
+  zipCode?: string;
+  latitude?: number;
+  longitude?: number;
+  serviceRadius?: number;
+  providesMobileService: boolean;
+
+  requirements?: string;
+  cancellationPolicy?: string;
+  advanceBookingHours?: number;
+  safetyMeasures?: string;
+
+  languages: string[];
+  amenities: string[];
+  imageUrls: string[];
+  videoUrl?: string;
+
   hasInsurance: boolean;
   hasLicense: boolean;
   licenseNumber?: string;
@@ -217,26 +265,26 @@ export interface ServiceBooking {
   id: number;
   publicId: string;
   status: BookingStatus;
-  
+
   // Service info
   servicePublicId: string;
   serviceTitle: string;
   serviceCategory: ServiceCategory;
   serviceImageUrl?: string;
-  
+
   // Provider info
   providerPublicId: string;
   providerName: string;
   providerAvatar?: string;
   providerPhone?: string;
-  
+
   // Customer info
   customerPublicId: string;
   customerName: string;
   customerAvatar?: string;
   customerPhone?: string;
   customerEmail?: string;
-  
+
   // Booking details
   bookingDate: string;
   startTime: string;
@@ -244,13 +292,13 @@ export interface ServiceBooking {
   durationMinutes?: number;
   numberOfPeople?: number;
   numberOfItems?: number;
-  
+
   // Location
   serviceLocation?: string;
   customerAddress?: string;
   latitude?: number;
   longitude?: number;
-  
+
   // Pricing
   basePrice: number;
   extraPersonCharge: number;
@@ -259,15 +307,15 @@ export interface ServiceBooking {
   serviceFee: number;
   tax: number;
   totalPrice: number;
-  
+
   // Payment
   paymentStatus: string;
   paymentIntentId?: string;
   paidAt?: string;
-  
+
   // Additional info
   specialRequests?: string;
-  
+
   // Status timestamps
   confirmedAt?: string;
   rejectedAt?: string;
@@ -275,17 +323,17 @@ export interface ServiceBooking {
   serviceStartedAt?: string;
   serviceCompletedAt?: string;
   refundedAt?: string;
-  
+
   // Review tracking
   isReviewedByCustomer: boolean;
   isReviewedByProvider: boolean;
   reviewPublicId?: string;
-  
+
   // Computed fields
   canCancel: boolean;
   canReview: boolean;
   statusDisplay: string;
-  
+
   // Timestamps
   createdAt: string;
   updatedAt: string;

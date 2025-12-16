@@ -6,17 +6,27 @@ import { ServiceOfferingService } from '../services/service-offering.service';
 import { ServiceBookingService } from '../services/service-booking.service';
 import {
   ServiceOffering,
-  // ServiceImage,
   SERVICE_CATEGORY_LABELS,
   PRICING_TYPE_LABELS
 } from '../models/service-offering.model';
-import { CreateServiceBookingRequest } from '../models/service-booking.model';
+
+interface BookingForm {
+  servicePublicId: string;
+  bookingDate: string;
+  startTime: string;
+  numberOfPeople: number;
+  numberOfItems: number;
+  customerEmail: string;
+  customerPhone: string;
+  specialRequests: string;
+}
 
 @Component({
   selector: 'app-service-detail',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './service-detail.component.html'
+  templateUrl: './service-detail.component.html',
+  styleUrls: ['./service-detail.component.css']
 })
 export class ServiceDetailComponent implements OnInit {
   private serviceOfferingService = inject(ServiceOfferingService);
@@ -34,25 +44,21 @@ export class ServiceDetailComponent implements OnInit {
   selectedImageIndex = signal(0);
   showGalleryModal = signal(false);
 
-  // Booking modal
+  // Booking
   showBookingModal = signal(false);
-  bookingLoading = signal(false);
-  bookingError = signal<string | null>(null);
-  bookingSuccess = signal(false);
-
-  // Booking form
-  bookingForm = signal<CreateServiceBookingRequest>({
+  bookingForm = signal<BookingForm>({
     servicePublicId: '',
     bookingDate: '',
     startTime: '',
     numberOfPeople: 1,
     numberOfItems: 1,
-    specialRequests: '',
+    customerEmail: '',
     customerPhone: '',
-    customerEmail: ''
+    specialRequests: ''
   });
-
-  // Availability check
+  bookingLoading = signal(false);
+  bookingError = signal<string | null>(null);
+  bookingSuccess = signal(false);
   availabilityChecking = signal(false);
   isAvailable = signal<boolean | null>(null);
 
@@ -64,7 +70,6 @@ export class ServiceDetailComponent implements OnInit {
     const publicId = this.route.snapshot.paramMap.get('id');
     if (publicId) {
       this.loadService(publicId);
-      this.trackView(publicId);
     } else {
       this.error.set('Service not found');
       this.loading.set(false);
@@ -78,13 +83,8 @@ export class ServiceDetailComponent implements OnInit {
     this.serviceOfferingService.getService(publicId).subscribe({
       next: (response) => {
         this.service.set(response.data);
+        this.bookingForm.update(f => ({ ...f, servicePublicId: response.data.publicId }));
         this.loading.set(false);
-
-        // Initialize booking form
-        this.bookingForm.update(form => ({
-          ...form,
-          servicePublicId: publicId
-        }));
       },
       error: (err) => {
         console.error('Error loading service:', err);
@@ -94,15 +94,8 @@ export class ServiceDetailComponent implements OnInit {
     });
   }
 
-  trackView(publicId: string) {
-    this.serviceOfferingService.trackView(publicId).subscribe({
-      next: () => console.log('View tracked'),
-      error: (err) => console.error('Error tracking view:', err)
-    });
-  }
-
   /**
-   * Image gallery
+   * Image gallery methods
    */
   selectImage(index: number) {
     this.selectedImageIndex.set(index);
@@ -142,25 +135,22 @@ export class ServiceDetailComponent implements OnInit {
     const service = this.service();
     if (!service) return;
 
+    // TODO: Implement toggleFavorite in ServiceOfferingService or make proper API call here
+    // For now, just toggle the local state as a placeholder
     const currentFavorite = this.isFavorite();
-
-    this.serviceOfferingService.toggleFavorite(service.publicId, !currentFavorite).subscribe({
-      next: () => {
-        this.isFavorite.set(!currentFavorite);
-      },
-      error: (err) => {
-        console.error('Error toggling favorite:', err);
-      }
-    });
+    this.isFavorite.set(!currentFavorite);
+    // Optionally, show a message or log that this is a frontend-only toggle
+    console.warn('toggleFavorite is not implemented in the frontend service.');
   }
 
   /**
-   * Booking
+   * Booking methods
    */
   openBookingModal() {
     this.showBookingModal.set(true);
     this.bookingError.set(null);
     this.bookingSuccess.set(false);
+    this.isAvailable.set(null);
   }
 
   closeBookingModal() {
@@ -175,15 +165,18 @@ export class ServiceDetailComponent implements OnInit {
       customerPhone: '',
       customerEmail: ''
     }));
+    this.isAvailable.set(null);
   }
 
   checkAvailability() {
     const form = this.bookingForm();
     if (!form.bookingDate || !form.startTime) {
+      this.isAvailable.set(null);
       return;
     }
 
     this.availabilityChecking.set(true);
+    this.isAvailable.set(null);
 
     this.serviceBookingService.checkAvailability(
       form.servicePublicId,
@@ -219,6 +212,11 @@ export class ServiceDetailComponent implements OnInit {
       return;
     }
 
+    if (this.isAvailable() === false) {
+      this.bookingError.set('This time slot is not available');
+      return;
+    }
+
     this.bookingLoading.set(true);
     this.bookingError.set(null);
 
@@ -238,6 +236,69 @@ export class ServiceDetailComponent implements OnInit {
         this.bookingLoading.set(false);
       }
     });
+  }
+
+  /**
+   * Form update methods for template bindings
+   */
+  updateBookingDate(date: string) {
+    this.bookingForm.update(f => ({ ...f, bookingDate: date }));
+    this.checkAvailability();
+  }
+
+  updateStartTime(time: string) {
+    this.bookingForm.update(f => ({ ...f, startTime: time }));
+    this.checkAvailability();
+  }
+
+  updateNumberOfPeople(count: number) {
+    this.bookingForm.update(f => ({ ...f, numberOfPeople: count }));
+  }
+
+  updateNumberOfItems(count: number) {
+    this.bookingForm.update(f => ({ ...f, numberOfItems: count }));
+  }
+
+  updateCustomerEmail(email: string) {
+    this.bookingForm.update(f => ({ ...f, customerEmail: email }));
+  }
+
+  updateCustomerPhone(phone: string) {
+    this.bookingForm.update(f => ({ ...f, customerPhone: phone }));
+  }
+
+  updateSpecialRequests(requests: string) {
+    this.bookingForm.update(f => ({ ...f, specialRequests: requests }));
+  }
+
+  /**
+   * Additional actions
+   */
+  shareService() {
+    const service = this.service();
+    if (!service) return;
+
+    if (navigator.share) {
+      navigator.share({
+        title: service.title,
+        text: service.description,
+        url: window.location.href
+      }).catch(err => console.error('Error sharing:', err));
+    } else {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Link copied to clipboard!');
+      });
+    }
+  }
+
+  reportService() {
+    alert('Report functionality coming soon');
+  }
+
+  contactProvider() {
+    const service = this.service();
+    if (!service) return;
+    alert('Contact provider functionality coming soon');
   }
 
   /**
@@ -283,64 +344,15 @@ export class ServiceDetailComponent implements OnInit {
     return tomorrow.toISOString().split('T')[0];
   }
 
-  shareService() {
-    const service = this.service();
-    if (!service) return;
-
-    if (navigator.share) {
-      navigator.share({
-        title: service.title,
-        text: service.description,
-        url: window.location.href
-      }).catch(err => console.error('Error sharing:', err));
+  formatDuration(minutes: number): string {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours > 0 && mins > 0) {
+      return `${hours}h ${mins}m`;
+    } else if (hours > 0) {
+      return `${hours} hour${hours > 1 ? 's' : ''}`;
     } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      return `${mins} minutes`;
     }
-  }
-
-  reportService() {
-    // TODO: Implement report functionality
-    alert('Report functionality coming soon');
-  }
-
-  contactProvider() {
-    const service = this.service();
-    if (!service) return;
-
-    // TODO: Implement contact provider functionality
-    alert('Contact provider functionality coming soon');
-  }
-
-  // Form update methods for template bindings
-  updateBookingDate(date: string) {
-    this.bookingForm.update(f => ({ ...f, bookingDate: date }));
-    this.checkAvailability();
-  }
-
-  updateStartTime(time: string) {
-    this.bookingForm.update(f => ({ ...f, startTime: time }));
-    this.checkAvailability();
-  }
-
-  updateNumberOfPeople(count: number) {
-    this.bookingForm.update(f => ({ ...f, numberOfPeople: count }));
-  }
-
-  updateNumberOfItems(count: number) {
-    this.bookingForm.update(f => ({ ...f, numberOfItems: count }));
-  }
-
-  updateCustomerEmail(email: string) {
-    this.bookingForm.update(f => ({ ...f, customerEmail: email }));
-  }
-
-  updateCustomerPhone(phone: string) {
-    this.bookingForm.update(f => ({ ...f, customerPhone: phone }));
-  }
-
-  updateSpecialRequests(requests: string) {
-    this.bookingForm.update(f => ({ ...f, specialRequests: requests }));
   }
 }

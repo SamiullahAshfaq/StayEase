@@ -5,9 +5,11 @@ import { environment } from '../../../../environments/environment';
 import {
   ServiceOffering,
   CreateServiceOfferingRequest,
+  UpdateServiceOfferingRequest,
   ServiceFilter,
   ServiceListResponse,
-  ApiResponse
+  ApiResponse,
+  ServiceCategory
 } from '../models/service-offering.model';
 
 @Injectable({
@@ -15,7 +17,7 @@ import {
 })
 export class ServiceOfferingService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/api/services`;
+  private apiUrl = `${environment.apiUrl}/service-offerings`;
 
   /**
    * Create a new service offering
@@ -34,8 +36,8 @@ export class ServiceOfferingService {
   /**
    * Update service offering
    */
-  updateService(publicId: string, request: Partial<CreateServiceOfferingRequest>): Observable<ApiResponse<ServiceOffering>> {
-    return this.http.patch<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}`, request);
+  updateService(publicId: string, request: UpdateServiceOfferingRequest): Observable<ApiResponse<ServiceOffering>> {
+    return this.http.put<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}`, request);
   }
 
   /**
@@ -46,102 +48,100 @@ export class ServiceOfferingService {
   }
 
   /**
-   * Get services with filters
+   * Get all active services with pagination
    */
-  getServices(filter: ServiceFilter = {}): Observable<ApiResponse<ServiceListResponse>> {
-    let params = new HttpParams();
-    
-    if (filter.category) params = params.set('category', filter.category);
-    if (filter.city) params = params.set('city', filter.city);
-    if (filter.country) params = params.set('country', filter.country);
-    if (filter.keyword) params = params.set('keyword', filter.keyword);
-    if (filter.minPrice) params = params.set('minPrice', filter.minPrice.toString());
-    if (filter.maxPrice) params = params.set('maxPrice', filter.maxPrice.toString());
-    if (filter.minRating) params = params.set('minRating', filter.minRating.toString());
-    if (filter.isFeatured !== undefined) params = params.set('isFeatured', filter.isFeatured.toString());
-    if (filter.providesMobileService !== undefined) params = params.set('providesMobileService', filter.providesMobileService.toString());
-    if (filter.isInstantBooking !== undefined) params = params.set('isInstantBooking', filter.isInstantBooking.toString());
-    if (filter.sortBy) params = params.set('sortBy', filter.sortBy);
-    if (filter.sortDirection) params = params.set('sortDirection', filter.sortDirection);
-    if (filter.page !== undefined) params = params.set('page', filter.page.toString());
-    if (filter.size) params = params.set('size', filter.size.toString());
+  getAllActiveServices(page = 0, size = 20, sortBy = 'averageRating', sortDirection = 'DESC'): Observable<ApiResponse<ServiceListResponse>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sortBy', sortBy)
+      .set('sortDirection', sortDirection);
 
     return this.http.get<ApiResponse<ServiceListResponse>>(this.apiUrl, { params });
   }
 
   /**
-   * Get featured services
+   * Search services with filters
    */
-  getFeaturedServices(page: number = 0, size: number = 12): Observable<ApiResponse<ServiceListResponse>> {
-    return this.getServices({ isFeatured: true, page, size, sortBy: 'averageRating', sortDirection: 'desc' });
+  searchServices(filter: ServiceFilter = {}): Observable<ApiResponse<ServiceListResponse>> {
+    let params = new HttpParams();
+
+    if (filter.category) params = params.set('category', filter.category);
+    if (filter.city) params = params.set('city', filter.city);
+    if (filter.keyword) params = params.set('keyword', filter.keyword);
+    if (filter.minRating !== undefined) params = params.set('minRating', filter.minRating.toString());
+    // if (typeof filter.mobileServiceOnly === 'boolean') {
+    //   params = params.set('mobileServiceOnly', filter.mobileServiceOnly.toString());
+    // }
+    if (filter.isInstantBooking) params = params.set('instantBookingOnly', filter.isInstantBooking.toString());
+    if (filter.sortBy) params = params.set('sortBy', filter.sortBy);
+    if (filter.sortDirection) params = params.set('sortDirection', filter.sortDirection);
+    if (filter.page !== undefined) params = params.set('page', filter.page.toString());
+    if (filter.size) params = params.set('size', filter.size.toString());
+
+    return this.http.get<ApiResponse<ServiceListResponse>>(`${this.apiUrl}/search`, { params });
   }
 
   /**
    * Get services by category
    */
-  getServicesByCategory(category: string, page: number = 0, size: number = 12): Observable<ApiResponse<ServiceListResponse>> {
-    let params = new HttpParams()
+  getServicesByCategory(category: ServiceCategory, page = 0, size = 20): Observable<ApiResponse<ServiceListResponse>> {
+    const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
-    
+
     return this.http.get<ApiResponse<ServiceListResponse>>(`${this.apiUrl}/category/${category}`, { params });
   }
 
   /**
-   * Search services
+   * Get featured services
    */
-  searchServices(keyword: string, page: number = 0, size: number = 12): Observable<ApiResponse<ServiceListResponse>> {
-    return this.getServices({ keyword, page, size });
+  getFeaturedServices(): Observable<ApiResponse<ServiceOffering[]>> {
+    return this.http.get<ApiResponse<ServiceOffering[]>>(`${this.apiUrl}/featured`);
   }
 
   /**
    * Get my services (provider)
    */
-  getMyServices(page: number = 0, size: number = 10): Observable<ApiResponse<ServiceListResponse>> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-    
-    return this.http.get<ApiResponse<ServiceListResponse>>(`${this.apiUrl}/my-services`, { params });
+  getMyServices(): Observable<ApiResponse<ServiceOffering[]>> {
+    return this.http.get<ApiResponse<ServiceOffering[]>>(`${this.apiUrl}/my-services`);
   }
 
   /**
-   * Track view
+   * Get services by specific provider
    */
-  trackView(publicId: string): Observable<ApiResponse<void>> {
-    return this.http.post<ApiResponse<void>>(`${this.apiUrl}/${publicId}/view`, {});
+  getServicesByProvider(providerPublicId: string): Observable<ApiResponse<ServiceOffering[]>> {
+    return this.http.get<ApiResponse<ServiceOffering[]>>(`${this.apiUrl}/provider/${providerPublicId}`);
   }
 
   /**
-   * Toggle favorite
+   * Update service status
    */
-  toggleFavorite(publicId: string, isFavorite: boolean): Observable<ApiResponse<void>> {
-    if (isFavorite) {
-      return this.http.post<ApiResponse<void>>(`${this.apiUrl}/${publicId}/favorite`, {});
-    } else {
-      return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${publicId}/favorite`);
-    }
+  updateServiceStatus(publicId: string, status: string): Observable<ApiResponse<ServiceOffering>> {
+    const params = new HttpParams().set('status', status);
+    return this.http.patch<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}/status`, {}, { params });
   }
 
   /**
-   * Activate/Deactivate service
+   * Approve service (admin only)
    */
-  toggleActive(publicId: string, isActive: boolean): Observable<ApiResponse<ServiceOffering>> {
-    const action = isActive ? 'activate' : 'deactivate';
-    return this.http.post<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}/${action}`, {});
+  approveService(publicId: string): Observable<ApiResponse<ServiceOffering>> {
+    return this.http.post<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}/approve`, {});
   }
 
   /**
-   * Feature service (admin/provider)
+   * Reject service (admin only)
    */
-  toggleFeature(publicId: string, isFeatured: boolean): Observable<ApiResponse<ServiceOffering>> {
-    return this.http.post<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}/feature`, { isFeatured });
+  rejectService(publicId: string, reason: string): Observable<ApiResponse<ServiceOffering>> {
+    const params = new HttpParams().set('reason', reason);
+    return this.http.post<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}/reject`, {}, { params });
   }
 
   /**
-   * Get statistics
+   * Toggle featured status (admin only)
    */
-  getStatistics(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/statistics`);
+  toggleFeature(publicId: string, featured: boolean): Observable<ApiResponse<ServiceOffering>> {
+    const params = new HttpParams().set('featured', featured.toString());
+    return this.http.post<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}/feature`, {}, { params });
   }
 }

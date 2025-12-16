@@ -3,17 +3,18 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ServiceOfferingService } from '../services/service-offering.service';
-import { 
-  ServiceOffering, 
-  ServiceFilter, 
+import { ServiceCardComponent } from '../service-card/service-card.component';
+import {
+  ServiceOffering,
+  ServiceFilter,
   ServiceCategory,
-  SERVICE_CATEGORY_LABELS 
+  SERVICE_CATEGORY_LABELS
 } from '../models/service-offering.model';
 
 @Component({
   selector: 'app-service-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ServiceCardComponent],
   templateUrl: './service-list.component.html',
   styleUrl: './service-list.component.css'
 })
@@ -28,7 +29,7 @@ export class ServiceListComponent implements OnInit {
   services = signal<ServiceOffering[]>([]);
   loading = signal(true);
   error = signal<string | null>(null);
-  
+
   // Pagination
   currentPage = signal(0);
   totalPages = signal(0);
@@ -68,7 +69,7 @@ export class ServiceListComponent implements OnInit {
     if (this.city()) {
       this.selectedCity.set(this.city()!);
     }
-    
+
     this.loadServices();
   }
 
@@ -91,7 +92,7 @@ export class ServiceListComponent implements OnInit {
       size: this.pageSize()
     };
 
-    this.serviceOfferingService.getServices(filter).subscribe({
+    this.serviceOfferingService.searchServices(filter).subscribe({
       next: (response) => {
         const data = response.data;
         this.services.set(data.content);
@@ -192,22 +193,17 @@ export class ServiceListComponent implements OnInit {
     event.stopPropagation();
 
     const isFavorite = this.favoriteIds().has(service.publicId);
-    
-    this.serviceOfferingService.toggleFavorite(service.publicId, !isFavorite).subscribe({
-      next: () => {
-        this.favoriteIds.update(favs => {
-          const newFavs = new Set(favs);
-          if (isFavorite) {
-            newFavs.delete(service.publicId);
-          } else {
-            newFavs.add(service.publicId);
-          }
-          return newFavs;
-        });
-      },
-      error: (err) => {
-        console.error('Error toggling favorite:', err);
+
+    // TODO: Implement toggleFavorite in ServiceOfferingService or update this logic accordingly.
+    // For now, just toggle locally for UI feedback.
+    this.favoriteIds.update(favs => {
+      const newFavs = new Set(favs);
+      if (isFavorite) {
+        newFavs.delete(service.publicId);
+      } else {
+        newFavs.add(service.publicId);
       }
+      return newFavs;
     });
   }
 

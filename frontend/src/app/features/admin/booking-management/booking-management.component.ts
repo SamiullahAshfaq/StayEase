@@ -23,8 +23,8 @@ import { BookingManagement } from '../services/admin.models';
       <div class="filters-card">
         <div class="filters-grid">
           <div class="filter-group">
-            <label class="filter-label">Status</label>
-            <select [(ngModel)]="statusFilter" (change)="onFilterChange()" class="filter-select">
+            <label for="statusFilter" class="filter-label">Status</label>
+            <select id="statusFilter" [(ngModel)]="statusFilter" (change)="onFilterChange()" class="filter-select">
               <option value="">All Statuses</option>
               <option value="PENDING">Pending</option>
               <option value="CONFIRMED">Confirmed</option>
@@ -33,10 +33,11 @@ import { BookingManagement } from '../services/admin.models';
             </select>
           </div>
           <div class="filter-group">
-            <label class="filter-label">Search</label>
-            <input 
-              type="text" 
-              [(ngModel)]="searchTerm" 
+            <label for="searchInput" class="filter-label">Search</label>
+            <input
+              id="searchInput"
+              type="text"
+              [(ngModel)]="searchTerm"
               (keyup.enter)="onSearch()"
               placeholder="Search by guest or listing..."
               class="filter-input"
@@ -129,16 +130,16 @@ import { BookingManagement } from '../services/admin.models';
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button 
+                    <button
                       *ngIf="booking.status === 'CONFIRMED' || booking.status === 'PENDING'"
-                      (click)="cancelBooking(booking.id, booking.publicId)" 
+                      (click)="cancelBooking(booking.id, booking.publicId)"
                       class="btn-action btn-cancel"
                       title="Cancel Booking">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </button>
-                    <button 
+                    <button
                       [routerLink]="['/booking', booking.publicId]"
                       class="btn-action btn-view"
                       title="View Details">
@@ -156,8 +157,8 @@ import { BookingManagement } from '../services/admin.models';
 
         <!-- Pagination -->
         <div *ngIf="totalPages() > 1" class="pagination">
-          <button 
-            (click)="previousPage()" 
+          <button
+            (click)="previousPage()"
             [disabled]="currentPage() === 0"
             class="pagination-btn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -168,8 +169,8 @@ import { BookingManagement } from '../services/admin.models';
           <span class="pagination-info">
             Page {{ currentPage() + 1 }} of {{ totalPages() }}
           </span>
-          <button 
-            (click)="nextPage()" 
+          <button
+            (click)="nextPage()"
             [disabled]="currentPage() >= totalPages() - 1"
             class="pagination-btn">
             Next
@@ -592,10 +593,10 @@ export class BookingManagementComponent implements OnInit {
   bookings = signal<BookingManagement[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
-  
+
   statusFilter = '';
   searchTerm = '';
-  
+
   currentPage = signal(0);
   pageSize = signal(10);
   totalPages = signal(0);

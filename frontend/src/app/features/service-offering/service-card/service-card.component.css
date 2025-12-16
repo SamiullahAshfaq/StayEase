@@ -1,0 +1,121 @@
+.service-card {
+  display: block;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover {
+  transform: translateY(-2px);
+}
+
+.image-container {
+  position: relative;
+  background-color: #f3f4f6;
+}
+
+.category-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.category-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.category-text {
+  font-size: 0.875rem;
+}
+
+/* List view styles */
+.service-card.list-view {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: white;
+}
+
+.service-card.list-view .image-container {
+  width: 280px;
+  min-width: 280px;
+  height: 200px;
+  aspect-ratio: unset;
+  margin-bottom: 0;
+}
+
+.service-card.list-view .space-y-1 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Featured badge animation */
+.featured-badge {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects for buttons */
+button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Loading skeleton */
+.service-card.loading {
+  pointer-events: none;
+}
+
+.service-card.loading .image-container,
+.service-card.loading .space-y-1 > * {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .service-card.list-view {
+    flex-direction: column;
+  }
+
+  .service-card.list-view .image-container {
+    width: 100%;
+    height: 200px;
+  }
+}

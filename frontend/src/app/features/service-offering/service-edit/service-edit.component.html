@@ -1,0 +1,525 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <button [routerLink]="['/services', serviceId()]" class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Back to service
+      </button>
+      <h1 class="text-3xl font-bold text-gray-900">Edit Service</h1>
+      <p class="mt-2 text-gray-600">Update your service information</p>
+    </div>
+
+    <!-- Loading State -->
+    @if (loadingService()) {
+      <div class="flex items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }
+
+    <!-- Progress Steps -->
+    @if (!loadingService()) {
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        @for (step of [1, 2, 3, 4]; track step) {
+          <div class="flex-1">
+            <div class="relative">
+              <div class="flex items-center">
+                <div
+                  class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors"
+                  [class.bg-blue-600]="currentStep() >= step || isStepValid(step)"
+                  [class.border-blue-600]="currentStep() >= step || isStepValid(step)"
+                  [class.text-white]="currentStep() >= step || isStepValid(step)"
+                  [class.bg-white]="currentStep() < step && !isStepValid(step)"
+                  [class.border-gray-300]="currentStep() < step && !isStepValid(step)"
+                  [class.text-gray-500]="currentStep() < step && !isStepValid(step)">
+                  @if (isStepValid(step) && currentStep() > step) {
+                    <span class="text-white">✓</span>
+                  } @else {
+                    <span>{{ step }}</span>
+                  }
+                </div>
+                @if (step < 4) {
+                  <div class="flex-1 h-0.5 mx-2"
+                       [class.bg-blue-600]="currentStep() > step"
+                       [class.bg-gray-300]="currentStep() <= step"></div>
+                }
+              </div>
+              <div class="absolute top-12 left-0 right-0 text-center">
+                <span class="text-sm font-medium"
+                      [class.text-blue-600]="currentStep() === step"
+                      [class.text-gray-500]="currentStep() !== step">
+                  {{ step === 1 ? 'Basic Info' : step === 2 ? 'Pricing' : step === 3 ? 'Availability' : 'Details' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="serviceForm" (ngSubmit)="submitForm()" class="bg-white shadow-sm rounded-lg p-6 mt-16">
+      <!-- Step 1: Basic Information -->
+      @if (currentStep() === 1) {
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Basic Information</h2>
+
+          <!-- Category -->
+          <div>
+            <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Service Category *</label>
+            <select id="category" formControlName="category"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="">Select a category</option>
+              @for (cat of categories; track cat) {
+                <option [value]="cat">{{ categoryLabels[cat] }}</option>
+              }
+            </select>
+            @if (serviceForm.get('category')?.invalid && serviceForm.get('category')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Category is required</p>
+            }
+          </div>
+
+          <!-- Title -->
+          <div>
+            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Service Title *</label>
+            <input id="title" type="text" formControlName="title"
+                   placeholder="e.g., Professional Photography Tour in Paris"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <p class="mt-1 text-sm text-gray-500">{{ serviceForm.get('title')?.value?.length || 0 }}/100 characters</p>
+            @if (serviceForm.get('title')?.invalid && serviceForm.get('title')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Title must be 10-100 characters</p>
+            }
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+            <textarea id="description" formControlName="description" rows="6"
+                      placeholder="Describe your service in detail. What makes it unique? What will customers experience?"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+            <p class="mt-1 text-sm text-gray-500">{{ serviceForm.get('description')?.value?.length || 0 }}/2000 characters</p>
+            @if (serviceForm.get('description')?.invalid && serviceForm.get('description')?.touched) {
+              <p class="mt-1 text-sm text-red-600">Description must be 50-2000 characters</p>
+            }
+          </div>
+
+          <!-- Highlights -->
+          <div>
+            <label for="highlights" class="block text-sm font-medium text-gray-700 mb-2">Highlights (Optional)</label>
+            <textarea id="highlights" formControlName="highlights" rows="3"
+                      placeholder="Key features of your service (one per line)"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          </div>
+
+          <!-- What's Included -->
+          <div>
+            <label for="whatIsIncluded" class="block text-sm font-medium text-gray-700 mb-2">What's Included (Optional)</label>
+            <textarea id="whatIsIncluded" formControlName="whatIsIncluded" rows="3"
+                      placeholder="List what's included in your service"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          </div>
+
+          <!-- What to Expect -->
+          <div>
+            <label for="whatToExpect" class="block text-sm font-medium text-gray-700 mb-2">What to Expect (Optional)</label>
+            <textarea id="whatToExpect" formControlName="whatToExpect" rows="3"
+                      placeholder="Help customers know what to expect"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          </div>
+        </div>
+      }
+
+      <!-- Step 2: Pricing & Capacity -->
+      @if (currentStep() === 2) {
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Pricing & Capacity</h2>
+
+          <!-- Pricing Type -->
+          <div>
+            <label for="pricingType" class="block text-sm font-medium text-gray-700 mb-2">Pricing Type *</label>
+            <select id="pricingType" formControlName="pricingType"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="">Select pricing type</option>
+              @for (type of pricingTypes; track type) {
+                <option [value]="type">{{ pricingLabels[type] }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Base Price -->
+          <div>
+            <label for="basePrice" class="block text-sm font-medium text-gray-700 mb-2">Base Price *</label>
+            <div class="relative">
+              <span class="absolute left-4 top-2 text-gray-500">$</span>
+              <input id="basePrice" type="number" formControlName="basePrice"
+                     placeholder="0.00" min="1" step="0.01"
+                     class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Extra Person Price -->
+            <div>
+              <label for="extraPersonPrice" class="block text-sm font-medium text-gray-700 mb-2">Extra Person Price</label>
+              <div class="relative">
+                <span class="absolute left-4 top-2 text-gray-500">$</span>
+                <input id="extraPersonPrice" type="number" formControlName="extraPersonPrice"
+                       placeholder="0.00" min="0" step="0.01"
+                       class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+            </div>
+
+            <!-- Weekend Surcharge -->
+            <div>
+              <label for="weekendSurcharge" class="block text-sm font-medium text-gray-700 mb-2">Weekend Surcharge</label>
+              <div class="relative">
+                <span class="absolute left-4 top-2 text-gray-500">$</span>
+                <input id="weekendSurcharge" type="number" formControlName="weekendSurcharge"
+                       placeholder="0.00" min="0" step="0.01"
+                       class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+            </div>
+          </div>
+
+          <!-- Capacity -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="minCapacity" class="block text-sm font-medium text-gray-700 mb-2">Minimum Capacity</label>
+              <input id="minCapacity" type="number" formControlName="minCapacity"
+                     placeholder="1" min="1"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="maxCapacity" class="block text-sm font-medium text-gray-700 mb-2">Maximum Capacity</label>
+              <input id="maxCapacity" type="number" formControlName="maxCapacity"
+                     placeholder="10" min="1"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+          </div>
+
+          <!-- Duration -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="durationMinutes" class="block text-sm font-medium text-gray-700 mb-2">Duration (minutes)</label>
+              <input id="durationMinutes" type="number" formControlName="durationMinutes"
+                     placeholder="60" min="15"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="minBookingHours" class="block text-sm font-medium text-gray-700 mb-2">Minimum Booking Hours</label>
+              <input id="minBookingHours" type="number" formControlName="minBookingHours"
+                     placeholder="2" min="1"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Step 3: Availability & Location -->
+      @if (currentStep() === 3) {
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Availability & Location</h2>
+
+          <!-- Instant Booking -->
+          <div class="flex items-center">
+            <input type="checkbox" formControlName="isInstantBooking" id="instantBooking"
+                   class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <label for="instantBooking" class="ml-2 text-sm font-medium text-gray-700">
+              Enable instant booking (automatically accept bookings)
+            </label>
+          </div>
+
+          <!-- Available Hours -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="availableFrom" class="block text-sm font-medium text-gray-700 mb-2">Available From</label>
+              <input id="availableFrom" type="time" formControlName="availableFrom"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="availableTo" class="block text-sm font-medium text-gray-700 mb-2">Available To</label>
+              <input id="availableTo" type="time" formControlName="availableTo"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+          </div>
+
+          <!-- Available Days -->
+          <fieldset>
+            <legend class="block text-sm font-medium text-gray-700 mb-2">Available Days *</legend>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+              @for (day of daysOfWeek; track day.value) {
+                <button type="button"
+                        (click)="toggleDay(day.value)"
+                        [class.bg-blue-600]="isDaySelected(day.value)"
+                        [class.text-white]="isDaySelected(day.value)"
+                        [class.border-blue-600]="isDaySelected(day.value)"
+                        [class.bg-white]="!isDaySelected(day.value)"
+                        [class.text-gray-700]="!isDaySelected(day.value)"
+                        [class.border-gray-300]="!isDaySelected(day.value)"
+                        class="px-4 py-2 border-2 rounded-lg font-medium transition-colors hover:border-blue-400">
+                  {{ day.label }}
+                </button>
+              }
+            </div>
+          </fieldset>
+
+          <!-- Location -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="city" class="block text-sm font-medium text-gray-700 mb-2">City *</label>
+              <input id="city" type="text" formControlName="city"
+                     placeholder="e.g., Paris"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div>
+              <label for="country" class="block text-sm font-medium text-gray-700 mb-2">Country *</label>
+              <input id="country" type="text" formControlName="country"
+                     placeholder="e.g., France"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+          </div>
+
+          <div>
+            <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+            <input id="address" type="text" formControlName="address"
+                   placeholder="Full address (optional)"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          </div>
+
+          <!-- Mobile Service -->
+          <div>
+            <div class="flex items-center">
+              <input type="checkbox" formControlName="providesMobileService" id="mobileService"
+                     class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+              <label for="mobileService" class="ml-2 text-sm font-medium text-gray-700">
+                I provide mobile service (travel to customer's location)
+              </label>
+            </div>
+            @if (serviceForm.get('providesMobileService')?.value) {
+              <div class="mt-3">
+                <label for="serviceRadius" class="block text-sm font-medium text-gray-700 mb-2">Service Radius (km)</label>
+                <input id="serviceRadius" type="number" formControlName="serviceRadius"
+                       placeholder="10" min="1"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+            }
+          </div>
+
+          <!-- Advance Booking -->
+          <div>
+            <label for="advanceBookingHours" class="block text-sm font-medium text-gray-700 mb-2">Advance Booking Hours</label>
+            <input id="advanceBookingHours" type="number" formControlName="advanceBookingHours"
+                   placeholder="24" min="1"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <p class="mt-1 text-sm text-gray-500">How many hours in advance customers must book</p>
+          </div>
+        </div>
+      }
+
+      <!-- Step 4: Details & Media -->
+      @if (currentStep() === 4) {
+        <div class="space-y-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Details & Media</h2>
+
+          <!-- Languages -->
+          <fieldset>
+            <legend class="block text-sm font-medium text-gray-700 mb-2">Languages Spoken</legend>
+            <div class="flex flex-wrap gap-2 mb-3">
+              @for (lang of commonLanguages; track lang) {
+                <button type="button"
+                        (click)="addLanguage(lang)"
+                        class="px-3 py-1 text-sm border border-gray-300 rounded-full hover:bg-gray-50">
+                  + {{ lang }}
+                </button>
+              }
+            </div>
+            <div class="flex flex-wrap gap-2">
+              @for (lang of languagesArray.controls; track $index) {
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                  {{ lang.value }}
+                  <button type="button" (click)="removeLanguage($index)" class="ml-2 focus:outline-none">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                </span>
+              }
+            </div>
+          </fieldset>
+
+          <!-- Amenities -->
+          <div>
+            <label for="amenityInput" class="block text-sm font-medium text-gray-700 mb-2">Amenities/Equipment Provided</label>
+            <button type="button" (click)="addAmenity()" id="amenityInput"
+                    class="mb-3 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
+              + Add Amenity
+            </button>
+            <div class="flex flex-wrap gap-2">
+              @for (amenity of amenitiesArray.controls; track $index) {
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                  {{ amenity.value }}
+                  <button type="button" (click)="removeAmenity($index)" class="ml-2 focus:outline-none">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- Images -->
+          <div>
+            <label for="servicePhotos" class="block text-sm font-medium text-gray-700 mb-2">Photos * (At least 1 required)</label>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <input type="file" id="servicePhotos" #fileInput multiple accept="image/*" (change)="onFileSelected($event)" class="hidden">
+              <button type="button" (click)="fileInput.click()"
+                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Upload Photos
+              </button>
+              <p class="mt-2 text-sm text-gray-500">Upload high-quality photos of your service</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              @for (preview of imagePreviews(); track $index) {
+                <div class="relative">
+                  <img [src]="preview" alt="Service photo {{ $index + 1 }}" class="w-full h-32 object-cover rounded-lg">
+                  <button type="button" (click)="removeImage($index)"
+                          class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Requirements -->
+          <div>
+            <label for="requirements" class="block text-sm font-medium text-gray-700 mb-2">Requirements</label>
+            <textarea id="requirements" formControlName="requirements" rows="3"
+                      placeholder="What customers need to bring or prepare"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          </div>
+
+          <!-- Cancellation Policy -->
+          <div>
+            <label for="cancellationPolicy" class="block text-sm font-medium text-gray-700 mb-2">Cancellation Policy</label>
+            <textarea id="cancellationPolicy" formControlName="cancellationPolicy" rows="3"
+                      placeholder="Your cancellation and refund policy"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          </div>
+
+          <!-- Safety Measures -->
+          <div>
+            <label for="safetyMeasures" class="block text-sm font-medium text-gray-700 mb-2">Safety Measures</label>
+            <textarea id="safetyMeasures" formControlName="safetyMeasures" rows="3"
+                      placeholder="COVID-19 and other safety measures you follow"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          </div>
+
+          <!-- Verification -->
+          <div class="space-y-4">
+            <div class="flex items-center">
+              <input type="checkbox" formControlName="hasInsurance" id="hasInsurance"
+                     class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+              <label for="hasInsurance" class="ml-2 text-sm font-medium text-gray-700">
+                I have insurance coverage
+              </label>
+            </div>
+
+            <div class="flex items-center">
+              <input type="checkbox" formControlName="hasLicense" id="hasLicense"
+                     class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+              <label for="hasLicense" class="ml-2 text-sm font-medium text-gray-700">
+                I have a professional license
+              </label>
+            </div>
+
+            @if (serviceForm.get('hasLicense')?.value) {
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 ml-6">
+                <div>
+                  <label for="licenseNumber" class="block text-sm font-medium text-gray-700 mb-2">License Number</label>
+                  <input id="licenseNumber" type="text" formControlName="licenseNumber"
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                  <label for="licenseExpiryDate" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                  <input id="licenseExpiryDate" type="date" formControlName="licenseExpiryDate"
+                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Error/Success Messages -->
+      @if (error()) {
+        <div class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p class="text-sm text-red-800">{{ error() }}</p>
+        </div>
+      }
+
+      @if (success()) {
+        <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p class="text-sm text-green-800">Service updated successfully! Redirecting...</p>
+        </div>
+      }
+
+      <!-- Navigation Buttons -->
+      <div class="mt-8 flex items-center justify-between pt-6 border-t border-gray-200">
+        @if (currentStep() > 1) {
+          <button type="button" (click)="previousStep()"
+                  class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
+            Previous
+          </button>
+        } @else {
+          <div class="flex-1"></div>
+        }
+
+        <div class="flex space-x-3">
+          <button type="button" (click)="cancel()"
+                  class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
+            Cancel
+          </button>
+
+          @if (currentStep() < totalSteps) {
+            <button type="button" (click)="nextStep()"
+                    [disabled]="!isStepValid(currentStep())"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+              Next
+            </button>
+          }
+
+          @if (currentStep() === totalSteps) {
+            <button type="submit"
+                    [disabled]="loading() || serviceForm.invalid"
+                    class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+              @if (!loading()) {
+                <span>Update Service</span>
+              }
+              @if (loading()) {
+                <span class="flex items-center">
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Updating...
+                </span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+    }
+  </div>
+</div>
