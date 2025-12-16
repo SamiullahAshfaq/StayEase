@@ -33,8 +33,8 @@ export class ServiceBookingService {
   /**
    * Get my bookings (customer)
    */
-  getMyBookings(page: number = 0, size: number = 10): Observable<ApiResponse<ServiceBookingListResponse>> {
-    let params = new HttpParams()
+  getMyBookings(page = 0, size = 10): Observable<ApiResponse<ServiceBookingListResponse>> {
+    const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
@@ -44,8 +44,8 @@ export class ServiceBookingService {
   /**
    * Get provider bookings
    */
-  getProviderBookings(page: number = 0, size: number = 10): Observable<ApiResponse<ServiceBookingListResponse>> {
-    let params = new HttpParams()
+  getProviderBookings(page = 0, size = 10): Observable<ApiResponse<ServiceBookingListResponse>> {
+    const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
@@ -91,7 +91,7 @@ export class ServiceBookingService {
    * Check availability
    */
   checkAvailability(servicePublicId: string, date: string, startTime: string): Observable<ApiResponse<boolean>> {
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('servicePublicId', servicePublicId)
       .set('date', date)
       .set('startTime', startTime);

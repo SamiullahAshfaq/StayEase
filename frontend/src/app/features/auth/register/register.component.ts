@@ -1,5 +1,5 @@
 // src/app/features/auth/register/register.component.ts
-import { Component, inject, signal, OnInit, PLATFORM_ID, Optional } from '@angular/core';
+import { Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
