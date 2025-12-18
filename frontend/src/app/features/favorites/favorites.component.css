@@ -25,14 +25,23 @@
 .heart-icon {
   width: 3rem;
   height: 3rem;
-  color: #FF385C;
+  color: #ff385c;
   animation: heartBeat 1.5s ease-in-out infinite;
 }
 
 @keyframes heartBeat {
-  0%, 100% { transform: scale(1); }
-  10%, 30% { transform: scale(1.1); }
-  20%, 40% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  10%,
+  30% {
+    transform: scale(1.1);
+  }
+  20%,
+  40% {
+    transform: scale(1.05);
+  }
 }
 
 .favorites-count {
@@ -55,14 +64,18 @@
   width: 50px;
   height: 50px;
   border: 4px solid #f3f4f6;
-  border-top: 4px solid #FF385C;
+  border-top: 4px solid #ff385c;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-state p {
@@ -84,7 +97,7 @@
 .error-icon {
   width: 80px;
   height: 80px;
-  color: #EF4444;
+  color: #ef4444;
 }
 
 .error-state p {
@@ -95,7 +108,7 @@
 
 .retry-btn {
   padding: 0.75rem 2rem;
-  background: #FF385C;
+  background: #ff385c;
   color: white;
   border: none;
   border-radius: 12px;
@@ -106,7 +119,7 @@
 }
 
 .retry-btn:hover {
-  background: #E31C5F;
+  background: #e31c5f;
   transform: translateY(-2px);
   box-shadow: 0 10px 25px -5px rgba(255, 56, 92, 0.3);
 }
@@ -124,7 +137,7 @@
 .empty-icon {
   width: 120px;
   height: 120px;
-  color: #D1D5DB;
+  color: #d1d5db;
   stroke-width: 1.5;
 }
 
@@ -145,7 +158,7 @@
 
 .browse-btn {
   padding: 0.875rem 2.5rem;
-  background: linear-gradient(135deg, #FF385C 0%, #E31C5F 100%);
+  background: linear-gradient(135deg, #ff385c 0%, #e31c5f 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -229,7 +242,7 @@
 .remove-favorite-btn svg {
   width: 24px;
   height: 24px;
-  color: #FF385C;
+  color: #ff385c;
   transition: all 0.3s ease;
 }
 
@@ -299,7 +312,7 @@
 .star-icon {
   width: 18px;
   height: 18px;
-  color: #FFC107;
+  color: #ffc107;
 }
 
 .rating-text {
@@ -337,7 +350,7 @@
 
 .view-btn {
   padding: 0.75rem 1.75rem;
-  background: linear-gradient(135deg, #FF385C 0%, #E31C5F 100%);
+  background: linear-gradient(135deg, #ff385c 0%, #e31c5f 100%);
   color: white;
   border: none;
   border-radius: 10px;

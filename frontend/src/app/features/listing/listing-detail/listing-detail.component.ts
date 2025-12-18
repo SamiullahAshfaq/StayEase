@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { ListingService } from '../services/listing.service';
 import { Listing } from '../models/listing.model';
 import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
+import { LandlordService } from '../../profile/services/landlord.service';
+import { LandlordProfile } from '../../profile/models/landlord.model';
+import { AuthService } from '../../../core/auth/auth.service';
 
 interface Review {
   id: string;
@@ -43,6 +46,9 @@ export class ListingDetailComponent implements OnInit {
   checkIn: string = '';
   checkOut: string = '';
   guests = 1;
+  
+  // Owner check - hide booking section if user owns the listing
+  isOwner = false;
 
   // Share & Save
   showShareModal = false;
@@ -119,6 +125,8 @@ export class ListingDetailComponent implements OnInit {
 
   constructor(
     private listingService: ListingService,
+    private landlordService: LandlordService,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
     @Inject(DOCUMENT) private document: Document,
@@ -143,6 +151,18 @@ export class ListingDetailComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           this.listing = response.data;
+          
+          // Check if current user is the owner of this listing
+          const currentUser = this.authService.getCurrentUser();
+          if (currentUser && this.listing.landlordPublicId) {
+            this.isOwner = currentUser.publicId === this.listing.landlordPublicId;
+          }
+          
+          // Load landlord profile if landlordPublicId is available
+          if (this.listing.landlordPublicId) {
+            this.loadLandlordProfile(this.listing.landlordPublicId);
+          }
+          
           this.loadSimilarListings();
           console.log('Listing loaded:', this.listing.publicId);
         }
@@ -155,6 +175,34 @@ export class ListingDetailComponent implements OnInit {
         this.loading = false;
         console.error('Error loading listing:', error);
         this.cdr.detectChanges();
+      }
+    });
+  }
+
+  loadLandlordProfile(landlordPublicId: string): void {
+    this.landlordService.getLandlordProfile(landlordPublicId).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const profile = response.data;
+          // Note: Backend returns UserDTO, not LandlordProfile
+          // Map UserDTO fields to what we need
+          const profileImageUrl = (profile as any).profileImageUrl;
+          const createdAt = (profile as any).createdAt;
+          
+          this.host = {
+            name: `${profile.firstName} ${profile.lastName}`,
+            avatar: profileImageUrl ? this.getImageUrl(profileImageUrl) : 'https://i.pravatar.cc/150?img=12',
+            joinedDate: createdAt ? new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently joined',
+            verified: (profile as any).isEmailVerified || false,
+            responseRate: 95, // Default value since not in UserDTO
+            responseTime: 'within a few hours' // Default value since not in UserDTO
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error loading landlord profile:', error);
+        // Keep the default host data if loading fails
       }
     });
   }

@@ -232,16 +232,7 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToMyListings() {
-    alert('🎯 Step 1: navigateToMyListings() method called!');
-    alert('🎯 Step 2: About to navigate to /profile/my-listings');
-    this.router.navigate(['/profile/my-listings']).then(
-      (success) => {
-        alert('✅ Navigation SUCCESS: ' + success);
-      },
-      (error) => {
-        alert('❌ Navigation FAILED: ' + error);
-      }
-    );
+    this.router.navigate(['/profile/my-listings']);
     this.isMenuOpen = false;
   }
 
@@ -267,26 +258,11 @@ export class HeaderComponent implements OnInit {
 
   // Check if user is landlord or admin
   isLandlordOrAdmin(): boolean {
-    console.log('🔍 [isLandlordOrAdmin] Called');
     if (!this.currentUser || !this.currentUser.authorities) {
-      alert('❌ NO USER OR AUTHORITIES - Button will NOT show!');
-      console.log('[Header] isLandlordOrAdmin: false (no user or authorities)');
-      console.log('[Header] currentUser:', this.currentUser);
       return false;
     }
     const authorities = this.currentUser.authorities;
-    console.log('🔍 [isLandlordOrAdmin] authorities:', authorities);
-    console.log('🔍 [isLandlordOrAdmin] is array?', Array.isArray(authorities));
-    const result = authorities.includes('ROLE_LANDLORD') || authorities.includes('ROLE_ADMIN');
-    
-    if (result) {
-      alert('✅ YOU ARE LANDLORD - Button WILL show!');
-    } else {
-      alert('❌ NOT LANDLORD - Button will NOT show! Authorities: ' + JSON.stringify(authorities));
-    }
-    
-    console.log('[Header] isLandlordOrAdmin:', result, 'authorities:', authorities);
-    return result;
+    return authorities.includes('ROLE_LANDLORD') || authorities.includes('ROLE_ADMIN');
   }
 
   // Check if user is tenant (only has ROLE_TENANT)

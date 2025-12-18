@@ -366,7 +366,8 @@
           </div>
         </div>
 
-        <!-- Right column - Booking Card -->
+        <!-- Right column - Booking Card (hidden if user owns the listing) -->
+        @if (!isOwner) {
         <div class="lg:col-span-1">
           <div class="border border-gray-300 rounded-xl shadow-xl p-6 sticky top-24">
 
@@ -446,6 +447,7 @@
             </button>
           </div>
         </div>
+        }
       </div>
     </div>
 

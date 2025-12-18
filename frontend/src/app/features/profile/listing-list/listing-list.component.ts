@@ -10,6 +10,7 @@ import {
   PROPERTY_TYPE_LABELS,
   ROOM_TYPE_LABELS
 } from '../models/landlord.model';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-listing-list',
@@ -72,7 +73,7 @@ export class ListingListComponent implements OnInit {
         console.log('[ListingList] Listings data:', response.data);
         if (response.data && response.data.length > 0) {
           console.log('[ListingList] First listing images:', response.data[0].images);
-          console.log('[ListingList] First listing coverImage:', response.data[0].coverImage);
+          console.log('[ListingList] First listing coverImageUrl:', response.data[0].coverImageUrl);
         }
         this.listings.set(response.data);
         this.applyFilters();
@@ -289,5 +290,24 @@ export class ListingListComponent implements OnInit {
       day: 'numeric',
       year: 'numeric'
     });
+  }
+
+  /**
+   * Get full image URL by prepending backend URL if needed
+   */
+  getImageUrl(url: string | undefined): string {
+    if (!url) {
+      return '';
+    }
+    // If URL is already absolute (starts with http:// or https://), return as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // If URL is relative (starts with /), prepend backend URL
+    if (url.startsWith('/')) {
+      return environment.apiUrl.replace('/api', '') + url;
+    }
+    // Otherwise, assume it's a relative path and prepend backend URL
+    return environment.apiUrl.replace('/api', '') + '/' + url;
   }
 }

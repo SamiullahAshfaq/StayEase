@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -50,7 +50,8 @@ interface ListingFormData {
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './listing-edit.component.html',
-  styleUrls: ['./listing-edit.component.css']
+  styleUrl: './listing-edit.component.css',
+  encapsulation: ViewEncapsulation.None
 })
 export class ListingEditComponent implements OnInit {
   private landlordService = inject(LandlordService);

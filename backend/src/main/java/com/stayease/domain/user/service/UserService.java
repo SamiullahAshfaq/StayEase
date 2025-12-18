@@ -101,6 +101,14 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
+    public UserDTO getUserByPublicId(UUID publicId) {
+        log.debug("Fetching user by public ID: {}", publicId);
+        User user = userRepository.findByPublicIdWithAuthorities(publicId)
+                .orElseThrow(() -> new NotFoundException("User not found with public ID: " + publicId));
+        return userMapper.toDTO(user);
+    }
+
+    @Transactional(readOnly = true)
     public UserDTO getUserByEmail(String email) {
         log.debug("Fetching user by email: {}", email);
         User user = userRepository.findByEmailWithAuthorities(email)

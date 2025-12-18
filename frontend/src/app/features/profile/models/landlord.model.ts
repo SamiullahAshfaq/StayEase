@@ -95,6 +95,7 @@ export interface UpdateLandlordProfileRequest {
 export interface Listing {
   id: number;
   publicId: string;
+  landlordPublicId: string;  // Added to identify the listing owner
   title: string;
   description: string;
   propertyType: PropertyType;

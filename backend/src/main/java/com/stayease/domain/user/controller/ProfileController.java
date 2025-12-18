@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +44,21 @@ public class ProfileController {
         UUID currentUserId = SecurityUtils.getCurrentUserId();
         UserDTO user = userService.getUserById(currentUserId);
         return ResponseEntity.ok(ApiResponse.success(user, "Profile retrieved successfully"));
+    }
+
+    /**
+     * Get public landlord profile by publicId (no authentication required)
+     */
+    @GetMapping("/{publicId}")
+    public ResponseEntity<ApiResponse<UserDTO>> getPublicProfile(@PathVariable UUID publicId) {
+        log.info("GET request to fetch public profile for publicId: {}", publicId);
+        try {
+            UserDTO user = userService.getUserByPublicId(publicId);
+            return ResponseEntity.ok(ApiResponse.success(user, "Profile retrieved successfully"));
+        } catch (Exception e) {
+            log.error("Failed to fetch public profile", e);
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**

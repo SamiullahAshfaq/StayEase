@@ -24,6 +24,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN FETCH u.userAuthorities ua JOIN FETCH ua.authority WHERE u.publicId = :publicId")
     Optional<User> findByIdWithAuthorities(@Param("publicId") UUID publicId);
 
+    @Query("SELECT u FROM User u JOIN FETCH u.userAuthorities ua JOIN FETCH ua.authority WHERE u.publicId = :publicId")
+    Optional<User> findByPublicIdWithAuthorities(@Param("publicId") UUID publicId);
+
     @Query("SELECT u FROM User u JOIN FETCH u.userAuthorities ua JOIN FETCH ua.authority WHERE u.email = :email")
     Optional<User> findByEmailWithAuthorities(@Param("email") String email);
 

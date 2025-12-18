@@ -14,12 +14,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update # Let Hibernate update schema automatically
-    show-sql: false  # Changed to false to reduce console spam
+    show-sql: false # Changed to false to reduce console spam
     properties:
       hibernate:
         format_sql: true
         jdbc:
-          batch_size: 50  # Increased from 20 to 50 for better performance
+          batch_size: 50 # Increased from 20 to 50 for better performance
         order_inserts: true
         order_updates: true
         # Enable batch versioned data for better performance
@@ -73,11 +73,11 @@ spring:
 logging:
   level:
     root: INFO
-    com.stayease: INFO  # Changed from DEBUG to INFO
-    org.springframework.web: INFO  # Changed from DEBUG to INFO
-    org.hibernate.SQL: WARN  # Changed from DEBUG to WARN (only shows warnings/errors)
-    org.hibernate.type.descriptor.sql.BasicBinder: WARN  # Changed to WARN
-    org.hibernate.orm.jdbc.bind: WARN  # Suppress parameter binding logs
+    com.stayease: INFO # Changed from DEBUG to INFO
+    org.springframework.web: INFO # Changed from DEBUG to INFO
+    org.hibernate.SQL: WARN # Changed from DEBUG to WARN (only shows warnings/errors)
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN # Changed to WARN
+    org.hibernate.orm.jdbc.bind: WARN # Suppress parameter binding logs
   pattern:
     console: "%d{HH:mm:ss.SSS} %clr(%-5level) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} : %msg%n"
 

@@ -27,6 +27,13 @@ export class LandlordService {
     return this.http.get<ApiResponse<LandlordProfile>>(`${this.baseUrl}/profile`);
   }
 
+  /**
+   * Get public landlord profile by publicId
+   */
+  getLandlordProfile(landlordPublicId: string): Observable<ApiResponse<LandlordProfile>> {
+    return this.http.get<ApiResponse<LandlordProfile>>(`${this.baseUrl}/profile/${landlordPublicId}`);
+  }
+
   updateProfile(request: UpdateLandlordProfileRequest): Observable<ApiResponse<LandlordProfile>> {
     return this.http.put<ApiResponse<LandlordProfile>>(`${this.baseUrl}/profile`, request);
   }
