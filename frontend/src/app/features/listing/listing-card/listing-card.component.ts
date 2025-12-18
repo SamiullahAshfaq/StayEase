@@ -1,8 +1,10 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Listing } from '../models/listing.model';
 import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
+import { FavoriteService } from '../../../core/services/favorite.service';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-listing-card',
@@ -14,16 +16,36 @@ import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 export class ListingCardComponent implements OnInit {
   @Input() listing!: Listing;
 
+  private favoriteService = inject(FavoriteService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   currentImageIndex = 0;
   isHovered = false;
-
-  constructor(private router: Router) {}
+  isFavorite = signal(false);
+  isTogglingFavorite = false;
 
   ngOnInit(): void {
     // Ensure images are available on init
     if (this.listing) {
       console.log('Listing card initialized:', this.listing.publicId, 'Images:', this.listing.images?.length);
+      
+      // Check if user is logged in and load favorite status
+      if (this.authService.isAuthenticated()) {
+        this.checkFavoriteStatus();
+      }
     }
+  }
+
+  checkFavoriteStatus(): void {
+    this.favoriteService.isFavorite(this.listing.publicId).subscribe({
+      next: (isFav) => {
+        this.isFavorite.set(isFav);
+      },
+      error: (err) => {
+        console.error('Error checking favorite status:', err);
+      }
+    });
   }
 
   navigateToListing(): void {
@@ -53,7 +75,40 @@ export class ListingCardComponent implements OnInit {
 
   toggleFavorite(event: Event): void {
     event.stopPropagation();
-    // TODO: Implement favorite functionality
+    
+    // Check if user is logged in
+    if (!this.authService.isAuthenticated()) {
+      // Redirect to login page
+      this.router.navigate(['/auth/login'], {
+        queryParams: { returnUrl: this.router.url }
+      });
+      return;
+    }
+
+    // Prevent multiple clicks while toggling
+    if (this.isTogglingFavorite) {
+      return;
+    }
+
+    this.isTogglingFavorite = true;
+    const currentStatus = this.isFavorite();
+
+    // Optimistic UI update
+    this.isFavorite.set(!currentStatus);
+
+    // Call API
+    this.favoriteService.toggleFavorite(this.listing.publicId, currentStatus).subscribe({
+      next: () => {
+        this.isTogglingFavorite = false;
+        console.log('Favorite toggled successfully');
+      },
+      error: (err) => {
+        // Revert on error
+        this.isFavorite.set(currentStatus);
+        this.isTogglingFavorite = false;
+        console.error('Error toggling favorite:', err);
+      }
+    });
   }
 
   getDisplayImage(): string {

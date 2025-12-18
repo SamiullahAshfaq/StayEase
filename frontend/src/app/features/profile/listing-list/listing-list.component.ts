@@ -68,6 +68,12 @@ export class ListingListComponent implements OnInit {
 
     this.landlordService.getMyListings().subscribe({
       next: (response) => {
+        console.log('[ListingList] API Response:', response);
+        console.log('[ListingList] Listings data:', response.data);
+        if (response.data && response.data.length > 0) {
+          console.log('[ListingList] First listing images:', response.data[0].images);
+          console.log('[ListingList] First listing coverImage:', response.data[0].coverImage);
+        }
         this.listings.set(response.data);
         this.applyFilters();
         this.updateStats();

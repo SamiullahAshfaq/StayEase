@@ -315,9 +315,9 @@ export class ProfileCompleteComponent implements OnInit {
     if (user.authorities.includes('ROLE_ADMIN')) {
       this.router.navigate(['/admin/dashboard']);
     } else if (user.authorities.includes('ROLE_LANDLORD')) {
-      this.router.navigate(['/landlord/dashboard']);
+      this.router.navigate(['/profile/my-listings']); // Fixed: Navigate to my listings instead
     } else if (user.authorities.includes('ROLE_SERVICE_PROVIDER')) {
-      this.router.navigate(['/service-offering/dashboard']);
+      this.router.navigate(['/service-offering/my-services']); // Fixed: Navigate to my services
     } else {
       this.router.navigate(['/']);
     }

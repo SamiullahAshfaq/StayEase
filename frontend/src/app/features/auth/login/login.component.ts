@@ -156,7 +156,7 @@ export class LoginComponent implements OnInit {
     if (user.authorities.includes('ROLE_ADMIN')) {
       this.router.navigate(['/admin/dashboard']);
     } else if (user.authorities.includes('ROLE_LANDLORD')) {
-      this.router.navigate(['/landlord/dashboard']);
+      this.router.navigate(['/profile/my-listings']); // Fixed: Navigate to my listings instead
     } else if (this.returnUrl !== '/') {
       this.router.navigateByUrl(this.returnUrl);
     } else {

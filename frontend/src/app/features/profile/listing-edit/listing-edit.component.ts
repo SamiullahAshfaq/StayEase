@@ -28,7 +28,7 @@ interface ListingFormData {
   amenities: string[];
   images: File[];
   imagePreviewUrls: string[];
-  existingImages: { id: number; imageUrl: string }[];
+  existingImages: { id: number; url: string }[]; // Changed from imageUrl to url
   title: string;
   description: string;
   houseRules: string;
@@ -391,7 +391,7 @@ export class ListingEditComponent implements OnInit {
     this.landlordService.updateListing(this.listingId(), updateRequest).subscribe({
       next: () => {
         this.saving.set(false);
-        this.router.navigate(['/landlord/listings', this.listingId()]);
+        this.router.navigate(['/listing', this.listingId()]); // Fixed: Navigate to listing detail
       },
       error: () => {
         this.saving.set(false);
@@ -403,7 +403,7 @@ export class ListingEditComponent implements OnInit {
 
   cancel(): void {
     if (confirm('Are you sure you want to cancel? Your changes will be lost.')) {
-      this.router.navigate(['/landlord/listings', this.listingId()]);
+      this.router.navigate(['/listing', this.listingId()]); // Fixed: Navigate to listing detail
     }
   }
 
@@ -416,7 +416,7 @@ export class ListingEditComponent implements OnInit {
   }
 
   getAllImages(): string[] {
-    const existingUrls = this.formData().existingImages.map(img => img.imageUrl);
+    const existingUrls = this.formData().existingImages.map(img => img.url); // Changed from imageUrl
     const newUrls = this.formData().imagePreviewUrls;
     return [...existingUrls, ...newUrls];
   }

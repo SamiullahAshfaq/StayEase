@@ -7,7 +7,8 @@ import {
   PropertyType,
   RoomType,
   PROPERTY_TYPE_LABELS,
-  ROOM_TYPE_LABELS
+  ROOM_TYPE_LABELS,
+  CreateListingRequest
 } from '../models/landlord.model';
 
 interface ListingFormData {
@@ -287,74 +288,96 @@ export class ListingCreateComponent implements OnInit {
 
     const data = this.formData();
 
-    // First, upload images
-    const imageUploads = data.images.length > 0
-      ? [this.landlordService.uploadListingImages('temp', data.images).toPromise()]
-      : [];
-
-    // Wait for all images to upload
-    Promise.all(imageUploads).then(responses => {
-      const imageUrls = responses.flatMap(r => r?.data || []);
-
-      // Create listing request
-      const listingRequest = {
-        propertyType: data.propertyType!,
-        roomType: data.roomType!,
-        address: data.address,
-        city: data.city,
-        state: '',
-        country: data.country,
-        zipCode: data.zipCode,
-        latitude: data.latitude,
-        longitude: data.longitude,
-        bedrooms: data.bedrooms,
-        beds: data.bedrooms,
-        bathrooms: data.bathrooms,
-        maxGuests: data.maxGuests,
-        propertySize: data.propertySize,
-        amenities: data.amenities,
-        imageUrls: imageUrls,
-        title: data.title,
-        description: data.description,
-        houseRules: data.houseRules,
-        basePrice: data.basePrice,
-        cleaningFee: data.cleaningFee,
-        weeklyDiscount: data.weeklyDiscount,
-        monthlyDiscount: data.monthlyDiscount,
-        checkInTime: data.checkInTime,
-        checkOutTime: data.checkOutTime,
-        minNights: data.minNights,
-        maxNights: data.maxNights,
-        cancellationPolicy: data.cancellationPolicy,
-        isInstantBooking: false,
-        status: isDraft ? 'DRAFT' : 'PENDING_APPROVAL'
-      };
-
-      this.landlordService.createListing(listingRequest).subscribe({
+    // First, upload images if there are any
+    if (data.images.length > 0) {
+      this.landlordService.uploadListingImages('temp', data.images).subscribe({
         next: (response) => {
-          this.loading.set(false);
-          if (!isDraft) {
-            this.router.navigate(['/landlord/listings']);
-          } else {
-            this.router.navigate(['/landlord/listings', response.data.publicId]);
-          }
+          const imageUrls = response.data || [];
+          this.createListingWithImages(imageUrls, isDraft);
         },
         error: (err) => {
           this.loading.set(false);
-          this.error.set('Failed to create listing');
-          console.error('Error creating listing:', err);
+          this.error.set('Failed to upload images');
+          console.error('Error uploading images:', err);
         }
       });
-    }).catch(err => {
-      this.loading.set(false);
-      this.error.set('Failed to upload images');
-      console.error('Error uploading images:', err);
+    } else {
+      this.createListingWithImages([], isDraft);
+    }
+  }
+
+  private createListingWithImages(imageUrls: string[], isDraft: boolean): void {
+    const data = this.formData();
+
+    // Create listing request matching the backend CreateListingDTO
+    const listingRequest: CreateListingRequest = {
+      title: data.title,
+      description: data.description,
+      
+      // Location fields
+      location: data.city, // Use city as location
+      address: data.address,
+      city: data.city,
+      country: data.country,
+      latitude: data.latitude,
+      longitude: data.longitude,
+      
+      // Property details
+      propertyType: data.propertyType!,
+      category: data.roomType!, // Map roomType to category
+      
+      // Capacity
+      bedrooms: data.bedrooms,
+      beds: data.bedrooms, // Use bedrooms count for beds
+      bathrooms: data.bathrooms,
+      maxGuests: data.maxGuests,
+      
+      // Pricing
+      pricePerNight: data.basePrice,
+      currency: 'USD',
+      
+      // Booking rules
+      minimumStay: data.minNights,
+      maximumStay: data.maxNights,
+      instantBook: false,
+      cancellationPolicy: 'FLEXIBLE',
+      
+      // Details
+      amenities: data.amenities,
+      houseRules: data.houseRules,
+      
+      // Images - Convert URLs to ListingImageDTO structure
+      images: imageUrls.map((url, index) => ({
+        url: url,
+        caption: index === 0 ? 'Cover image' : `Image ${index + 1}`,
+        isCover: index === 0,
+        sortOrder: index
+      }))
+    };
+
+    console.log('[ListingCreate] Submitting request:', listingRequest);
+
+    this.landlordService.createListing(listingRequest).subscribe({
+      next: (response) => {
+        this.loading.set(false);
+        console.log('[ListingCreate] Success:', response);
+        if (!isDraft) {
+          this.router.navigate(['/profile/my-listings']);
+        } else {
+          this.router.navigate(['/listing', response.data.publicId]);
+        }
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set('Failed to create listing');
+        console.error('[ListingCreate] Error creating listing:', err);
+      }
     });
   }
 
   cancel(): void {
     if (confirm('Are you sure you want to cancel? Your changes will be lost.')) {
-      this.router.navigate(['/landlord/listings']);
+      this.router.navigate(['/profile/my-listings']); // Fixed: was /landlord/listings
     }
   }
 

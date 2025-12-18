@@ -136,7 +136,7 @@ export interface Listing {
   
   // Images
   images: ListingImage[];
-  coverImage?: string;
+  coverImageUrl?: string;  // CHANGED from coverImage to match backend
   
   // Availability
   isInstantBooking: boolean;
@@ -160,10 +160,10 @@ export interface Listing {
 
 export interface ListingImage {
   id: number;
-  imageUrl: string;
+  url: string;           // CHANGED from imageUrl to match backend
   caption?: string;
-  isPrimary: boolean;
-  displayOrder: number;
+  isCover: boolean;      // CHANGED from isPrimary to match backend
+  sortOrder: number;     // CHANGED from displayOrder to match backend
 }
 
 export enum PropertyType {
@@ -198,38 +198,46 @@ export enum ListingStatus {
 export interface CreateListingRequest {
   title: string;
   description: string;
-  propertyType: PropertyType;
-  roomType: RoomType;
   
+  // Location fields
+  location: string;      // NEW: required by backend (could be same as address or city)
   address: string;
   city: string;
-  state: string;
   country: string;
-  zipCode: string;
   latitude?: number;
   longitude?: number;
   
+  // Property details
+  propertyType: string;  // e.g., "APARTMENT", "HOUSE", "VILLA"
+  category: string;      // NEW: required by backend (e.g., "ENTIRE_PLACE", "PRIVATE_ROOM")
+  
+  // Capacity
   bedrooms: number;
   beds: number;
   bathrooms: number;
   maxGuests: number;
   
-  basePrice: number;
-  cleaningFee?: number;
-  securityDeposit?: number;
-  weekendPrice?: number;
-  monthlyDiscount?: number;
-  weeklyDiscount?: number;
+  // Pricing
+  pricePerNight: number;  // CHANGED from basePrice to match backend
+  currency?: string;
   
-  amenities: string[];
+  // Booking rules
+  minimumStay?: number;   // CHANGED from minNights
+  maximumStay?: number;   // CHANGED from maxNights
+  instantBook?: boolean;  // CHANGED from isInstantBooking
+  cancellationPolicy?: string;
+  
+  // Details
+  amenities?: string[];
   houseRules?: string;
-  checkInTime: string;
-  checkOutTime: string;
-  minNights: number;
-  maxNights?: number;
   
-  isInstantBooking: boolean;
-  imageUrls: string[];
+  // Images - CHANGED to match backend ListingImageDTO structure
+  images: Array<{
+    url: string;
+    caption?: string;
+    isCover?: boolean;
+    sortOrder?: number;
+  }>;
 }
 
 export interface ListingStats {

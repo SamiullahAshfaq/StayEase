@@ -154,6 +154,14 @@ export const routes: Routes = [
     ]
   },
 
+  // Favorites route (auth required)
+  {
+    path: 'favorites',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/favorites/favorites.component').then(m => m.FavoritesComponent),
+    title: 'My Favourites - StayEase'
+  },
+
   // Landlord dashboard (landlords and admins only) - NOT IMPLEMENTED YET
   // {
   //   path: 'landlord',

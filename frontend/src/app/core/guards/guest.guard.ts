@@ -20,7 +20,7 @@ export const guestGuard: CanActivateFn = () => {
     if (user?.authorities.includes('ROLE_ADMIN')) {
       router.navigate(['/admin/dashboard']);
     } else if (user?.authorities.includes('ROLE_LANDLORD')) {
-      router.navigate(['/landlord/dashboard']);
+      router.navigate(['/profile/my-listings']); // Fixed: Navigate to my listings instead
     } else {
       router.navigate(['/']);
     }

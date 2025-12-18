@@ -100,7 +100,6 @@ public class User {
     @Builder.Default
     private Set<UserAuthority> userAuthorities = new HashSet<>();
 
-
     public void addAuthority(Authority authority) {
         UserAuthority userAuthority = UserAuthority.builder()
                 .user(this)

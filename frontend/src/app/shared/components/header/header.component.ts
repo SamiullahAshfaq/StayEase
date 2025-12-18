@@ -43,8 +43,10 @@ export class HeaderComponent implements OnInit {
   selectedEndDate = signal<Date | null>(null);
 
   ngOnInit() {
+    console.log('🚀 [Header] ngOnInit called - Component is initializing');
     // Only initialize auth state in browser
     if (isPlatformBrowser(this.platformId)) {
+      console.log('🚀 [Header] Running in browser, initializing auth state');
       // Initial state
       this.updateAuthState();
 
@@ -88,8 +90,9 @@ export class HeaderComponent implements OnInit {
       this.closeSearch();
     }
 
-    // Close menu if clicking outside
-    if (!target.closest('.user-menu') && !target.closest('.auth-menu') && this.isMenuOpen) {
+    // Close menu if clicking outside (but not if clicking dropdown items)
+    if (!target.closest('.user-menu') && !target.closest('.auth-menu') && !target.closest('.user-dropdown') && this.isMenuOpen) {
+      console.log('🚪 [Header] Closing menu - clicked outside');
       this.isMenuOpen = false;
     }
   }
@@ -201,7 +204,11 @@ export class HeaderComponent implements OnInit {
 
   // Navigation and auth
   toggleMenu() {
+    console.log('🔘 [Header] toggleMenu called - BEFORE:', this.isMenuOpen);
     this.isMenuOpen = !this.isMenuOpen;
+    console.log('🔘 [Header] toggleMenu called - AFTER:', this.isMenuOpen);
+    console.log('🔘 [Header] isAuthenticated:', this.isAuthenticated);
+    console.log('🔘 [Header] currentUser:', this.currentUser);
   }
 
   login() {
@@ -225,7 +232,16 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToMyListings() {
-    this.router.navigate(['/landlord/listings']);
+    alert('🎯 Step 1: navigateToMyListings() method called!');
+    alert('🎯 Step 2: About to navigate to /profile/my-listings');
+    this.router.navigate(['/profile/my-listings']).then(
+      (success) => {
+        alert('✅ Navigation SUCCESS: ' + success);
+      },
+      (error) => {
+        alert('❌ Navigation FAILED: ' + error);
+      }
+    );
     this.isMenuOpen = false;
   }
 
@@ -244,13 +260,42 @@ export class HeaderComponent implements OnInit {
     this.isMenuOpen = false;
   }
 
+  navigateToFavorites() {
+    this.router.navigate(['/favorites']);
+    this.isMenuOpen = false;
+  }
+
   // Check if user is landlord or admin
   isLandlordOrAdmin(): boolean {
+    console.log('🔍 [isLandlordOrAdmin] Called');
+    if (!this.currentUser || !this.currentUser.authorities) {
+      alert('❌ NO USER OR AUTHORITIES - Button will NOT show!');
+      console.log('[Header] isLandlordOrAdmin: false (no user or authorities)');
+      console.log('[Header] currentUser:', this.currentUser);
+      return false;
+    }
+    const authorities = this.currentUser.authorities;
+    console.log('🔍 [isLandlordOrAdmin] authorities:', authorities);
+    console.log('🔍 [isLandlordOrAdmin] is array?', Array.isArray(authorities));
+    const result = authorities.includes('ROLE_LANDLORD') || authorities.includes('ROLE_ADMIN');
+    
+    if (result) {
+      alert('✅ YOU ARE LANDLORD - Button WILL show!');
+    } else {
+      alert('❌ NOT LANDLORD - Button will NOT show! Authorities: ' + JSON.stringify(authorities));
+    }
+    
+    console.log('[Header] isLandlordOrAdmin:', result, 'authorities:', authorities);
+    return result;
+  }
+
+  // Check if user is tenant (only has ROLE_TENANT)
+  isTenant(): boolean {
     if (!this.currentUser || !this.currentUser.authorities) {
       return false;
     }
     const authorities = this.currentUser.authorities;
-    return authorities.includes('ROLE_LANDLORD') || authorities.includes('ROLE_ADMIN');
+    return authorities.includes('ROLE_TENANT') && !authorities.includes('ROLE_LANDLORD') && !authorities.includes('ROLE_ADMIN');
   }
 
   // Check if user is service provider
@@ -315,5 +360,37 @@ export class HeaderComponent implements OnInit {
     this.closeSearch();
     // Navigate to listings search with query params
     this.router.navigate(['/listing/search'], { queryParams });
+  }
+
+  // Get full profile image URL
+  getProfileImageUrl(): string {
+    if (!this.currentUser?.profileImageUrl) {
+      console.log('❌ No profile image URL found');
+      return '';
+    }
+
+    console.log('🖼️ Original profileImageUrl:', this.currentUser.profileImageUrl);
+
+    // If it's already a full URL, return as-is
+    if (this.currentUser.profileImageUrl.startsWith('http://') || 
+        this.currentUser.profileImageUrl.startsWith('https://')) {
+      console.log('✅ Already full URL:', this.currentUser.profileImageUrl);
+      return this.currentUser.profileImageUrl;
+    }
+
+    // If it's a relative path, build full URL
+    const fullUrl = `http://localhost:8080${this.currentUser.profileImageUrl}`;
+    console.log('✅ Built full URL:', fullUrl);
+    return fullUrl;
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    console.error('❌ Failed to load profile image:', img.src);
+    console.error('❌ Current user:', this.currentUser);
+  }
+
+  onImageLoad(): void {
+    console.log('✅ Profile image loaded successfully');
   }
 }
