@@ -5,6 +5,7 @@
 ### 1. Header Dropdown Changes
 
 #### Before (All Users Saw):
+
 ```
 ┌─────────────────────────┐
 │  👤 John Doe (Tenant)  │
@@ -18,6 +19,7 @@
 ```
 
 #### After (Tenant View):
+
 ```
 ┌─────────────────────────┐
 │  👤 John Doe (Tenant)  │
@@ -30,6 +32,7 @@
 ```
 
 #### After (Landlord/Admin View):
+
 ```
 ┌─────────────────────────┐
 │  👤 Jane (Landlord)     │
@@ -48,6 +51,7 @@
 ## 🖥️ Favorites Page States
 
 ### Empty State
+
 ```
 ┌────────────────────────────────────────────┐
 │                                            │
@@ -64,6 +68,7 @@
 ```
 
 ### Loading State
+
 ```
 ┌────────────────────────────────────────────┐
 │                                            │
@@ -75,6 +80,7 @@
 ```
 
 ### Error State
+
 ```
 ┌────────────────────────────────────────────┐
 │                                            │
@@ -88,6 +94,7 @@
 ```
 
 ### Favorites Grid (Desktop - 4 columns)
+
 ```
 ┌───────────────────────────────────────────────────────────────────┐
 │                  ❤️  My Favourites                                │
@@ -115,6 +122,7 @@
 ## 🎨 Card Interactions
 
 ### Normal State
+
 ```
 ┌─────────────────────┐
 │    🖼️ Listing Image │
@@ -131,6 +139,7 @@
 ```
 
 ### Hover State
+
 ```
 ┌─────────────────────┐  ← Card lifts up (translateY: -8px)
 │    🖼️ (zoomed 1.08x)│  ← Image zooms in
@@ -147,6 +156,7 @@
 ```
 
 ### Heart Button Hover
+
 ```
 ┌─────────────────────┐
 │                     │
@@ -161,6 +171,7 @@
 ## 📱 Responsive Layouts
 
 ### Mobile (< 768px) - 1 Column
+
 ```
 ┌──────────────┐
 │  ❤️ Faves    │
@@ -181,6 +192,7 @@
 ```
 
 ### Tablet (769-1024px) - 2 Columns
+
 ```
 ┌────────────────────────────┐
 │    ❤️  My Favourites       │
@@ -197,6 +209,7 @@
 ```
 
 ### Desktop (1025-1399px) - 3 Columns
+
 ```
 ┌────────────────────────────────────────┐
 │         ❤️  My Favourites              │
@@ -213,6 +226,7 @@
 ```
 
 ### Large Desktop (≥ 1400px) - 4 Columns
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │              ❤️  My Favourites                          │
@@ -233,6 +247,7 @@
 ## 🎭 Animation Timeline
 
 ### Page Load
+
 ```
 1. Fade in header (0.3s)
 2. Show spinner (0s delay)
@@ -242,6 +257,7 @@
 ```
 
 ### Add Favorite (Future Enhancement)
+
 ```
 1. Click heart outline icon
 2. Heart scales up (0.2s)
@@ -251,6 +267,7 @@
 ```
 
 ### Remove Favorite
+
 ```
 1. Click red heart button
 2. Heart rotates -10deg and scales (0.3s)
@@ -261,6 +278,7 @@
 ```
 
 ### Card Hover
+
 ```
 1. Mouse enters card
 2. Card lifts up 8px (0.4s cubic-bezier)
@@ -274,6 +292,7 @@
 ## 🔄 User Journey
 
 ### First Time User
+
 ```
 1. Login as tenant
 2. Browse listings
@@ -287,6 +306,7 @@
 ```
 
 ### Returning User
+
 ```
 1. Login
 2. Header badge shows favorite count
@@ -299,6 +319,7 @@
 ```
 
 ### Landlord User
+
 ```
 1. Login as landlord
 2. See both menus:
@@ -313,6 +334,7 @@
 ## 🎨 Color & Style Guide
 
 ### Heart Icon States
+
 ```
 Unfavorited (Future):  ───────►  stroke: #6b7280
                                  fill: transparent
@@ -325,6 +347,7 @@ Hover:                 ───────►  transform: scale(1.15)
 ```
 
 ### Button States
+
 ```
 Normal:    background: linear-gradient(#FF385C, #E31C5F)
            shadow: 0 4px 12px rgba(255,56,92,0.3)
@@ -336,6 +359,7 @@ Active:    transform: scale(0.95)
 ```
 
 ### Card Elevation
+
 ```
 Rest:      shadow: 0 4px 20px rgba(0,0,0,0.08)
            z-index: 1
@@ -371,6 +395,7 @@ favorites                                     by many users
 ## 🚀 Quick Start Commands
 
 ### Backend (Run Migration)
+
 ```bash
 cd backend
 ./mvnw spring-boot:run
@@ -378,6 +403,7 @@ cd backend
 ```
 
 ### Frontend (Start Dev Server)
+
 ```bash
 cd frontend
 npm install
@@ -386,6 +412,7 @@ npm start
 ```
 
 ### Test API
+
 ```bash
 # Add to favorites
 curl -X POST http://localhost:8080/api/favorites/{listingId} \
@@ -405,6 +432,7 @@ curl -X DELETE http://localhost:8080/api/favorites/{listingId} \
 ## ✅ Feature Checklist
 
 ### Must Have (Completed ✅)
+
 - [x] Backend: Favorite entity
 - [x] Backend: Repository with custom queries
 - [x] Backend: Service layer
@@ -419,6 +447,7 @@ curl -X DELETE http://localhost:8080/api/favorites/{listingId} \
 - [x] Role-based menu (hide "My Listings" for tenants)
 
 ### Nice to Have (Future Enhancements)
+
 - [ ] Heart icon on listing cards
 - [ ] Toggle favorites from search/browse pages
 - [ ] Favorites count badge in header
@@ -433,6 +462,7 @@ curl -X DELETE http://localhost:8080/api/favorites/{listingId} \
 ## 🎯 Success Metrics
 
 ### Technical KPIs
+
 - ✅ All API endpoints return < 200ms
 - ✅ Page load time < 2 seconds
 - ✅ Zero compilation errors
@@ -440,6 +470,7 @@ curl -X DELETE http://localhost:8080/api/favorites/{listingId} \
 - ✅ Mobile-responsive (tested)
 
 ### Business KPIs (To Track)
+
 - User engagement with favorites
 - Average favorites per user
 - Conversion rate (favorite → booking)
@@ -448,4 +479,4 @@ curl -X DELETE http://localhost:8080/api/favorites/{listingId} \
 
 ---
 
-*Visual Guide v1.0 | December 18, 2025*
+_Visual Guide v1.0 | December 18, 2025_

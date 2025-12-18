@@ -1,6 +1,7 @@
 # ❤️ Favorites Feature Implementation - Complete Summary
 
 ## 📋 Overview
+
 Successfully implemented a full-stack favorites/wishlist feature for the StayEase application, allowing tenants to save and manage their favorite property listings.
 
 ---
@@ -8,6 +9,7 @@ Successfully implemented a full-stack favorites/wishlist feature for the StayEas
 ## ✨ Key Features
 
 ### For Users
+
 - ❤️ **Add to Favorites**: Click heart icon on listings to save them
 - 🗑️ **Remove from Favorites**: Easily remove listings from favorites
 - 📋 **View All Favorites**: Dedicated page showing all saved listings
@@ -15,6 +17,7 @@ Successfully implemented a full-stack favorites/wishlist feature for the StayEas
 - 🎨 **Beautiful UI**: Premium animated heart icons with smooth transitions
 
 ### Role-Based Access
+
 - ✅ **All Users**: Can access "My Favourites" page
 - ✅ **Tenants**: "My Listings" menu hidden (only see "My Favourites")
 - ✅ **Landlords/Admins**: Can see both "My Listings" and "My Favourites"
@@ -24,6 +27,7 @@ Successfully implemented a full-stack favorites/wishlist feature for the StayEas
 ## 🗄️ Backend Implementation
 
 ### 1. **Database Schema** (`V12__create_favorite_table.sql`)
+
 ```sql
 CREATE TABLE favorite (
     id BIGSERIAL PRIMARY KEY,
@@ -35,17 +39,20 @@ CREATE TABLE favorite (
 ```
 
 **Features:**
+
 - ✅ Unique constraint prevents duplicate favorites
 - ✅ Cascade delete when user or listing is removed
 - ✅ Indexed for optimal query performance
 - ✅ Timestamp tracking for "recently added" features
 
 **Indexes:**
+
 - `idx_favorite_user_id` - Fast user favorites lookup
 - `idx_favorite_listing_id` - Track listing popularity
 - `idx_favorite_created_at` - Sort by date added
 
 ### 2. **Entity Layer** (`Favorite.java`)
+
 ```java
 @Entity
 @Table(name = "favorite", uniqueConstraints = {
@@ -55,24 +62,26 @@ public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Listing listing;
-    
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 }
 ```
 
 **Features:**
+
 - ✅ Lazy loading for performance
 - ✅ Automatic timestamp generation
 - ✅ Many-to-One relationships with User and Listing
 
 ### 3. **Repository Layer** (`FavoriteRepository.java`)
+
 ```java
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     Optional<Favorite> findByUserPublicIdAndListingPublicId(UUID userPublicId, UUID listingPublicId);
@@ -83,12 +92,14 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 ```
 
 **Features:**
+
 - ✅ Uses UUID (publicId) for secure external API
 - ✅ JOIN FETCH for optimized listing retrieval with images
 - ✅ Count query for fast favorite status check
 - ✅ Custom delete query with @Modifying annotation
 
 ### 4. **Service Layer** (`FavoriteService.java`)
+
 ```java
 @Service
 @RequiredArgsConstructor
@@ -101,12 +112,14 @@ public class FavoriteService {
 ```
 
 **Features:**
+
 - ✅ Idempotent add operation (no error if already favorited)
 - ✅ Uses ListingMapper for consistent DTO conversion
 - ✅ Transactional operations for data consistency
 - ✅ Proper exception handling with NotFoundException
 
 ### 5. **Controller Layer** (`FavoriteController.java`)
+
 ```java
 @RestController
 @RequestMapping("/api/favorites")
@@ -119,6 +132,7 @@ public class FavoriteController {
 ```
 
 **Features:**
+
 - ✅ Uses UserPrincipal for authenticated user info
 - ✅ RESTful API design
 - ✅ Consistent ApiResponse wrapper
@@ -129,29 +143,32 @@ public class FavoriteController {
 ## 💻 Frontend Implementation
 
 ### 1. **Favorite Service** (`favorite.service.ts`)
+
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class FavoriteService {
-  addToFavorites(listingId: string): Observable<void>
-  removeFromFavorites(listingId: string): Observable<void>
-  getUserFavorites(): Observable<Listing[]>
-  isFavorite(listingId: string): Observable<boolean>
-  toggleFavorite(listingId: string, currentStatus: boolean): Observable<void>
+  addToFavorites(listingId: string): Observable<void>;
+  removeFromFavorites(listingId: string): Observable<void>;
+  getUserFavorites(): Observable<Listing[]>;
+  isFavorite(listingId: string): Observable<boolean>;
+  toggleFavorite(listingId: string, currentStatus: boolean): Observable<void>;
 }
 ```
 
 **Features:**
+
 - ✅ RxJS Observable-based for reactive programming
 - ✅ Unwraps ApiResponse automatically
 - ✅ Toggle helper method for convenience
 - ✅ Type-safe with TypeScript interfaces
 
 ### 2. **Favorites Page Component** (`favorites.component.ts`)
+
 ```typescript
 @Component({
-  selector: 'app-favorites',
+  selector: "app-favorites",
   standalone: true,
-  templateUrl: './favorites.component.html'
+  templateUrl: "./favorites.component.html",
 })
 export class FavoritesComponent {
   favorites = signal<Listing[]>([]);
@@ -161,6 +178,7 @@ export class FavoritesComponent {
 ```
 
 **Features:**
+
 - ✅ Angular 17+ standalone component
 - ✅ Signal-based reactive state management
 - ✅ Loading and error states
@@ -170,6 +188,7 @@ export class FavoritesComponent {
 ### 3. **UI Design** (`favorites.component.html` + `.css`)
 
 **Page Structure:**
+
 ```
 ┌─────────────────────────────────────┐
 │   ❤️ My Favourites                 │
@@ -183,12 +202,14 @@ export class FavoritesComponent {
 ```
 
 **UI States:**
+
 1. **Loading State** - Animated spinner with message
 2. **Empty State** - Friendly message with "Browse Listings" CTA
 3. **Error State** - Error icon with "Try Again" button
 4. **Favorites Grid** - Responsive card grid (1-4 columns)
 
 **Card Features:**
+
 - 🖼️ **Hero Image**: 3:2 aspect ratio with zoom on hover
 - ❤️ **Remove Button**: Red filled heart in top-right corner
 - 📍 **Location**: City and country with location icon
@@ -198,6 +219,7 @@ export class FavoritesComponent {
 - 🔗 **View Button**: Gradient button linking to listing details
 
 **Animations:**
+
 - ❤️ Heart beat animation on page title
 - 🔄 Card lift and shadow on hover
 - 🖼️ Image zoom on hover (scale 1.08)
@@ -207,6 +229,7 @@ export class FavoritesComponent {
 ### 4. **Header Integration** (`header.component`)
 
 **Changes Made:**
+
 ```typescript
 // Added methods
 navigateToFavorites() { ... }
@@ -214,6 +237,7 @@ isTenant(): boolean { ... }
 ```
 
 **Template Updates:**
+
 ```html
 <!-- NEW: My Favourites button (all users) -->
 <button (click)="navigateToFavorites()">
@@ -223,11 +247,12 @@ isTenant(): boolean { ... }
 
 <!-- UPDATED: My Listings (landlords/admins only) -->
 @if (isLandlordOrAdmin()) {
-  <button (click)="navigateToMyListings()">...</button>
+<button (click)="navigateToMyListings()">...</button>
 }
 ```
 
 ### 5. **Routing** (`app.routes.ts`)
+
 ```typescript
 {
   path: 'favorites',
@@ -238,6 +263,7 @@ isTenant(): boolean { ... }
 ```
 
 **Features:**
+
 - ✅ Protected by authentication guard
 - ✅ Lazy loaded for performance
 - ✅ Dynamic page title
@@ -248,6 +274,7 @@ isTenant(): boolean { ... }
 ## 🎨 Design Highlights
 
 ### Color Palette
+
 - **Primary Red**: `#FF385C` (StayEase brand color)
 - **Hover Red**: `#E31C5F` (darker for interaction)
 - **White**: `#FFFFFF` (card backgrounds)
@@ -256,12 +283,14 @@ isTenant(): boolean { ... }
 - **Light Gray**: `#e5e7eb` (borders)
 
 ### Animations & Transitions
+
 - **Duration**: 0.3s - 0.6s (smooth but not slow)
 - **Easing**: `cubic-bezier(0.4, 0, 0.2, 1)` (material design)
 - **Transforms**: translateY, scale, rotate
 - **Box Shadows**: Elevation increases on hover
 
 ### Responsive Breakpoints
+
 - **Mobile**: < 768px (1 column)
 - **Tablet**: 769px - 1024px (2 columns)
 - **Desktop**: 1025px - 1399px (3 columns)
@@ -306,6 +335,7 @@ frontend/
 ## 🔧 API Endpoints
 
 ### Add to Favorites
+
 ```http
 POST /api/favorites/{listingId}
 Authorization: Bearer <token>
@@ -319,6 +349,7 @@ Response 201:
 ```
 
 ### Remove from Favorites
+
 ```http
 DELETE /api/favorites/{listingId}
 Authorization: Bearer <token>
@@ -332,6 +363,7 @@ Response 200:
 ```
 
 ### Get User's Favorites
+
 ```http
 GET /api/favorites
 Authorization: Bearer <token>
@@ -355,6 +387,7 @@ Response 200:
 ```
 
 ### Check Favorite Status
+
 ```http
 GET /api/favorites/{listingId}/status
 Authorization: Bearer <token>
@@ -372,6 +405,7 @@ Response 200:
 ## ✅ Testing Checklist
 
 ### Backend Tests
+
 - [ ] Add favorite - success case
 - [ ] Add favorite - duplicate (should be idempotent)
 - [ ] Add favorite - non-existent user (404)
@@ -382,6 +416,7 @@ Response 200:
 - [ ] Check favorite status - true/false
 
 ### Frontend Tests
+
 - [ ] Favorites page loads
 - [ ] Loading state displays
 - [ ] Empty state displays with CTA button
@@ -395,6 +430,7 @@ Response 200:
 - [ ] "My Favourites" visible for all users
 
 ### Integration Tests
+
 - [ ] End-to-end favorite flow
 - [ ] Authentication required
 - [ ] Real-time UI updates
@@ -406,12 +442,14 @@ Response 200:
 ## 🚀 Deployment Steps
 
 1. **Database Migration**
+
    ```bash
    # Migration will run automatically on application start
    # V12__create_favorite_table.sql
    ```
 
 2. **Backend Deployment**
+
    ```bash
    cd backend
    ./mvnw clean package
@@ -430,12 +468,14 @@ Response 200:
 ## 📊 Performance Optimizations
 
 ### Backend
+
 - ✅ **JOIN FETCH**: Eager load listing images to avoid N+1 queries
 - ✅ **Database Indexes**: Fast lookups on user_id, listing_id, created_at
 - ✅ **Lazy Loading**: Entities loaded only when needed
 - ✅ **Unique Constraint**: Database-level duplicate prevention
 
 ### Frontend
+
 - ✅ **Lazy Loading**: Favorites page loaded on demand
 - ✅ **Signals**: Fine-grained reactivity (Angular 17+)
 - ✅ **Optimistic UI**: Instant feedback before server response
@@ -447,20 +487,25 @@ Response 200:
 ## 🎯 Future Enhancements
 
 ### Phase 2 (Optional)
+
 1. **Heart Icon on Listing Cards**
+
    - Add floating heart button to listing search/browse cards
    - Toggle favorites without leaving search page
    - Show filled/outline heart based on favorite status
 
 2. **Favorites Counter**
+
    - Display number of favorites in header badge
    - Update counter in real-time
 
 3. **Share Favorites**
+
    - Generate shareable link to favorites collection
    - Social media integration
 
 4. **Favorites Analytics**
+
    - Track most favorited listings
    - Show "X people favorited this" on listings
    - Trending favorites section
@@ -475,12 +520,14 @@ Response 200:
 ## 📝 Notes
 
 ### Security
+
 - ✅ All endpoints protected with JWT authentication
 - ✅ Users can only manage their own favorites
 - ✅ UUID-based public IDs prevent enumeration attacks
 - ✅ Input validation on all API endpoints
 
 ### Accessibility
+
 - ✅ Semantic HTML structure
 - ✅ ARIA labels on interactive elements
 - ✅ Keyboard navigation support
@@ -488,6 +535,7 @@ Response 200:
 - ✅ Focus indicators visible
 
 ### Browser Support
+
 - ✅ Chrome 90+
 - ✅ Firefox 88+
 - ✅ Safari 14+
@@ -498,19 +546,23 @@ Response 200:
 ## 🎉 Summary
 
 **Lines of Code Added:**
+
 - Backend: ~400 lines
 - Frontend: ~600 lines
 - Total: ~1,000 lines
 
 **Files Created:**
+
 - Backend: 5 files
 - Frontend: 4 files
 - Total: 9 files
 
 **Files Modified:**
+
 - Frontend: 2 files (header component, routes)
 
 **Time Estimate:**
+
 - Backend Implementation: 2-3 hours
 - Frontend Implementation: 3-4 hours
 - Testing & Polish: 2 hours
@@ -532,6 +584,6 @@ Response 200:
 
 ---
 
-*Created: December 18, 2025*
-*Version: 1.0.0*
-*Status: ✅ Complete & Production Ready*
+_Created: December 18, 2025_
+_Version: 1.0.0_
+_Status: ✅ Complete & Production Ready_

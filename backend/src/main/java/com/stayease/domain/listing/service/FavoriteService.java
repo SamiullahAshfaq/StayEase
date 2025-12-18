@@ -36,15 +36,15 @@ public class FavoriteService {
         }
 
         User user = userRepository.findByPublicId(userPublicId)
-            .orElseThrow(() -> new NotFoundException("User not found with id: " + userPublicId));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userPublicId));
 
         Listing listing = listingRepository.findByPublicId(listingPublicId)
-            .orElseThrow(() -> new NotFoundException("Listing not found with id: " + listingPublicId));
+                .orElseThrow(() -> new NotFoundException("Listing not found with id: " + listingPublicId));
 
         Favorite favorite = Favorite.builder()
-            .user(user)
-            .listing(listing)
-            .build();
+                .user(user)
+                .listing(listing)
+                .build();
 
         favoriteRepository.save(favorite);
     }
@@ -57,10 +57,10 @@ public class FavoriteService {
     @Transactional(readOnly = true)
     public List<ListingDTO> getUserFavorites(UUID userPublicId) {
         List<Favorite> favorites = favoriteRepository.findAllByUserPublicId(userPublicId);
-        
+
         return favorites.stream()
-            .map(favorite -> listingMapper.toDTO(favorite.getListing()))
-            .collect(Collectors.toList());
+                .map(favorite -> listingMapper.toDTO(favorite.getListing()))
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

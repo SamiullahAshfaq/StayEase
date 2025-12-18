@@ -3,6 +3,7 @@
 ## 🎯 Problem Solved
 
 **Original Issue**: When uploading profile pictures during "Complete Profile", the application was trying to store entire base64-encoded images in the database, causing:
+
 - `could not execute batch` errors
 - Database column overflow (VARCHAR(500) too small for base64 data)
 - Poor performance and excessive database size
@@ -74,6 +75,7 @@ Frontend (Angular)                    Backend (Spring Boot)
 ### **New Files Created:**
 
 1. **`FileStorageService.java`** - Core file storage logic
+
    - Location: `backend/src/main/java/com/stayease/shared/service/`
    - Purpose: Handles saving/deleting files, base64 decoding, filename generation
 
@@ -84,11 +86,13 @@ Frontend (Angular)                    Backend (Spring Boot)
 ### **Modified Files:**
 
 3. **`ProfileController.java`** - Updated upload/delete endpoints
+
    - Integrated `FileStorageService`
    - Now stores files instead of base64 data
    - Automatically deletes old images
 
 4. **`application-dev.yml`** - Added file upload configuration
+
    - Added `file.upload-dir` property
 
 5. **`User.java`** - Kept as VARCHAR(500) (reverted TEXT change)
@@ -101,6 +105,7 @@ Frontend (Angular)                    Backend (Spring Boot)
 ### **1. File Upload Flow**
 
 #### **Frontend Sends:**
+
 ```typescript
 POST /api/profile/image
 {
@@ -111,6 +116,7 @@ POST /api/profile/image
 #### **Backend Process:**
 
 **Step 1: Extract Image Data**
+
 ```java
 // Remove data URI prefix
 String base64Data = base64Image.split(",")[1];
@@ -120,6 +126,7 @@ String fileExtension = "png"; // jpeg, gif, webp, etc.
 ```
 
 **Step 2: Decode & Save**
+
 ```java
 // Decode base64 to bytes
 byte[] imageBytes = Base64.getDecoder().decode(base64Data);
@@ -134,12 +141,14 @@ Files.write(targetLocation, imageBytes);
 ```
 
 **Step 3: Generate URL**
+
 ```java
 String imageUrl = "/api/files/profile-images/" + filename;
 // Result: "/api/files/profile-images/a7b3c4d5-e6f7-8901-2345-6789abcdef01.png"
 ```
 
 **Step 4: Update Database**
+
 ```java
 UpdateUserDTO updateDTO = UpdateUserDTO.builder()
     .profileImageUrl(imageUrl) // Only ~60 characters
@@ -148,6 +157,7 @@ userService.updateUser(currentUserId, updateDTO);
 ```
 
 #### **Backend Returns:**
+
 ```json
 {
   "success": true,
@@ -163,6 +173,7 @@ userService.updateUser(currentUserId, updateDTO);
 ### **2. Image Retrieval Flow**
 
 #### **Frontend Requests:**
+
 ```html
 <img [src]="user.profileImageUrl" />
 <!-- Translates to: -->
@@ -170,18 +181,19 @@ userService.updateUser(currentUserId, updateDTO);
 ```
 
 #### **Backend Process:**
+
 ```java
 @GetMapping("/profile-images/{filename:.+}")
 public ResponseEntity<Resource> getProfileImage(@PathVariable String filename) {
     // 1. Resolve file path
     Path filePath = fileStorageLocation.resolve(filename);
-    
+
     // 2. Load file as resource
     Resource resource = new UrlResource(filePath.toUri());
-    
+
     // 3. Determine content type
     String contentType = Files.probeContentType(filePath);
-    
+
     // 4. Return file with appropriate headers
     return ResponseEntity.ok()
         .contentType(MediaType.parseMediaType(contentType))
@@ -203,10 +215,10 @@ UserDTO currentUser = userService.getUserById(currentUserId);
 if (currentUser.getProfileImageUrl() != null) {
     String oldImageUrl = currentUser.getProfileImageUrl();
     // e.g., "/api/files/profile-images/old-uuid.png"
-    
+
     String[] parts = oldImageUrl.split("/profile-images/");
     // parts[1] = "old-uuid.png"
-    
+
     fileStorageService.deleteFile(parts[1]);
     // Deletes: uploads/profile-images/old-uuid.png
 }
@@ -246,9 +258,10 @@ backend/
 ## 🔐 Security Considerations
 
 ### **1. File Type Validation**
+
 ```java
 // Only allows image types
-if (dataUriPrefix.contains("image/jpeg") || 
+if (dataUriPrefix.contains("image/jpeg") ||
     dataUriPrefix.contains("image/png") ||
     dataUriPrefix.contains("image/gif") ||
     dataUriPrefix.contains("image/webp")) {
@@ -259,18 +272,21 @@ if (dataUriPrefix.contains("image/jpeg") ||
 ```
 
 ### **2. Unique Filenames**
+
 ```java
 // UUID prevents filename collisions and path traversal attacks
 String filename = UUID.randomUUID().toString() + "." + fileExtension;
 ```
 
 ### **3. Authorized Access**
+
 ```java
 @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
 public ResponseEntity<ApiResponse<Map<String, String>>> uploadProfileImage(...)
 ```
 
 ### **4. Path Normalization**
+
 ```java
 // Prevents directory traversal attacks
 Path filePath = fileStorageLocation.resolve(filename).normalize();
@@ -281,14 +297,16 @@ Path filePath = fileStorageLocation.resolve(filename).normalize();
 ## 📊 Database Impact
 
 ### **Before (Storing Base64):**
+
 ```sql
 -- User table row size
-profile_image_url: "data:image/png;base64,iVBORw0KGgoAAAA..." 
+profile_image_url: "data:image/png;base64,iVBORw0KGgoAAAA..."
 -- Size: 10,000+ characters per row
 -- Database size for 1000 users: ~10 MB just for profile pics
 ```
 
 ### **After (Storing URLs):**
+
 ```sql
 -- User table row size
 profile_image_url: "/api/files/profile-images/a7b3c4d5-...-01.png"
@@ -302,18 +320,21 @@ profile_image_url: "/api/files/profile-images/a7b3c4d5-...-01.png"
 ## 🚀 Configuration
 
 ### **Default Configuration** (`application-dev.yml`):
+
 ```yaml
 file:
   upload-dir: uploads/profile-images
 ```
 
 ### **Custom Configuration** (Production):
+
 ```yaml
 file:
   upload-dir: /var/stayease/uploads/profile-images
 ```
 
 Or use environment variable:
+
 ```bash
 export FILE_UPLOAD_DIR=/var/stayease/uploads/profile-images
 ```
@@ -323,6 +344,7 @@ export FILE_UPLOAD_DIR=/var/stayease/uploads/profile-images
 ## 🧪 Testing the Feature
 
 ### **1. Test Upload**
+
 ```bash
 # Login first
 POST http://localhost:8080/api/auth/login
@@ -349,6 +371,7 @@ Authorization: Bearer <your-jwt-token>
 ```
 
 ### **2. Test Retrieval**
+
 ```bash
 GET http://localhost:8080/api/files/profile-images/a7b3c4d5-e6f7-8901-2345-6789abcdef01.png
 
@@ -356,6 +379,7 @@ GET http://localhost:8080/api/files/profile-images/a7b3c4d5-e6f7-8901-2345-6789a
 ```
 
 ### **3. Test Delete**
+
 ```bash
 DELETE http://localhost:8080/api/profile/image
 Authorization: Bearer <your-jwt-token>
@@ -369,6 +393,7 @@ Authorization: Bearer <your-jwt-token>
 ```
 
 ### **4. Verify in Browser**
+
 1. Complete your profile and upload a picture
 2. Open DevTools → Network tab
 3. Should see:
@@ -379,24 +404,25 @@ Authorization: Bearer <your-jwt-token>
 
 ## 📈 Performance Benefits
 
-| Metric | Before (Base64) | After (File Storage) | Improvement |
-|--------|----------------|---------------------|-------------|
-| **Database Size** | 10 MB / 1000 users | 60 KB / 1000 users | **166x smaller** |
-| **Query Speed** | Slow (large text) | Fast (small string) | **~100x faster** |
-| **Upload Time** | 2-3 seconds | 0.5-1 second | **3x faster** |
-| **Memory Usage** | High (all in RAM) | Low (files on disk) | **10x less RAM** |
-| **Backup Size** | Large | Small | **166x smaller** |
+| Metric            | Before (Base64)    | After (File Storage) | Improvement      |
+| ----------------- | ------------------ | -------------------- | ---------------- |
+| **Database Size** | 10 MB / 1000 users | 60 KB / 1000 users   | **166x smaller** |
+| **Query Speed**   | Slow (large text)  | Fast (small string)  | **~100x faster** |
+| **Upload Time**   | 2-3 seconds        | 0.5-1 second         | **3x faster**    |
+| **Memory Usage**  | High (all in RAM)  | Low (files on disk)  | **10x less RAM** |
+| **Backup Size**   | Large              | Small                | **166x smaller** |
 
 ---
 
 ## 🔄 Future Enhancements
 
 ### **Option 1: Cloud Storage (AWS S3)**
+
 ```java
 @Service
 public class S3FileStorageService {
     private final AmazonS3 s3Client;
-    
+
     public String storeFile(byte[] fileBytes, String filename) {
         s3Client.putObject(
             "stayease-profile-images",
@@ -410,20 +436,22 @@ public class S3FileStorageService {
 ```
 
 ### **Option 2: Image Optimization**
+
 ```java
 // Add image resizing/compression
 public byte[] optimizeImage(byte[] originalBytes) {
     BufferedImage img = ImageIO.read(new ByteArrayInputStream(originalBytes));
-    
+
     // Resize to 500x500
     BufferedImage resized = Scalr.resize(img, 500);
-    
+
     // Compress to 80% quality
     return compressImage(resized, 0.8f);
 }
 ```
 
 ### **Option 3: CDN Integration**
+
 ```yaml
 file:
   cdn-url: https://cdn.stayease.com/profile-images/
@@ -450,10 +478,12 @@ file:
 ## 🎉 Summary
 
 **What Changed:**
+
 - ❌ **Before**: Stored 10,000+ character base64 strings in database
 - ✅ **After**: Store ~60 character URLs, save actual files to disk
 
 **Benefits:**
+
 - 🚀 **166x smaller database**
 - ⚡ **3x faster uploads**
 - 💾 **10x less memory usage**
@@ -461,6 +491,7 @@ file:
 - 🧹 **Automatic cleanup** (old images deleted)
 
 **User Experience:**
+
 - ✅ Profile pictures upload without errors
 - ✅ Images load instantly
 - ✅ No database size issues
@@ -471,6 +502,7 @@ file:
 ## 📞 Support
 
 If you encounter any issues:
+
 1. Check backend logs: `backend/logs/`
 2. Verify upload directory exists: `backend/uploads/profile-images/`
 3. Ensure proper permissions on upload directory

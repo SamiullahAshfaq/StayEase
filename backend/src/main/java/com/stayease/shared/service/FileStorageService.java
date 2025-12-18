@@ -39,7 +39,8 @@ public class FileStorageService {
     /**
      * Store base64 encoded image and return the filename
      * 
-     * @param base64Image Base64 encoded image string with or without data URI prefix
+     * @param base64Image Base64 encoded image string with or without data URI
+     *                    prefix
      * @return Filename of the stored image
      */
     public String storeBase64Image(String base64Image) {
@@ -49,7 +50,8 @@ public class FileStorageService {
     /**
      * Store base64 encoded listing image and return the filename
      * 
-     * @param base64Image Base64 encoded image string with or without data URI prefix
+     * @param base64Image Base64 encoded image string with or without data URI
+     *                    prefix
      * @return Filename of the stored image
      */
     public String storeBase64ListingImage(String base64Image) {

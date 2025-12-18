@@ -9,12 +9,13 @@
 cd backend
 ./mvnw spring-boot:run
 
-# Terminal 2: Frontend  
+# Terminal 2: Frontend
 cd frontend
 npm start
 ```
 
 **Wait for:**
+
 - ✅ Backend: "Started Application in X seconds"
 - ✅ Frontend: "✔ Browser application bundle generation complete"
 
@@ -23,6 +24,7 @@ npm start
 ### 2️⃣ Test as Guest User (Not Logged In)
 
 **Steps:**
+
 1. Open browser: http://localhost:4200
 2. Browse to any page with listings (home page)
 3. **Look at listing cards** - should see gray outline heart (🤍) in top-right corner
@@ -30,6 +32,7 @@ npm start
 5. **Click heart** - should redirect to login page
 
 **Expected:**
+
 ```
 Before click: 🤍 (gray outline)
 After hover:  💗 (pink fill, red stroke)
@@ -43,6 +46,7 @@ After click:  → Redirected to /auth/login
 ### 3️⃣ Test as Logged-In User
 
 **Steps:**
+
 1. **Login** to the application
 2. **Navigate to home page** or search listings
 3. **Find a listing card** with a heart icon
@@ -52,15 +56,17 @@ After click:  → Redirected to /auth/login
 7. **Watch it turn gray instantly** (🤍)
 
 **Expected:**
+
 ```
 Step 1: 🤍 Gray outline (not favorited)
         ↓ (click)
 Step 2: ❤️ Red filled (favorited) - INSTANT!
-        ↓ (click again)  
+        ↓ (click again)
 Step 3: 🤍 Gray outline (removed) - INSTANT!
 ```
 
-**✅ Pass if:** 
+**✅ Pass if:**
+
 - Heart turns red on first click
 - Heart turns gray on second click
 - Both happen instantly (no delay)
@@ -70,6 +76,7 @@ Step 3: 🤍 Gray outline (removed) - INSTANT!
 ### 4️⃣ Verify in Favorites Page
 
 **Steps:**
+
 1. **Favorite 2-3 listings** (click gray hearts)
 2. **Click user dropdown** (top-right)
 3. **Click "My Favourites"**
@@ -79,6 +86,7 @@ Step 3: 🤍 Gray outline (removed) - INSTANT!
 7. **Card should disappear** from the page
 
 **Expected:**
+
 ```
 My Favourites Page:
 ┌────────┐  ┌────────┐  ┌────────┐
@@ -92,6 +100,7 @@ After clicking one heart:
 ```
 
 **✅ Pass if:**
+
 - All favorites show red hearts
 - Clicking heart removes from favorites
 - UI updates immediately
@@ -101,6 +110,7 @@ After clicking one heart:
 ### 5️⃣ Test Heart Doesn't Trigger Card Click
 
 **Steps:**
+
 1. **Go to any listing page**
 2. **Click the HEART icon** (top-right)
 3. **Should NOT navigate** to listing detail page
@@ -109,12 +119,14 @@ After clicking one heart:
 6. **Should navigate** to listing detail page
 
 **Expected:**
+
 ```
 Click heart:  Toggles favorite (stays on page) ✅
 Click card:   Opens listing detail page ✅
 ```
 
 **✅ Pass if:**
+
 - Heart click ONLY toggles favorite
 - Card click navigates to detail page
 - Both work independently
@@ -124,6 +136,7 @@ Click card:   Opens listing detail page ✅
 ### 6️⃣ Test Loading State
 
 **Steps:**
+
 1. **Open browser DevTools** (F12)
 2. **Go to Network tab**
 3. **Throttle network** to "Slow 3G"
@@ -132,6 +145,7 @@ Click card:   Opens listing detail page ✅
 6. **Wait for API to complete**
 
 **Expected:**
+
 ```
 Time 0ms:    🤍 (before click)
 Time 50ms:   ❤️ (turns red + starts pulsing)
@@ -140,6 +154,7 @@ Time 500ms:  ❤️ (stops pulsing, stays red)
 ```
 
 **✅ Pass if:**
+
 - Heart pulses during loading
 - Stops pulsing after complete
 - Can't click again while pulsing
@@ -149,6 +164,7 @@ Time 500ms:  ❤️ (stops pulsing, stays red)
 ### 7️⃣ Test Error Handling
 
 **Steps:**
+
 1. **Stop backend** (Ctrl+C in backend terminal)
 2. **Click a heart icon** in frontend
 3. **Heart should change color** (optimistic update)
@@ -157,6 +173,7 @@ Time 500ms:  ❤️ (stops pulsing, stays red)
 6. **Check browser console** for error message
 
 **Expected:**
+
 ```
 With backend stopped:
 Before click: 🤍
@@ -166,6 +183,7 @@ Console: "Error toggling favorite..."
 ```
 
 **✅ Pass if:**
+
 - Heart reverts on error
 - Console shows error message
 - No app crash
@@ -175,6 +193,7 @@ Console: "Error toggling favorite..."
 ### 8️⃣ Test Across Multiple Pages
 
 **Steps:**
+
 1. **Go to home page** - favorite a listing (click 🤍 → ❤️)
 2. **Go to search page** - same listing should show ❤️
 3. **Go to favorites page** - listing should appear there
@@ -182,6 +201,7 @@ Console: "Error toggling favorite..."
 5. **Go back to home** - should show 🤍 (need refresh)
 
 **Expected:**
+
 ```
 Home:      🤍 → ❤️ (favorited)
 Search:    ❤️ (shows as favorited)
@@ -191,6 +211,7 @@ Home:      🤍 (after refresh)
 ```
 
 **✅ Pass if:**
+
 - Status persists across page navigation
 - Favorites page updates correctly
 
@@ -199,6 +220,7 @@ Home:      🤍 (after refresh)
 ### 9️⃣ Test Mobile/Responsive
 
 **Steps:**
+
 1. **Open browser DevTools** (F12)
 2. **Toggle device toolbar** (Ctrl+Shift+M)
 3. **Select iPhone/Android device**
@@ -206,6 +228,7 @@ Home:      🤍 (after refresh)
 5. **Should still work** perfectly
 
 **Expected:**
+
 ```
 Mobile view:
 ┌─────────┐
@@ -217,6 +240,7 @@ Mobile view:
 ```
 
 **✅ Pass if:**
+
 - Heart icon visible on mobile
 - Still clickable (40x40px tap target)
 - Animations smooth on mobile
@@ -226,12 +250,14 @@ Mobile view:
 ### 🔟 Test Rapid Clicking
 
 **Steps:**
+
 1. **Find a listing card**
 2. **Click heart 10 times rapidly**
 3. **Should only toggle once**
 4. **Check Network tab** - should see only 1 API call
 
 **Expected:**
+
 ```
 Click #1: 🤍 → ❤️ (API call sent)
 Click #2-10: ❤️ (no effect, debounced)
@@ -239,6 +265,7 @@ API calls: 1 (not 10!)
 ```
 
 **✅ Pass if:**
+
 - Only toggles once
 - Only 1 API call sent
 - No errors in console
@@ -248,6 +275,7 @@ API calls: 1 (not 10!)
 ## 🎯 Quick Checklist
 
 ### Visual Tests
+
 - [ ] Gray heart when not favorited
 - [ ] Red heart when favorited
 - [ ] Hover effect (pink fill)
@@ -256,6 +284,7 @@ API calls: 1 (not 10!)
 - [ ] Smooth animations
 
 ### Functional Tests
+
 - [ ] Click adds to favorites
 - [ ] Click removes from favorites
 - [ ] Doesn't navigate to detail
@@ -266,6 +295,7 @@ API calls: 1 (not 10!)
 - [ ] Works on mobile
 
 ### Integration Tests
+
 - [ ] Syncs with favorites page
 - [ ] Works across all pages
 - [ ] API calls correct
@@ -276,13 +306,16 @@ API calls: 1 (not 10!)
 ## 🐛 Common Issues & Fixes
 
 ### Issue: Heart doesn't change color
+
 **Check:**
+
 - Is backend running? (`./mvnw spring-boot:run`)
 - Are you logged in?
 - Check browser console for errors
 - Check Network tab for failed API calls
 
 **Fix:**
+
 ```powershell
 # Restart backend
 cd backend
@@ -298,7 +331,9 @@ Ctrl+Shift+R
 ---
 
 ### Issue: "Cannot find module FavoriteService"
+
 **Fix:**
+
 ```powershell
 cd frontend
 rm -rf .angular node_modules
@@ -309,11 +344,14 @@ npm start
 ---
 
 ### Issue: API returns 401 Unauthorized
+
 **Check:**
+
 - JWT token expired? → Re-login
 - Authentication configured correctly?
 
 **Fix:**
+
 ```powershell
 # Check application.properties
 # Verify JWT settings
@@ -323,11 +361,14 @@ npm start
 ---
 
 ### Issue: Heart changes but doesn't persist
+
 **Check:**
+
 - Database migration ran? (V12)
 - API endpoints working?
 
 **Fix:**
+
 ```sql
 -- Check if table exists
 \d favorite
@@ -344,6 +385,7 @@ cd backend
 If all tests pass, congratulations! 🎉
 
 **You should see:**
+
 - ✅ Gray outline hearts on all listing cards
 - ✅ Hearts turn red instantly when clicked
 - ✅ Hearts turn gray when clicked again
@@ -361,6 +403,7 @@ If all tests pass, congratulations! 🎉
 The heart icon feature is now **fully functional** and ready for users!
 
 **Next Steps:**
+
 1. ✅ Test thoroughly (follow this guide)
 2. ✅ Fix any issues found
 3. ✅ Deploy to production
@@ -368,6 +411,6 @@ The heart icon feature is now **fully functional** and ready for users!
 
 ---
 
-*Quick Test Guide v1.0*
-*December 18, 2025*
-*Estimated Testing Time: 10-15 minutes*
+_Quick Test Guide v1.0_
+_December 18, 2025_
+_Estimated Testing Time: 10-15 minutes_

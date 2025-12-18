@@ -26,11 +26,11 @@ public class FavoriteController {
     public ResponseEntity<ApiResponse<Void>> addToFavorites(
             @PathVariable UUID listingId,
             @AuthenticationPrincipal UserPrincipal currentUser) {
-        
+
         log.info("Adding listing {} to favorites for user: {}", listingId, currentUser.getId());
-        
+
         favoriteService.addToFavorites(currentUser.getId(), listingId);
-        
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(null, "Listing added to favorites"));
     }
@@ -39,22 +39,22 @@ public class FavoriteController {
     public ResponseEntity<ApiResponse<Void>> removeFromFavorites(
             @PathVariable UUID listingId,
             @AuthenticationPrincipal UserPrincipal currentUser) {
-        
+
         log.info("Removing listing {} from favorites for user: {}", listingId, currentUser.getId());
-        
+
         favoriteService.removeFromFavorites(currentUser.getId(), listingId);
-        
+
         return ResponseEntity.ok(ApiResponse.success(null, "Listing removed from favorites"));
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<ListingDTO>>> getUserFavorites(
             @AuthenticationPrincipal UserPrincipal currentUser) {
-        
+
         log.info("Fetching favorites for user: {}", currentUser.getId());
-        
+
         List<ListingDTO> favorites = favoriteService.getUserFavorites(currentUser.getId());
-        
+
         return ResponseEntity.ok(ApiResponse.success(favorites, "Favorites retrieved successfully"));
     }
 
@@ -62,9 +62,9 @@ public class FavoriteController {
     public ResponseEntity<ApiResponse<Boolean>> isFavorite(
             @PathVariable UUID listingId,
             @AuthenticationPrincipal UserPrincipal currentUser) {
-        
+
         boolean isFavorite = favoriteService.isFavorite(currentUser.getId(), listingId);
-        
+
         return ResponseEntity.ok(ApiResponse.success(isFavorite, "Favorite status retrieved"));
     }
 }

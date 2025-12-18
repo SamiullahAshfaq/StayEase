@@ -9,6 +9,7 @@ The favorites/wishlist feature has been fully implemented. Follow these steps to
 ## 📋 Pre-Deployment Checklist
 
 ### ✅ Backend Files Created
+
 - [x] `Favorite.java` - Entity class
 - [x] `FavoriteRepository.java` - Data access layer
 - [x] `FavoriteService.java` - Business logic
@@ -16,12 +17,14 @@ The favorites/wishlist feature has been fully implemented. Follow these steps to
 - [x] `V12__create_favorite_table.sql` - Database migration
 
 ### ✅ Frontend Files Created
+
 - [x] `favorite.service.ts` - HTTP service
 - [x] `favorites.component.ts` - Page component
 - [x] `favorites.component.html` - Template
 - [x] `favorites.component.css` - Styles
 
 ### ✅ Frontend Files Modified
+
 - [x] `header.component.ts` - Added navigation methods
 - [x] `header.component.html` - Updated menu items
 - [x] `app.routes.ts` - Added favorites route
@@ -46,6 +49,7 @@ cd backend
 ```
 
 **Expected Output:**
+
 ```
 Flyway migration V12__create_favorite_table.sql SUCCESS
 Application started successfully
@@ -68,6 +72,7 @@ npm start
 ```
 
 **Expected Output:**
+
 ```
 ✔ Browser application bundle generation complete.
 ** Angular Live Development Server is listening on localhost:4200
@@ -76,6 +81,7 @@ npm start
 ### 3️⃣ Verify Installation
 
 **Check Database:**
+
 ```sql
 -- Connect to PostgreSQL
 psql -U postgres -d stayease
@@ -93,6 +99,7 @@ psql -U postgres -d stayease
 ```
 
 **Test API Endpoints:**
+
 ```powershell
 # Test health check
 curl http://localhost:8080/actuator/health
@@ -108,6 +115,7 @@ curl http://localhost:8080/api/favorites `
 ## 🧪 Testing the Feature
 
 ### Test Scenario 1: Tenant User
+
 1. **Login** as a tenant user
 2. **Navigate** to any page with the header
 3. **Click** user dropdown (top right)
@@ -118,6 +126,7 @@ curl http://localhost:8080/api/favorites `
 6. **Expected**: Empty state page with "Browse Listings" button
 
 ### Test Scenario 2: Landlord/Admin User
+
 1. **Login** as a landlord or admin
 2. **Click** user dropdown
 3. **Verify**:
@@ -126,6 +135,7 @@ curl http://localhost:8080/api/favorites `
 4. **Both options** should be functional
 
 ### Test Scenario 3: Add Favorites (Manual API Test)
+
 ```powershell
 # Get a listing ID from the database or API
 $listingId = "your-listing-uuid-here"
@@ -144,6 +154,7 @@ curl -X POST "http://localhost:8080/api/favorites/$listingId" `
 ```
 
 ### Test Scenario 4: View Favorites Page
+
 1. **Navigate** to http://localhost:4200/favorites
 2. **If no favorites**: See empty state with heart icon
 3. **If has favorites**: See grid of listing cards
@@ -152,6 +163,7 @@ curl -X POST "http://localhost:8080/api/favorites/$listingId" `
 6. **Click "View Details"**: Should navigate to listing detail page
 
 ### Test Scenario 5: Responsive Design
+
 1. **Desktop** (> 1400px): 4 columns
 2. **Laptop** (1024px): 3 columns
 3. **Tablet** (768px): 2 columns
@@ -163,7 +175,9 @@ curl -X POST "http://localhost:8080/api/favorites/$listingId" `
 ## 🔍 Troubleshooting
 
 ### Issue: "Cannot find module favorite.service"
+
 **Solution:**
+
 ```powershell
 cd frontend
 # Clear Angular cache
@@ -173,7 +187,9 @@ npm start
 ```
 
 ### Issue: "Table favorite does not exist"
+
 **Solution:**
+
 ```powershell
 # Check Flyway migration status
 # In application logs, look for:
@@ -185,14 +201,18 @@ cd backend
 ```
 
 ### Issue: 401 Unauthorized on API calls
+
 **Solution:**
+
 - Ensure you're logged in
 - Check JWT token is valid
 - Verify token is sent in Authorization header
 - Check backend logs for authentication errors
 
 ### Issue: Favorites page blank/white screen
+
 **Solution:**
+
 ```powershell
 # Check browser console for errors
 # Common fix: Clear browser cache
@@ -203,7 +223,9 @@ Ctrl+Shift+R
 ```
 
 ### Issue: Heart icon not showing
+
 **Solution:**
+
 - Check browser console for SVG errors
 - Verify CSS file is loaded
 - Check network tab for 404 errors on CSS
@@ -213,14 +235,16 @@ Ctrl+Shift+R
 ## 📊 Database Verification Queries
 
 ### Check if table was created
+
 ```sql
-SELECT * FROM information_schema.tables 
+SELECT * FROM information_schema.tables
 WHERE table_name = 'favorite';
 ```
 
 ### View all favorites
+
 ```sql
-SELECT 
+SELECT
     f.id,
     u.email as user_email,
     l.title as listing_title,
@@ -232,8 +256,9 @@ ORDER BY f.created_at DESC;
 ```
 
 ### Count favorites per user
+
 ```sql
-SELECT 
+SELECT
     u.email,
     COUNT(f.id) as favorite_count
 FROM "user" u
@@ -243,8 +268,9 @@ ORDER BY favorite_count DESC;
 ```
 
 ### Most favorited listings
+
 ```sql
-SELECT 
+SELECT
     l.title,
     COUNT(f.id) as favorite_count
 FROM listing l
@@ -259,6 +285,7 @@ LIMIT 10;
 ## 🎯 Feature Verification Checklist
 
 ### Backend ✅
+
 - [ ] Migration file exists in `src/main/resources/db/migration/`
 - [ ] Favorite table created in database
 - [ ] All 4 API endpoints respond correctly:
@@ -270,6 +297,7 @@ LIMIT 10;
 - [ ] Authentication required for all endpoints
 
 ### Frontend ✅
+
 - [ ] Favorites service created in `core/services/`
 - [ ] Favorites component created in `features/favorites/`
 - [ ] Route added to `app.routes.ts`
@@ -282,6 +310,7 @@ LIMIT 10;
 - [ ] Page renders without console errors
 
 ### UI/UX ✅
+
 - [ ] Favorites page accessible at `/favorites`
 - [ ] Empty state displays correctly
 - [ ] Loading state shows spinner
@@ -298,6 +327,7 @@ LIMIT 10;
 ## 🚀 Deployment
 
 ### Development Environment
+
 ```powershell
 # Backend
 cd backend
@@ -313,6 +343,7 @@ npm start
 ### Production Build
 
 **Backend:**
+
 ```powershell
 cd backend
 ./mvnw clean package -DskipTests
@@ -321,6 +352,7 @@ java -jar target/stayease-backend-1.0.0.jar
 ```
 
 **Frontend:**
+
 ```powershell
 cd frontend
 npm run build --configuration=production
@@ -333,25 +365,26 @@ npm run build --configuration=production
 ## 📱 Testing Matrix
 
 | Browser | Desktop | Tablet | Mobile | Status |
-|---------|---------|--------|--------|--------|
+| ------- | ------- | ------ | ------ | ------ |
 | Chrome  | ✅      | ✅     | ✅     | Tested |
 | Firefox | ✅      | ✅     | ✅     | Tested |
 | Safari  | ✅      | ✅     | ✅     | Tested |
 | Edge    | ✅      | ✅     | ✅     | Tested |
 
-| Feature | Tenant | Landlord | Admin | Status |
-|---------|--------|----------|-------|--------|
-| View Favorites | ✅ | ✅ | ✅ | Working |
-| Add Favorite | ✅ | ✅ | ✅ | Working |
-| Remove Favorite | ✅ | ✅ | ✅ | Working |
-| Menu "My Favourites" | ✅ | ✅ | ✅ | Visible |
-| Menu "My Listings" | ❌ | ✅ | ✅ | Role-based |
+| Feature              | Tenant | Landlord | Admin | Status     |
+| -------------------- | ------ | -------- | ----- | ---------- |
+| View Favorites       | ✅     | ✅       | ✅    | Working    |
+| Add Favorite         | ✅     | ✅       | ✅    | Working    |
+| Remove Favorite      | ✅     | ✅       | ✅    | Working    |
+| Menu "My Favourites" | ✅     | ✅       | ✅    | Visible    |
+| Menu "My Listings"   | ❌     | ✅       | ✅    | Role-based |
 
 ---
 
 ## 📖 API Documentation
 
 ### Add to Favorites
+
 ```
 POST /api/favorites/{listingId}
 Authorization: Bearer {token}
@@ -365,6 +398,7 @@ Response 201:
 ```
 
 ### Remove from Favorites
+
 ```
 DELETE /api/favorites/{listingId}
 Authorization: Bearer {token}
@@ -378,6 +412,7 @@ Response 200:
 ```
 
 ### Get User's Favorites
+
 ```
 GET /api/favorites
 Authorization: Bearer {token}
@@ -401,6 +436,7 @@ Response 200:
 ```
 
 ### Check Favorite Status
+
 ```
 GET /api/favorites/{listingId}/status
 Authorization: Bearer {token}
@@ -418,6 +454,7 @@ Response 200:
 ## 🎉 Success Criteria
 
 ### ✅ Feature is Complete When:
+
 1. Backend API endpoints all return 200/201 responses
 2. Database table created with proper indexes
 3. Frontend favorites page loads without errors
@@ -434,6 +471,7 @@ Response 200:
 ## 🆘 Need Help?
 
 ### Check These Files:
+
 - **Backend Issues**: `FavoriteController.java`, `FavoriteService.java`
 - **Database Issues**: `V12__create_favorite_table.sql`
 - **Frontend Issues**: `favorites.component.ts`, `favorite.service.ts`
@@ -441,6 +479,7 @@ Response 200:
 - **UI Issues**: `favorites.component.css`, `favorites.component.html`
 
 ### Common Commands:
+
 ```powershell
 # Restart backend
 cd backend
@@ -477,6 +516,7 @@ npm start
 The favorites feature is now fully implemented and ready to use. Users can start saving their favorite listings and building their dream vacation wishlist! 🏠❤️
 
 **Next Steps:**
+
 1. Run both backend and frontend
 2. Login as a user
 3. Click "My Favourites" in header dropdown
@@ -485,5 +525,5 @@ The favorites feature is now fully implemented and ready to use. Users can start
 
 ---
 
-*Quick Start Guide v1.0 | December 18, 2025*
-*Status: ✅ Ready for Production*
+_Quick Start Guide v1.0 | December 18, 2025_
+_Status: ✅ Ready for Production_

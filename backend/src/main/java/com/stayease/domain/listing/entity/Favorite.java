@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "favorite", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "listing_id"})
+        @UniqueConstraint(columnNames = { "user_id", "listing_id" })
 })
 @Data
 @NoArgsConstructor

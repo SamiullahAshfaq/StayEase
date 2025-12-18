@@ -16,15 +16,18 @@ import com.stayease.domain.listing.entity.Favorite;
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
     @Query("SELECT f FROM Favorite f WHERE f.user.publicId = :userPublicId AND f.listing.publicId = :listingPublicId")
-    Optional<Favorite> findByUserPublicIdAndListingPublicId(@Param("userPublicId") UUID userPublicId, @Param("listingPublicId") UUID listingPublicId);
+    Optional<Favorite> findByUserPublicIdAndListingPublicId(@Param("userPublicId") UUID userPublicId,
+            @Param("listingPublicId") UUID listingPublicId);
 
     @Query("SELECT f FROM Favorite f JOIN FETCH f.listing l LEFT JOIN FETCH l.images WHERE f.user.publicId = :userPublicId ORDER BY f.createdAt DESC")
     List<Favorite> findAllByUserPublicId(@Param("userPublicId") UUID userPublicId);
 
     @Query("SELECT COUNT(f) FROM Favorite f WHERE f.user.publicId = :userPublicId AND f.listing.publicId = :listingPublicId")
-    long countByUserPublicIdAndListingPublicId(@Param("userPublicId") UUID userPublicId, @Param("listingPublicId") UUID listingPublicId);
+    long countByUserPublicIdAndListingPublicId(@Param("userPublicId") UUID userPublicId,
+            @Param("listingPublicId") UUID listingPublicId);
 
     @Modifying
     @Query("DELETE FROM Favorite f WHERE f.user.publicId = :userPublicId AND f.listing.publicId = :listingPublicId")
-    void deleteByUserPublicIdAndListingPublicId(@Param("userPublicId") UUID userPublicId, @Param("listingPublicId") UUID listingPublicId);
+    void deleteByUserPublicIdAndListingPublicId(@Param("userPublicId") UUID userPublicId,
+            @Param("listingPublicId") UUID listingPublicId);
 }

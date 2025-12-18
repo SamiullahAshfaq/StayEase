@@ -1,14 +1,15 @@
 -- Create favorite table for users to save their favorite listings
-CREATE TABLE favorite (
+CREATE TABLE favorite
+(
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     listing_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- Foreign keys
     CONSTRAINT fk_favorite_user FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
     CONSTRAINT fk_favorite_listing FOREIGN KEY (listing_id) REFERENCES listing(id) ON DELETE CASCADE,
-    
+
     -- Unique constraint to prevent duplicate favorites
     CONSTRAINT uk_favorite_user_listing UNIQUE (user_id, listing_id)
 );

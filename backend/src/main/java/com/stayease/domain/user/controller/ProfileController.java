@@ -78,7 +78,7 @@ public class ProfileController {
         try {
             // Get current user to check if they have an existing profile image
             UserDTO currentUser = userService.getUserById(currentUserId);
-            
+
             // Delete old profile image if it exists
             if (currentUser.getProfileImageUrl() != null && !currentUser.getProfileImageUrl().isEmpty()) {
                 // Extract filename from URL
@@ -126,7 +126,7 @@ public class ProfileController {
         try {
             // Get current user to check if they have a profile image
             UserDTO currentUser = userService.getUserById(currentUserId);
-            
+
             // Delete the file if it exists
             if (currentUser.getProfileImageUrl() != null && !currentUser.getProfileImageUrl().isEmpty()) {
                 String imageUrl = currentUser.getProfileImageUrl();
@@ -145,7 +145,7 @@ public class ProfileController {
             userService.updateUser(currentUserId, updateDTO);
 
             return ResponseEntity.ok(ApiResponse.success(null, "Profile image deleted successfully"));
-            
+
         } catch (Exception e) {
             log.error("Failed to delete profile image", e);
             return ResponseEntity.internalServerError()
