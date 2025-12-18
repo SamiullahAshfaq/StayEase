@@ -127,4 +127,68 @@ public class FileController {
                     .body(ApiResponse.error("Failed to upload images: " + e.getMessage()));
         }
     }
+
+    /**
+     * Serve service images
+     */
+    @GetMapping("/service-images/{filename:.+}")
+    public ResponseEntity<Resource> getServiceImage(@PathVariable String filename) {
+        try {
+            Path serviceImagesPath = fileStorageService.getFileStorageLocation()
+                    .getParent().resolve("service-images");
+            Path filePath = serviceImagesPath.resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists()) {
+                log.warn("Service image not found: {}", filename);
+                return ResponseEntity.notFound().build();
+            }
+
+            // Determine content type
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+
+        } catch (IOException ex) {
+            log.error("Error serving service image: {}", filename, ex);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Upload service images (base64)
+     */
+    @PostMapping("/service-images")
+    public ResponseEntity<ApiResponse<List<String>>> uploadServiceImages(
+            @RequestBody Map<String, List<String>> request) {
+        try {
+            List<String> base64Images = request.get("images");
+            if (base64Images == null || base64Images.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(ApiResponse.error("No images provided"));
+            }
+
+            List<String> imageUrls = new ArrayList<>();
+            for (String base64Image : base64Images) {
+                String filename = fileStorageService.storeBase64ServiceImage(base64Image);
+                String imageUrl = "/api/files/service-images/" + filename;
+                imageUrls.add(imageUrl);
+            }
+
+            return ResponseEntity.ok(ApiResponse.success(
+                    imageUrls,
+                    "Images uploaded successfully"));
+
+        } catch (Exception e) {
+            log.error("Failed to upload service images", e);
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error("Failed to upload images: " + e.getMessage()));
+        }
+    }
 }

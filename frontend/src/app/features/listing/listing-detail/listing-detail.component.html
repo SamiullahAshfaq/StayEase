@@ -396,7 +396,7 @@
 
             <!-- Price -->
             <div class="flex items-baseline gap-1 mb-6">
-              <span class="text-2xl font-semibold">${{ listing.pricePerNight }}</span>
+              <span class="text-2xl font-semibold">${{ listing.basePrice }}</span>
               <span class="text-gray-600">night</span>
             </div>
 
@@ -450,16 +450,16 @@
             @if (checkIn && checkOut) {
               <div class="mt-6 space-y-3">
                 <div class="flex justify-between">
-                  <span class="underline">${{ listing.pricePerNight }} x {{ calculateNights() }} nights</span>
-                  <span>${{ listing.pricePerNight * calculateNights() }}</span>
+                  <span class="underline">${{ listing.basePrice }} x {{ calculateNights() }} nights</span>
+                  <span>${{ listing.basePrice * calculateNights() }}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="underline">Service fee</span>
-                  <span>${{ (listing.pricePerNight * calculateNights() * 0.14).toFixed(2) }}</span>
+                  <span>${{ (listing.basePrice * calculateNights() * 0.14).toFixed(2) }}</span>
                 </div>
                 <div class="pt-3 border-t flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>${{ (listing.pricePerNight * calculateNights() * 1.14).toFixed(2) }}</span>
+                  <span>${{ (listing.basePrice * calculateNights() * 1.14).toFixed(2) }}</span>
                 </div>
               </div>
             }
@@ -522,7 +522,7 @@
                 <p class="text-gray-600 text-sm">{{ similar.propertyType }}</p>
                 <p class="text-gray-600 text-sm">{{ similar.maxGuests }} guests · {{ similar.bedrooms }} bedrooms</p>
                 <div class="flex items-baseline gap-1 mt-2">
-                  <span class="font-semibold">${{ similar.pricePerNight }}</span>
+                  <span class="font-semibold">${{ similar.basePrice }}</span>
                   <span class="text-gray-600 text-sm">night</span>
                 </div>
               </div>

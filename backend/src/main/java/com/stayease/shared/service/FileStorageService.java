@@ -20,16 +20,19 @@ public class FileStorageService {
 
     private final Path profileImagesLocation;
     private final Path listingImagesLocation;
+    private final Path serviceImagesLocation;
 
     public FileStorageService(@Value("${file.upload-dir:uploads}") String uploadDir) {
         Path baseLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
         this.profileImagesLocation = baseLocation.resolve("profile-images");
         this.listingImagesLocation = baseLocation.resolve("listing-images");
+        this.serviceImagesLocation = baseLocation.resolve("service-images");
         this.fileStorageLocation = profileImagesLocation; // Keep for backward compatibility
 
         try {
             Files.createDirectories(this.profileImagesLocation);
             Files.createDirectories(this.listingImagesLocation);
+            Files.createDirectories(this.serviceImagesLocation);
             log.info("File storage directories created at: {}", baseLocation);
         } catch (Exception ex) {
             throw new RuntimeException("Could not create the directory where the uploaded files will be stored.", ex);
@@ -49,13 +52,24 @@ public class FileStorageService {
 
     /**
      * Store base64 encoded listing image and return the filename
-     * 
+     *
      * @param base64Image Base64 encoded image string with or without data URI
      *                    prefix
      * @return Filename of the stored image
      */
     public String storeBase64ListingImage(String base64Image) {
         return storeBase64Image(base64Image, listingImagesLocation);
+    }
+
+    /**
+     * Store base64 encoded service image and return the filename
+     *
+     * @param base64Image Base64 encoded image string with or without data URI
+     *                    prefix
+     * @return Filename of the stored image
+     */
+    public String storeBase64ServiceImage(String base64Image) {
+        return storeBase64Image(base64Image, serviceImagesLocation);
     }
 
     private String storeBase64Image(String base64Image, Path targetDirectory) {

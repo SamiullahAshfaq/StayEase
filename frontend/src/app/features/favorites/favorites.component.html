@@ -43,8 +43,8 @@
         <div class="listing-card">
           <div class="card-image-container">
             <img [src]="getCoverImage(listing)" [alt]="listing.title" class="card-image">
-            <button 
-              (click)="removeFavorite(listing.publicId)" 
+            <button
+              (click)="removeFavorite(listing.publicId)"
               class="remove-favorite-btn"
               title="Remove from favourites">
               <svg viewBox="0 0 24 24" fill="currentColor">
@@ -52,10 +52,10 @@
               </svg>
             </button>
           </div>
-          
+
           <div class="card-content">
             <h3 class="card-title">{{ listing.title }}</h3>
-            
+
             <div class="card-location">
               <svg class="location-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -83,7 +83,7 @@
 
             <div class="card-footer">
               <div class="card-price">
-                <span class="price-amount">{{ listing.currency }} {{ listing.pricePerNight }}</span>
+                <span class="price-amount">{{ listing.currency }} {{ listing.basePrice }}</span>
                 <span class="price-period">/ night</span>
               </div>
               <a [routerLink]="['/listing', listing.publicId]" class="view-btn">View Details</a>

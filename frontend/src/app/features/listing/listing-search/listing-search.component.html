@@ -4,16 +4,17 @@
     <div class="max-w-630 mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center gap-8 py-4 overflow-x-auto scrollbar-hide">
         @for (category of categories; track category) {
-          <button
-            (click)="selectCategory(category)"
-            [class.border-b-2]="selectedCategory === category"
-            [class.border-black]="selectedCategory === category"
-            [class.text-gray-900]="selectedCategory === category"
-            [class.text-gray-500]="selectedCategory !== category"
-            class="flex flex-col items-center gap-2 pb-3 px-2 hover:text-gray-900 hover:border-b-2 hover:border-gray-200 transition-all duration-200 whitespace-nowrap cursor-pointer shrink-0">
-            <span class="text-2xl">{{ categoryIcons[category] || '📍' }}</span>
-            <span class="text-xs font-medium">{{ category }}</span>
-          </button>
+        <button
+          (click)="selectCategory(category)"
+          [class.border-b-2]="selectedCategory === category"
+          [class.border-black]="selectedCategory === category"
+          [class.text-gray-900]="selectedCategory === category"
+          [class.text-gray-500]="selectedCategory !== category"
+          class="flex flex-col items-center gap-2 pb-3 px-2 hover:text-gray-900 hover:border-b-2 hover:border-gray-200 transition-all duration-200 whitespace-nowrap cursor-pointer shrink-0"
+        >
+          <span class="text-2xl">{{ categoryIcons[category] || '📍' }}</span>
+          <span class="text-xs font-medium">{{ category }}</span>
+        </button>
         }
       </div>
     </div>
@@ -24,24 +25,24 @@
     <div class="flex items-center justify-between mb-6">
       <div>
         <h1 class="text-2xl font-semibold text-gray-900">
-          {{ totalElements }} stays
-          @if (searchParams.location) {
-            <span> in {{ searchParams.location }}</span>
+          {{ totalElements }} stays @if (searchParams.location) {
+          <span> in {{ searchParams.location }}</span>
           }
         </h1>
         @if (hasActiveFilters()) {
-          <div class="flex flex-wrap gap-2 mt-3">
-            @for (filter of getFilterSummary(); track filter) {
-              <span class="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm">
-                {{ filter }}
-              </span>
-            }
-            <button 
-              (click)="clearAllFilters()" 
-              class="inline-flex items-center gap-1 px-3 py-1 text-sm text-gray-700 hover:text-black underline">
-              Clear all
-            </button>
-          </div>
+        <div class="flex flex-wrap gap-2 mt-3">
+          @for (filter of getFilterSummary(); track filter) {
+          <span class="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 rounded-full text-sm">
+            {{ filter }}
+          </span>
+          }
+          <button
+            (click)="clearAllFilters()"
+            class="inline-flex items-center gap-1 px-3 py-1 text-sm text-gray-700 hover:text-black underline"
+          >
+            Clear all
+          </button>
+        </div>
         }
       </div>
 
@@ -49,337 +50,400 @@
       <div class="relative">
         <button
           (click)="openFiltersModal()"
-          class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-xl hover:border-black transition-colors duration-200">
+          class="flex items-center gap-2 px-4 py-2.5 border border-gray-300 rounded-xl hover:border-black transition-colors duration-200"
+        >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+            />
           </svg>
           <span class="font-semibold text-sm">Filters</span>
           @if (hasActiveFilters()) {
-            <span class="flex items-center justify-center w-5 h-5 bg-black text-white text-xs rounded-full">
-              {{ getActiveFiltersCount() }}
-            </span>
+          <span
+            class="flex items-center justify-center w-5 h-5 bg-black text-white text-xs rounded-full"
+          >
+            {{ getActiveFiltersCount() }}
+          </span>
           }
         </button>
 
         <!-- Filters Panel - Dropdown Overlay -->
         @if (showFiltersModal) {
-          <!-- Backdrop for click-outside to close -->
-          <div 
-            class="fixed inset-0 z-40"
-            role="button"
-            tabindex="0"
-            (click)="closeFiltersModal()"
-            (keyup.enter)="closeFiltersModal()"
-            (keyup.space)="closeFiltersModal()"></div>
-          
-          <!-- Filter Panel - Centered Modal -->
-          <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white border rounded-2xl shadow-2xl w-[90vw] max-w-200">
-            <div class="max-h-[80vh] overflow-y-auto">
-              <!-- Header -->
-              <div class="flex items-center justify-between p-6 border-b sticky top-0 bg-white z-10">
-                <h2 class="text-xl font-semibold">Filters</h2>
-                <div class="flex items-center gap-4">
-                  <button (click)="clearFilters()" class="text-sm font-semibold underline hover:text-gray-700">
-                    Clear all
-                  </button>
-                  <button (click)="closeFiltersModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              
-              <!-- Content - Scrollable with padding -->
-              <div class="p-6 space-y-8">
-                <!-- Price Range -->
-                <div>
-                  <h3 class="text-lg font-semibold mb-4">Price range</h3>
-                  
-                  <!-- Price Presets -->
-                  <div class="flex flex-wrap gap-2 mb-4">
-                    @for (preset of pricePresets; track preset.label) {
-                      <button
-                        (click)="setPricePreset(preset)"
-                        [class.bg-black]="selectedPricePreset === preset.label"
-                        [class.text-white]="selectedPricePreset === preset.label"
-                        [class.border-black]="selectedPricePreset === preset.label"
-                        class="px-3 py-2 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200">
-                        {{ preset.label }}
-                      </button>
-                    }
-                  </div>
-                  
-                  <!-- Custom Price Inputs -->
-                  <div class="grid grid-cols-2 gap-3">
-                    <div>
-                      <label for="minPrice" class="block text-xs font-medium text-gray-700 mb-2">Minimum</label>
-                      <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
-                        <input
-                          id="minPrice"
-                          type="number"
-                          [(ngModel)]="tempFilters.minPrice"
-                          (ngModelChange)="onPriceInputChange()"
-                          placeholder="0"
-                          min="0"
-                          class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
-                      </div>
-                    </div>
-                    <div>
-                      <label for="maxPrice" class="block text-xs font-medium text-gray-700 mb-2">Maximum</label>
-                      <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
-                        <input
-                          id="maxPrice"
-                          type="number"
-                          [(ngModel)]="tempFilters.maxPrice"
-                          (ngModelChange)="onPriceInputChange()"
-                          placeholder="1000+"
-                          min="0"
-                          class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        <!-- Backdrop for click-outside to close -->
+        <button
+          type="button"
+          class="fixed inset-0 z-40"
+          (click)="closeFiltersModal()"
+          aria-label="Close filters modal"
+        ></button>
 
-                <!-- Property Type -->
-                <div>
-                  <h3 class="text-lg font-semibold mb-4">Property type</h3>
-                  <div class="grid grid-cols-2 gap-3">
-                    @for (type of propertyTypes; track type) {
-                      <button
-                        (click)="togglePropertyType(type)"
-                        [class.bg-black]="isPropertyTypeSelected(type)"
-                        [class.text-white]="isPropertyTypeSelected(type)"
-                        [class.border-black]="isPropertyTypeSelected(type)"
-                        class="px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium hover:border-black transition-colors duration-200 text-left">
-                        {{ type }}
-                      </button>
-                    }
-                  </div>
-                </div>
-
-                <!-- Guests -->
-<div>
-  <h3 class="text-lg font-semibold mb-4">Guests</h3>
-  <div class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
-    <span class="text-sm font-medium">Number of guests</span>
-    <div class="flex items-center gap-3">
-      <button
-        (click)="decrementCounter('minGuests')"
-        [disabled]="!tempFilters.minGuests || tempFilters.minGuests <= 0"
-        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-200">
-        <span class="text-lg">−</span>
-      </button>
-      <span class="w-8 text-center font-medium">{{ tempFilters.minGuests || 0 }}</span>
-      <button
-        (click)="incrementCounter('minGuests')"
-        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black transition-colors duration-200">
-        <span class="text-lg">+</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-                <!-- Rooms and beds -->
-                <div>
-                  <h3 class="text-lg font-semibold mb-4">Rooms and beds</h3>
-                  <div class="space-y-4">
-                    <!-- Bedrooms -->
-                    <div>
-                      <h4 class="block text-sm font-medium mb-2">Bedrooms</h4>
-                      <div class="flex flex-wrap gap-2">
-                        <button
-                          (click)="resetCounter('minBedrooms')"
-                          [class.bg-black]="!tempFilters.minBedrooms"
-                          [class.text-white]="!tempFilters.minBedrooms"
-                          [class.border-black]="!tempFilters.minBedrooms"
-                          class="px-4 py-2 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200">
-                          Any
-                        </button>
-                        @for (num of [1,2,3,4,5,6,7,8]; track num) {
-                          <button
-                            (click)="tempFilters.minBedrooms = num"
-                            [class.bg-black]="tempFilters.minBedrooms === num"
-                            [class.text-white]="tempFilters.minBedrooms === num"
-                            [class.border-black]="tempFilters.minBedrooms === num"
-                            class="w-10 h-10 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200">
-                            {{ num }}{{ num === 8 ? '+' : '' }}
-                          </button>
-                        }
-                      </div>
-                    </div>
-
-                    <!-- Beds -->
-                    <div>
-                      <h4 class="block text-sm font-medium mb-2">Beds</h4>
-                      <div class="flex flex-wrap gap-2">
-                        <button
-                          (click)="resetCounter('minBeds')"
-                          [class.bg-black]="!tempFilters.minBeds"
-                          [class.text-white]="!tempFilters.minBeds"
-                          [class.border-black]="!tempFilters.minBeds"
-                          class="px-4 py-2 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200">
-                          Any
-                        </button>
-                        @for (num of [1,2,3,4,5,6,7,8]; track num) {
-                          <button
-                            (click)="tempFilters.minBeds = num"
-                            [class.bg-black]="tempFilters.minBeds === num"
-                            [class.text-white]="tempFilters.minBeds === num"
-                            [class.border-black]="tempFilters.minBeds === num"
-                            class="w-10 h-10 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200">
-                            {{ num }}{{ num === 8 ? '+' : '' }}
-                          </button>
-                        }
-                      </div>
-                    </div>
-
-                    <!-- Bathrooms -->
-                    <div>
-                      <h4 class="block text-sm font-medium mb-2">Bathrooms</h4>
-                      <div class="flex flex-wrap gap-2">
-                        <button
-                          (click)="resetCounter('minBathrooms')"
-                          [class.bg-black]="!tempFilters.minBathrooms"
-                          [class.text-white]="!tempFilters.minBathrooms"
-                          [class.border-black]="!tempFilters.minBathrooms"
-                          class="px-4 py-2 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200">
-                          Any
-                        </button>
-                        @for (num of [1,2,3,4,5,6,7,8]; track num) {
-                          <button
-                            (click)="tempFilters.minBathrooms = num"
-                            [class.bg-black]="tempFilters.minBathrooms === num"
-                            [class.text-white]="tempFilters.minBathrooms === num"
-                            [class.border-black]="tempFilters.minBathrooms === num"
-                            class="w-10 h-10 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200">
-                            {{ num }}{{ num === 8 ? '+' : '' }}
-                          </button>
-                        }
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Amenities -->
-                <div>
-                  <h3 class="text-lg font-semibold mb-4">Amenities</h3>
-                  <div class="grid grid-cols-2 gap-x-6 gap-y-3">
-                    @for (amenity of amenities; track amenity) {
-                      <label class="flex items-center gap-3 cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          [checked]="isAmenitySelected(amenity)"
-                          (change)="toggleAmenity(amenity)"
-                          class="w-5 h-5 rounded border-gray-300 text-black focus:ring-black focus:ring-offset-0"/>
-                        <span class="text-sm group-hover:text-black transition-colors duration-200">{{ amenity }}</span>
-                      </label>
-                    }
-                  </div>
-                </div>
-
-                <!-- Booking options -->
-                <div>
-                  <h3 class="text-lg font-semibold mb-4">Booking options</h3>
-                  <label class="flex items-center justify-between cursor-pointer group">
-                    <div>
-                      <p class="font-medium group-hover:text-black transition-colors duration-200">Instant Book</p>
-                      <p class="text-sm text-gray-500">Listings you can book without waiting for host approval</p>
-                    </div>
-                    <input
-                      type="checkbox"
-                      [(ngModel)]="tempFilters.instantBook"
-                      class="w-12 h-6 rounded-full appearance-none bg-gray-300 relative cursor-pointer transition-colors duration-200
-                             checked:bg-black
-                             before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform before:duration-200
-                             checked:before:translate-x-6"/>
-                  </label>
-                </div>
-              </div>
-              
-              <!-- Footer - Sticky at bottom -->
-              <div class="flex items-center justify-between p-6 border-t bg-white sticky bottom-0">
+        <!-- Filter Panel - Centered Modal -->
+        <div
+          class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white border rounded-2xl shadow-2xl w-[90vw] max-w-[800px]"
+        >
+          <div class="max-h-[80vh] overflow-y-auto">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-6 border-b sticky top-0 bg-white z-10">
+              <h2 class="text-xl font-semibold">Filters</h2>
+              <div class="flex items-center gap-4">
                 <button
                   (click)="clearFilters()"
-                  class="text-sm font-semibold underline hover:text-gray-700">
+                  class="text-sm font-semibold underline hover:text-gray-700"
+                >
                   Clear all
                 </button>
                 <button
-                  (click)="applyFilters()"
-                  class="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 font-semibold">
-                  Show {{ totalElements }} stays
+                  (click)="closeFiltersModal()"
+                  class="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
+
+            <!-- Content - Scrollable with padding -->
+            <div class="p-6 space-y-8">
+              <!-- Price Range -->
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Price range</h3>
+
+                <!-- Price Presets -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                  @for (preset of pricePresets; track preset.label) {
+                  <button
+                    (click)="setPricePreset(preset)"
+                    [class.bg-black]="selectedPricePreset === preset.label"
+                    [class.text-white]="selectedPricePreset === preset.label"
+                    [class.border-black]="selectedPricePreset === preset.label"
+                    class="px-3 py-2 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200"
+                  >
+                    {{ preset.label }}
+                  </button>
+                  }
+                </div>
+
+                <!-- Custom Price Inputs -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-2">Minimum</label>
+                    <div class="relative">
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"
+                        >$</span
+                      >
+                      <input
+                        type="number"
+                        [(ngModel)]="tempFilters.minPrice"
+                        (ngModelChange)="onPriceInputChange()"
+                        placeholder="0"
+                        min="0"
+                        class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-2">Maximum</label>
+                    <div class="relative">
+                      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"
+                        >$</span
+                      >
+                      <input
+                        type="number"
+                        [(ngModel)]="tempFilters.maxPrice"
+                        (ngModelChange)="onPriceInputChange()"
+                        placeholder="1000+"
+                        min="0"
+                        class="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Property Type -->
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Property type</h3>
+                <div class="grid grid-cols-2 gap-3">
+                  @for (type of propertyTypes; track type) {
+                  <button
+                    (click)="togglePropertyType(type)"
+                    [class.bg-black]="isPropertyTypeSelected(type)"
+                    [class.text-white]="isPropertyTypeSelected(type)"
+                    [class.border-black]="isPropertyTypeSelected(type)"
+                    class="px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium hover:border-black transition-colors duration-200 text-left"
+                  >
+                    {{ type }}
+                  </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Guests -->
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Guests</h3>
+                <div class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                  <span class="text-sm font-medium">Number of guests</span>
+                  <div class="flex items-center gap-3">
+                    <button
+                      (click)="decrementCounter('minGuests')"
+                      [disabled]="!tempFilters.minGuests || tempFilters.minGuests <= 0"
+                      class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-200"
+                    >
+                      <span class="text-lg">−</span>
+                    </button>
+                    <span class="w-8 text-center font-medium">{{
+                      tempFilters.minGuests || 0
+                    }}</span>
+                    <button
+                      (click)="incrementCounter('minGuests')"
+                      class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:border-black transition-colors duration-200"
+                    >
+                      <span class="text-lg">+</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rooms and beds -->
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Rooms and beds</h3>
+                <div class="space-y-4">
+                  <!-- Bedrooms -->
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Bedrooms</label>
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        (click)="resetCounter('minBedrooms')"
+                        [class.bg-black]="!tempFilters.minBedrooms"
+                        [class.text-white]="!tempFilters.minBedrooms"
+                        [class.border-black]="!tempFilters.minBedrooms"
+                        class="px-4 py-2 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200"
+                      >
+                        Any
+                      </button>
+                      @for (num of [1,2,3,4,5,6,7,8]; track num) {
+                      <button
+                        (click)="tempFilters.minBedrooms = num"
+                        [class.bg-black]="tempFilters.minBedrooms === num"
+                        [class.text-white]="tempFilters.minBedrooms === num"
+                        [class.border-black]="tempFilters.minBedrooms === num"
+                        class="w-10 h-10 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200"
+                      >
+                        {{ num }}{{ num === 8 ? '+' : '' }}
+                      </button>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Beds -->
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Beds</label>
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        (click)="resetCounter('minBeds')"
+                        [class.bg-black]="!tempFilters.minBeds"
+                        [class.text-white]="!tempFilters.minBeds"
+                        [class.border-black]="!tempFilters.minBeds"
+                        class="px-4 py-2 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200"
+                      >
+                        Any
+                      </button>
+                      @for (num of [1,2,3,4,5,6,7,8]; track num) {
+                      <button
+                        (click)="tempFilters.minBeds = num"
+                        [class.bg-black]="tempFilters.minBeds === num"
+                        [class.text-white]="tempFilters.minBeds === num"
+                        [class.border-black]="tempFilters.minBeds === num"
+                        class="w-10 h-10 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200"
+                      >
+                        {{ num }}{{ num === 8 ? '+' : '' }}
+                      </button>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Bathrooms -->
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Bathrooms</label>
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        (click)="resetCounter('minBathrooms')"
+                        [class.bg-black]="!tempFilters.minBathrooms"
+                        [class.text-white]="!tempFilters.minBathrooms"
+                        [class.border-black]="!tempFilters.minBathrooms"
+                        class="px-4 py-2 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200"
+                      >
+                        Any
+                      </button>
+                      @for (num of [1,2,3,4,5,6,7,8]; track num) {
+                      <button
+                        (click)="tempFilters.minBathrooms = num"
+                        [class.bg-black]="tempFilters.minBathrooms === num"
+                        [class.text-white]="tempFilters.minBathrooms === num"
+                        [class.border-black]="tempFilters.minBathrooms === num"
+                        class="w-10 h-10 border border-gray-300 rounded-full text-xs font-medium hover:border-black transition-colors duration-200"
+                      >
+                        {{ num }}{{ num === 8 ? '+' : '' }}
+                      </button>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Amenities -->
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Amenities</h3>
+                <div class="grid grid-cols-2 gap-x-6 gap-y-3">
+                  @for (amenity of amenities; track amenity) {
+                  <label class="flex items-center gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      [checked]="isAmenitySelected(amenity)"
+                      (change)="toggleAmenity(amenity)"
+                      class="w-5 h-5 rounded border-gray-300 text-black focus:ring-black focus:ring-offset-0"
+                    />
+                    <span class="text-sm group-hover:text-black transition-colors duration-200">{{
+                      amenity
+                    }}</span>
+                  </label>
+                  }
+                </div>
+              </div>
+
+              <!-- Booking options -->
+              <div>
+                <h3 class="text-lg font-semibold mb-4">Booking options</h3>
+                <label class="flex items-center justify-between cursor-pointer group">
+                  <div>
+                    <p class="font-medium group-hover:text-black transition-colors duration-200">
+                      Instant Book
+                    </p>
+                    <p class="text-sm text-gray-500">
+                      Listings you can book without waiting for host approval
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="tempFilters.instantBook"
+                    class="w-12 h-6 rounded-full appearance-none bg-gray-300 relative cursor-pointer transition-colors duration-200 checked:bg-black before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform before:duration-200 checked:before:translate-x-6"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <!-- Footer - Sticky at bottom -->
+            <div class="flex items-center justify-between p-6 border-t bg-white sticky bottom-0">
+              <button
+                (click)="clearFilters()"
+                class="text-sm font-semibold underline hover:text-gray-700"
+              >
+                Clear all
+              </button>
+              <button
+                (click)="applyFilters()"
+                class="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 font-semibold"
+              >
+                Show {{ totalElements }} stays
+              </button>
+            </div>
           </div>
+        </div>
         }
       </div>
     </div>
 
     <!-- Loading State -->
     @if (loading) {
-      <div class="flex justify-center items-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
-      </div>
+    <div class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+    </div>
     } @else if (error) {
-      <!-- Error State -->
-      <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
-        {{ error }}
-      </div>
+    <!-- Error State -->
+    <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-red-800">
+      {{ error }}
+    </div>
     } @else if (listings.length > 0) {
-      <!-- Listings Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-10">
-        @for (listing of listings; track listing.publicId) {
-          <app-listing-card [listing]="listing"></app-listing-card>
-        }
-      </div>
+    <!-- Listings Grid -->
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-6 gap-y-10"
+    >
+      @for (listing of listings; track listing.publicId) {
+      <app-listing-card [listing]="listing"></app-listing-card>
+      }
+    </div>
     } @else {
-      <!-- Empty State -->
-      <div class="text-center py-20">
-        <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-        </svg>
-        <h3 class="mt-4 text-lg font-medium text-gray-900">No listings found</h3>
-        <p class="mt-2 text-sm text-gray-500">Try adjusting your filters or search criteria.</p>
-        @if (hasActiveFilters()) {
-          <button
-            (click)="clearAllFilters()"
-            class="mt-6 px-6 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors duration-200">
-            Clear all filters
-          </button>
-        }
-      </div>
+    <!-- Empty State -->
+    <div class="text-center py-20">
+      <svg
+        class="mx-auto h-24 w-24 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1"
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+        />
+      </svg>
+      <h3 class="mt-4 text-lg font-medium text-gray-900">No listings found</h3>
+      <p class="mt-2 text-sm text-gray-500">Try adjusting your filters or search criteria.</p>
+      @if (hasActiveFilters()) {
+      <button
+        (click)="clearAllFilters()"
+        class="mt-6 px-6 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors duration-200"
+      >
+        Clear all filters
+      </button>
+      }
+    </div>
     }
 
     <!-- Pagination -->
     @if (!loading && listings.length > 0 && totalPages > 1) {
-      <div class="flex justify-center items-center gap-2 mt-12 pb-12">
-        <button
-          (click)="changePage(currentPage - 1)"
-          [disabled]="currentPage === 0"
-          [class.opacity-50]="currentPage === 0"
-          [class.cursor-not-allowed]="currentPage === 0"
-          class="px-4 py-2 border border-gray-300 rounded-full hover:border-black transition-colors duration-200 disabled:hover:border-gray-300">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-          </svg>
-        </button>
-        <span class="px-4 py-2 text-sm font-medium">
-          Page {{ currentPage + 1 }} of {{ totalPages }}
-        </span>
-        <button
-          (click)="changePage(currentPage + 1)"
-          [disabled]="currentPage === totalPages - 1"
-          [class.opacity-50]="currentPage === totalPages - 1"
-          [class.cursor-not-allowed]="currentPage === totalPages - 1"
-          class="px-4 py-2 border border-gray-300 rounded-full hover:border-black transition-colors duration-200 disabled:hover:border-gray-300">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </button>
-      </div>
+    <div class="flex justify-center items-center gap-2 mt-12 pb-12">
+      <button
+        (click)="changePage(currentPage - 1)"
+        [disabled]="currentPage === 0"
+        [class.opacity-50]="currentPage === 0"
+        [class.cursor-not-allowed]="currentPage === 0"
+        class="px-4 py-2 border border-gray-300 rounded-full hover:border-black transition-colors duration-200 disabled:hover:border-gray-300"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </button>
+      <span class="px-4 py-2 text-sm font-medium">
+        Page {{ currentPage + 1 }} of {{ totalPages }}
+      </span>
+      <button
+        (click)="changePage(currentPage + 1)"
+        [disabled]="currentPage === totalPages - 1"
+        [class.opacity-50]="currentPage === totalPages - 1"
+        [class.cursor-not-allowed]="currentPage === totalPages - 1"
+        class="px-4 py-2 border border-gray-300 rounded-full hover:border-black transition-colors duration-200 disabled:hover:border-gray-300"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
     }
   </div>
 </div>

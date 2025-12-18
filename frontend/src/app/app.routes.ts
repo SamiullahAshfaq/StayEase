@@ -28,11 +28,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent),
         title: 'Register - StayEase'
       },
-      // {
-      //   path: 'forgot-password',
-      //   loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
-      //   title: 'Forgot Password - StayEase'
-      // },
       {
         path: '',
         redirectTo: 'login',
@@ -230,11 +225,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
         title: 'Admin Dashboard - StayEase'
       },
-      // {
-      //   path: 'users',
-      //   loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent),
-      //   title: 'User Management - StayEase'
-      // },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent),
+        title: 'User Management - StayEase'
+      },
       {
         path: 'listings',
         loadComponent: () => import('./features/admin/listing-management/listing-management.component').then(m => m.ListingManagementComponent),
@@ -245,11 +240,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/booking-management/booking-management.component').then(m => m.BookingManagementComponent),
         title: 'Booking Management - StayEase'
       },
-      // {
-      //   path: 'audit-logs',
-      //   loadComponent: () => import('./features/admin/audit-log/audit-log.component').then(m => m.AuditLogComponent),
-      //   title: 'Audit Logs - StayEase'
-      // },
+      {
+        path: 'audit-logs',
+        loadComponent: () => import('./features/admin/audit-log/audit-log.component').then(m => m.AuditLogComponent),
+        title: 'Audit Logs - StayEase'
+      },
       {
         path: '',
         redirectTo: 'dashboard',

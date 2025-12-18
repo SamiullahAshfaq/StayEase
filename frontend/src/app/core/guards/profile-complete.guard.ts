@@ -12,10 +12,12 @@ export const profileCompleteGuard: CanActivateFn = () => {
     return false;
   }
 
-  if (!authService.isProfileComplete()) {
-    router.navigate(['/profile/complete']);
-    return false;
+  // Profile completion is optional for service providers - they can access features immediately
+  const user = authService.getCurrentUser();
+  if (user && user.authorities && user.authorities.includes('ROLE_SERVICE_PROVIDER')) {
+    return true;
   }
 
+  // For other users, profile completion is still optional
   return true;
 };

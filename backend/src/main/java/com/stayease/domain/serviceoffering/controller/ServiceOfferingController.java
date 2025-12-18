@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stayease.domain.serviceoffering.dto.CreateServiceOfferingDTO;
+import com.stayease.domain.serviceoffering.dto.ServiceListResponse;
 import com.stayease.domain.serviceoffering.dto.ServiceOfferingDTO;
-import com.stayease.domain.serviceoffering.entity.ServiceOffering.*;
 import com.stayease.domain.serviceoffering.entity.ServiceOffering.ServiceCategory;
 import com.stayease.domain.serviceoffering.entity.ServiceOffering.ServiceStatus;
 import com.stayease.domain.serviceoffering.service.ServiceOfferingService;
@@ -84,7 +84,7 @@ public class ServiceOfferingController {
      * Get all active service offerings with pagination
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<ServiceOfferingDTO>>> getAllActiveServices(
+    public ResponseEntity<ApiResponse<ServiceListResponse>> getAllActiveServices(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "averageRating") String sortBy,
@@ -92,11 +92,19 @@ public class ServiceOfferingController {
 
         log.debug("Fetching all active services - page: {}, size: {}", page, size);
 
-        Page<ServiceOfferingDTO> services = serviceOfferingService.getAllActiveServices(page, size, sortBy, sortDirection);
+        Page<ServiceOfferingDTO> servicesPage = serviceOfferingService.getAllActiveServices(page, size, sortBy, sortDirection);
 
-        return ResponseEntity.ok(ApiResponse.<Page<ServiceOfferingDTO>>builder()
+        ServiceListResponse response = ServiceListResponse.builder()
+                .content(servicesPage.getContent())
+                .totalElements((int) servicesPage.getTotalElements())
+                .totalPages(servicesPage.getTotalPages())
+                .currentPage(servicesPage.getNumber())
+                .size(servicesPage.getSize())
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.<ServiceListResponse>builder()
                 .success(true)
-                .data(services)
+                .data(response)
                 .build());
     }
 
@@ -104,7 +112,7 @@ public class ServiceOfferingController {
      * Search service offerings with filters
      */
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<Page<ServiceOfferingDTO>>> searchServices(
+    public ResponseEntity<ApiResponse<ServiceListResponse>> searchServices(
             @RequestParam(required = false) ServiceCategory category,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String keyword,
@@ -118,13 +126,21 @@ public class ServiceOfferingController {
 
         log.debug("Searching services with filters");
 
-        Page<ServiceOfferingDTO> services = serviceOfferingService.searchServices(
+        Page<ServiceOfferingDTO> servicesPage = serviceOfferingService.searchServices(
                 category, city, keyword, minRating, mobileServiceOnly, instantBookingOnly,
                 page, size, sortBy, sortDirection);
 
-        return ResponseEntity.ok(ApiResponse.<Page<ServiceOfferingDTO>>builder()
+        ServiceListResponse response = ServiceListResponse.builder()
+                .content(servicesPage.getContent())
+                .totalElements((int) servicesPage.getTotalElements())
+                .totalPages(servicesPage.getTotalPages())
+                .currentPage(servicesPage.getNumber())
+                .size(servicesPage.getSize())
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.<ServiceListResponse>builder()
                 .success(true)
-                .data(services)
+                .data(response)
                 .build());
     }
 

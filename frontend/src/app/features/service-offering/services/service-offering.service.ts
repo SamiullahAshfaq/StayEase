@@ -144,4 +144,15 @@ export class ServiceOfferingService {
     const params = new HttpParams().set('featured', featured.toString());
     return this.http.post<ApiResponse<ServiceOffering>>(`${this.apiUrl}/${publicId}/feature`, {}, { params });
   }
+
+  /**
+   * Get addon services by city and categories (for booking addons)
+   */
+  getAddonServices(city: string, categories: ServiceCategory[]): Observable<ApiResponse<ServiceOffering[]>> {
+    let params = new HttpParams().set('city', city);
+    categories.forEach(category => {
+      params = params.append('categories', category);
+    });
+    return this.http.get<ApiResponse<ServiceOffering[]>>(`${this.apiUrl}/addon-services`, { params });
+  }
 }

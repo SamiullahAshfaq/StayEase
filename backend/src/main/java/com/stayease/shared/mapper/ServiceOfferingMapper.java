@@ -11,12 +11,22 @@ import com.stayease.domain.serviceoffering.dto.ServiceImageDTO;
 import com.stayease.domain.serviceoffering.dto.ServiceOfferingDTO;
 import com.stayease.domain.serviceoffering.entity.ServiceImage;
 import com.stayease.domain.serviceoffering.entity.ServiceOffering;
+import com.stayease.shared.service.FileStorageService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Mapper for Service Offering entity and DTOs
  */
 @Component
+@Slf4j
 public class ServiceOfferingMapper {
+
+    private final FileStorageService fileStorageService;
+
+    public ServiceOfferingMapper(FileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
+    }
 
     /**
      * Convert ServiceOffering entity to DTO
@@ -172,8 +182,24 @@ public class ServiceOfferingMapper {
         if (dto.getImageUrls() != null && !dto.getImageUrls().isEmpty()) {
             int order = 0;
             for (String imageUrl : dto.getImageUrls()) {
+                String processedImageUrl = imageUrl;
+
+                try {
+                    // Check if it's base64 data (starts with data:image/)
+                    if (imageUrl != null && imageUrl.startsWith("data:image/")) {
+                        // Store as file and get the file path
+                        String filename = fileStorageService.storeBase64ServiceImage(imageUrl);
+                        processedImageUrl = "/api/files/service-images/" + filename;
+                    }
+                } catch (Exception e) {
+                    // If image processing fails, log error and keep original URL
+                    // This prevents service creation from failing due to image issues
+                    log.warn("Failed to process image URL: {}, keeping original. Error: {}", imageUrl, e.getMessage());
+                    processedImageUrl = imageUrl;
+                }
+
                 ServiceImage image = ServiceImage.builder()
-                        .imageUrl(imageUrl)
+                        .imageUrl(processedImageUrl)
                         .isPrimary(order == 0) // First image is primary
                         .displayOrder(order++)
                         .build();
@@ -253,8 +279,24 @@ public class ServiceOfferingMapper {
             service.getImages().clear();
             int order = 0;
             for (String imageUrl : dto.getImageUrls()) {
+                String processedImageUrl = imageUrl;
+
+                try {
+                    // Check if it's base64 data (starts with data:image/)
+                    if (imageUrl != null && imageUrl.startsWith("data:image/")) {
+                        // Store as file and get the file path
+                        String filename = fileStorageService.storeBase64ServiceImage(imageUrl);
+                        processedImageUrl = "/api/files/service-images/" + filename;
+                    }
+                } catch (Exception e) {
+                    // If image processing fails, log error and keep original URL
+                    // This prevents service update from failing due to image issues
+                    log.warn("Failed to process image URL: {}, keeping original. Error: {}", imageUrl, e.getMessage());
+                    processedImageUrl = imageUrl;
+                }
+
                 ServiceImage image = ServiceImage.builder()
-                        .imageUrl(imageUrl)
+                        .imageUrl(processedImageUrl)
                         .isPrimary(order == 0)
                         .displayOrder(order++)
                         .build();

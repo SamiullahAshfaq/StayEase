@@ -8,7 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,12 +99,10 @@ public class ServiceOfferingService {
         Sort sort = sortDirection.equalsIgnoreCase("ASC") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Specification<ServiceOffering> spec = createSearchSpecification(category, city, keyword, minRating, 
+        Specification<ServiceOffering> spec = createSearchSpecification(category, city, keyword, minRating,
                                         mobileServiceOnly, instantBookingOnly);
 
-        // Cast repository to JpaSpecificationExecutor to use findAll with Specification
-        JpaSpecificationExecutor<ServiceOffering> specRepo = (JpaSpecificationExecutor<ServiceOffering>) serviceOfferingRepository;
-        Page<ServiceOffering> services = specRepo.findAll(spec, pageable);
+        Page<ServiceOffering> services = serviceOfferingRepository.findAll(spec, pageable);
 
         return services.map(serviceOfferingMapper::toDTO);
     }

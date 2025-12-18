@@ -6,7 +6,7 @@
         <h1>Welcome back, {{ profile()?.displayName || 'Host' }}!</h1>
         <p>Manage your properties and bookings</p>
       </div>
-      
+
       <button class="create-listing-btn" (click)="createListing()">
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -18,7 +18,7 @@
 
   <!-- Navigation Tabs -->
   <nav class="dashboard-tabs">
-    <button 
+    <button
       class="tab"
       [class.active]="activeTab() === 'overview'"
       (click)="switchTab('overview')">
@@ -27,7 +27,7 @@
       </svg>
       Overview
     </button>
-    <button 
+    <button
       class="tab"
       [class.active]="activeTab() === 'listings'"
       (click)="switchTab('listings')">
@@ -37,7 +37,7 @@
       My Listings
       <span class="badge">{{ stats()?.totalListings || 0 }}</span>
     </button>
-    <button 
+    <button
       class="tab"
       [class.active]="activeTab() === 'bookings'"
       (click)="switchTab('bookings')">
@@ -49,7 +49,7 @@
         <span class="badge warning">{{ pendingBookings().length }}</span>
       }
     </button>
-    <button 
+    <button
       class="tab"
       [class.active]="activeTab() === 'earnings'"
       (click)="switchTab('earnings')">
@@ -59,7 +59,7 @@
       </svg>
       Earnings
     </button>
-    <button 
+    <button
       class="tab"
       [class.active]="activeTab() === 'profile'"
       (click)="switchTab('profile')">
@@ -92,7 +92,7 @@
   <!-- Dashboard Content -->
   @if (!loading() && !error()) {
     <div class="dashboard-content">
-    
+
     <!-- Overview Tab -->
     @if (activeTab() === 'overview') {
       <div class="overview-section">
@@ -211,8 +211,8 @@
         </div>
         <div class="bookings-list">
           @for (booking of pendingBookings(); track booking.publicId) {
-            <div 
-              class="booking-card pending" 
+            <div
+              class="booking-card pending"
               role="button"
               tabindex="0"
               (click)="viewBooking(booking.publicId)"
@@ -269,7 +269,7 @@
         </div>
         <div class="listings-grid">
           @for (listing of recentListings(); track listing.publicId) {
-            <div 
+            <div
               class="listing-card"
               role="button"
               tabindex="0"
@@ -310,12 +310,215 @@
                 {{ formatPrice(listing.pricePerNight) }}<span>/night</span>
               </div>
             </div>
-            <button class="edit-btn" (click)="editListing(listing.publicId, $event)">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-              </svg>
-              Edit
-            </button>
+
+            <div class="stat-card">
+              <div class="stat-icon bookings">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <h3>{{ stats()?.totalBookings || 0 }}</h3>
+                <p>Total Bookings</p>
+                <span class="stat-detail">{{ upcomingBookings().length }} upcoming</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon revenue">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <h3>{{ formatPrice(stats()?.totalRevenue || 0) }}</h3>
+                <p>Total Revenue</p>
+                <span class="stat-detail">All time earnings</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon rating">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+              </div>
+              <div class="stat-content">
+                <h3>{{ stats()?.averageRating ? stats()!.averageRating.toFixed(1) : 'N/A' }}</h3>
+                <p>Average Rating</p>
+                <span class="stat-detail">{{ profile()?.totalReviews || 0 }} reviews</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Host Performance -->
+          <div class="performance-section">
+            <h2>Host Performance</h2>
+            <div class="performance-grid">
+              <div class="performance-card">
+                <div class="performance-header">
+                  <h4>Response Rate</h4>
+                  <span class="badge" [ngClass]="getResponseRateClass()">
+                    {{ profile()?.responseRate || 0 }}%
+                  </span>
+                </div>
+                <p>How quickly you respond to inquiries</p>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="profile()?.responseRate || 0"></div>
+                </div>
+              </div>
+
+              <div class="performance-card">
+                <div class="performance-header">
+                  <h4>Occupancy Rate</h4>
+                  <span class="badge rate-medium">{{ calculateOccupancyPercentage() }}%</span>
+                </div>
+                <p>Average occupancy across all listings</p>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="calculateOccupancyPercentage()"></div>
+                </div>
+              </div>
+
+              <div class="performance-card">
+                <div class="performance-header">
+                  <h4>Response Time</h4>
+                  <span class="badge rate-high">{{ profile()?.responseTime || 'N/A' }}</span>
+                </div>
+                <p>Average time to respond to guests</p>
+              </div>
+
+              @if (profile()?.isSuperhost) {
+                <div class="performance-card">
+                  <div class="superhost-badge">
+                    <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                    <h4>Superhost</h4>
+                    <p>You're a top-rated host!</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Pending Bookings -->
+          @if (pendingBookings().length > 0) {
+            <div class="section">
+              <div class="section-header">
+                <h2>Pending Bookings</h2>
+                <button class="view-all-btn" (click)="navigateToBookings()">View All</button>
+              </div>
+              <div class="bookings-list">
+                @for (booking of pendingBookings(); track booking.publicId) {
+                  <div
+                    class="booking-card pending"
+                    role="button"
+                    tabindex="0"
+                    (click)="viewBooking(booking.publicId)"
+                    (keydown.enter)="viewBooking(booking.publicId)"
+                    (keydown.space)="viewBooking(booking.publicId)">
+                    <img [src]="booking.listingImage || '/images/default-listing.jpg'" [alt]="booking.listingTitle" class="booking-image">
+                    <div class="booking-content">
+                      <h4>{{ booking.listingTitle }}</h4>
+                      <div class="booking-details">
+                        <div class="guest-info">
+                          <img [src]="booking.guestAvatar || '/images/default-avatar.png'" [alt]="booking.guestName" class="guest-avatar">
+                          <span>{{ booking.guestName }}</span>
+                        </div>
+                        <div class="booking-dates">
+                          <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                          </svg>
+                          {{ formatShortDate(booking.checkInDate) }} - {{ formatShortDate(booking.checkOutDate) }}
+                        </div>
+                        <div class="booking-guests">
+                          <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                          </svg>
+                          {{ booking.numberOfGuests }} guest{{ booking.numberOfGuests > 1 ? 's' : '' }}
+                        </div>
+                      </div>
+                      <div class="booking-price">{{ formatPrice(booking.totalPrice) }}</div>
+                    </div>
+                    <div class="booking-actions">
+                      <button class="action-btn confirm" (click)="confirmBooking(booking.publicId, $event)">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        Accept
+                      </button>
+                      <button class="action-btn reject" (click)="rejectBooking(booking.publicId, $event)">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                        Decline
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Recent Listings -->
+          <div class="section">
+            <div class="section-header">
+              <h2>Your Listings</h2>
+              <button class="view-all-btn" (click)="navigateToListings()">View All</button>
+            </div>
+            <div class="listings-grid">
+              @for (listing of recentListings(); track listing.publicId) {
+                <div
+                  class="listing-card"
+                  role="button"
+                  tabindex="0"
+                  (click)="viewListing(listing.publicId)"
+                  (keydown.enter)="viewListing(listing.publicId)"
+                  (keydown.space)="viewListing(listing.publicId)">
+                  <div class="listing-image">
+                    <img [src]="listing.coverImageUrl || listing.images[0]?.url || '/images/default-listing.jpg'" [alt]="listing.title">
+                    <span class="status-badge" [ngClass]="getStatusClass(listing.status)">
+                      {{ listingStatusLabels[listing.status] }}
+                    </span>
+                  </div>
+                  <div class="listing-content">
+                    <h3>{{ listing.title }}</h3>
+                    <p class="listing-location">
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                      </svg>
+                      {{ listing.city }}, {{ listing.state }}
+                    </p>
+                    <div class="listing-stats">
+                      <span>
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                          <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ listing.viewCount }} views
+                      </span>
+                      <span>
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                          <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ listing.bookingCount }} bookings
+                      </span>
+                    </div>
+                    <div class="listing-price">
+                      {{ formatPrice(listing.basePrice) }}<span>/night</span>
+                    </div>
+                  </div>
+                  <button class="edit-btn" (click)="editListing(listing.publicId, $event)">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                    </svg>
+                    Edit
+                  </button>
+                </div>
+              }
+            </div>
           </div>
           }
         </div>

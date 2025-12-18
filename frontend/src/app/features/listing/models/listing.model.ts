@@ -7,11 +7,12 @@ export interface Listing {
   description: string;
   location: string;
   city: string;
+  state: string;
   country: string;
   latitude?: number;
   longitude?: number;
   address?: string;
-  pricePerNight: number;
+  basePrice: number;
   currency: string;
   maxGuests: number;
   bedrooms: number;
@@ -30,6 +31,8 @@ export interface Listing {
   coverImageUrl?: string;
   averageRating?: number;
   totalReviews?: number;
+  viewCount: number;
+  bookingCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -163,7 +166,7 @@ export const CATEGORIES = [
   'Historical homes'
 ];
 
-export const CATEGORY_ICONS: { [key: string]: string } = {
+export const CATEGORY_ICONS: Record<string, string> = {
   'Amazing views': '🏔️',
   'Beachfront': '🏖️',
   'Trending': '🔥',

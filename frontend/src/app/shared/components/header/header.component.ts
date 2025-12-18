@@ -247,7 +247,7 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToMyServices() {
-    this.router.navigate(['/service-offering/dashboard']);
+    this.router.navigate(['/service-offering/my-services']);
     this.isMenuOpen = false;
   }
 

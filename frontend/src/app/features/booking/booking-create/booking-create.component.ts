@@ -6,7 +6,8 @@ import { BookingService } from '../services/booking.service';
 import { ListingService } from '../../listing/services/listing.service';
 import { Listing } from '../../listing/models/listing.model';
 import { BookingAddon } from '../models/booking.model';
-import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
+import { ServiceOfferingService } from '../../service-offering/services/service-offering.service';
+import { ServiceCategory } from '../../service-offering/models/service-offering.model';
 
 @Component({
   selector: 'app-booking-create',
@@ -48,12 +49,22 @@ export class BookingCreateComponent implements OnInit {
     return this.bookingForm?.get('checkIn')?.value || this.todayISO;
   }
 
-  // Inject services using Angular 18+ inject() function
-  private fb = inject(FormBuilder);
-  private bookingService = inject(BookingService);
-  private listingService = inject(ListingService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  /**
+   * Using constructor injection instead of inject() for stability.
+   * Constructor injection is more reliable for components with:
+   * - FormBuilder and reactive forms
+   * - Route parameter handling
+   * - Multiple service dependencies
+   * This prevents "Cannot read properties of undefined" errors during initialization.
+   */
+  constructor(
+    private fb: FormBuilder,
+    private bookingService: BookingService,
+    private listingService: ListingService,
+    private serviceOfferingService: ServiceOfferingService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -90,6 +101,7 @@ export class BookingCreateComponent implements OnInit {
           if (response.success && response.data) {
             this.listing = response.data;
             this.calculatePricing();
+            this.loadAddonServices();
           }
         },
         error: (error) => {
@@ -113,6 +125,34 @@ export class BookingCreateComponent implements OnInit {
     }
   }
 
+  loadAddonServices(): void {
+    if (!this.listing?.city) return;
+
+    const addonCategories: ServiceCategory[] = [
+      ServiceCategory.AIRPORT_TRANSFER,
+      ServiceCategory.HOUSE_CLEANING,
+      ServiceCategory.CAR_RENTAL,
+      ServiceCategory.GROCERY_DELIVERY
+    ];
+
+    this.serviceOfferingService.getAddonServices(this.listing.city, addonCategories).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.availableAddons = response.data.map(service => ({
+            name: service.title,
+            description: service.description || service.highlights || 'Additional service',
+            price: service.basePrice,
+            quantity: 1
+          }));
+        }
+      },
+      error: (error) => {
+        console.error('Error loading addon services:', error);
+        // Keep the default hardcoded addons as fallback
+      }
+    });
+  }
+
   calculatePricing(): void {
     if (!this.listing) return;
 
@@ -125,7 +165,7 @@ export class BookingCreateComponent implements OnInit {
       const diffTime = Math.abs(end.getTime() - start.getTime());
       this.numberOfNights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      this.basePrice = this.listing.pricePerNight * this.numberOfNights;
+      this.basePrice = this.listing.basePrice * this.numberOfNights;
 
       const addonsTotal = this.selectedAddons.reduce(
         (sum, addon) => sum + (addon.price * addon.quantity), 0
@@ -176,7 +216,7 @@ export class BookingCreateComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           const bookingId = response.data.publicId;
-          
+
           // Immediately confirm the payment
           this.bookingService.confirmPayment(bookingId).subscribe({
             next: () => {

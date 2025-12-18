@@ -49,7 +49,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   checkIn = '';
   checkOut = '';
   guests = 1;
-  
+
   // Owner check - hide booking section if user owns the listing
   isOwner = false;
 
@@ -166,18 +166,18 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response.success && response.data) {
           this.listing = response.data;
-          
+
           // Check if current user is the owner of this listing
           const currentUser = this.authService.getCurrentUser();
           if (currentUser && this.listing.landlordPublicId) {
             this.isOwner = currentUser.publicId === this.listing.landlordPublicId;
           }
-          
+
           // Load landlord profile if landlordPublicId is available
           if (this.listing.landlordPublicId) {
             this.loadLandlordProfile(this.listing.landlordPublicId);
           }
-          
+
           this.loadSimilarListings();
           console.log('Listing loaded:', this.listing.publicId);
         }
@@ -203,7 +203,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
             createdAt?: string;
             isEmailVerified?: boolean;
           };
-          
+
           this.host = {
             name: `${profile.firstName} ${profile.lastName}`,
             avatar: profileData.profileImageUrl ? this.getImageUrl(profileData.profileImageUrl) : 'https://i.pravatar.cc/150?img=12',
@@ -310,7 +310,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   calculateTotal(): number {
     if (!this.listing) return 0;
     const nights = this.calculateNights();
-    return nights * this.listing.pricePerNight;
+    return nights * this.listing.basePrice;
   }
 
   toggleShare(): void {

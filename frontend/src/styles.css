@@ -9,6 +9,17 @@
   --background: #F4F4F4;
   --text-primary: #1F2937;
   --text-secondary: #6B7280;
+
+  /* Admin Dashboard Variables */
+  --admin-primary: #018790;
+  --admin-surface: #ffffff;
+  --admin-border: #e5e7eb;
+  --admin-text-primary: #1f2937;
+  --admin-text-secondary: #6b7280;
+  --admin-success: #10b981;
+  --admin-error: #ef4444;
+  --admin-warning: #f59e0b;
+  --admin-info: #3b82f6;
 }
 
 html, body {
@@ -55,4 +66,33 @@ html, body {
   animation: shimmer 2s infinite linear;
   background: linear-gradient(to right, #f0f0f0 4%, #e0e0e0 25%, #f0f0f0 36%);
   background-size: 1000px 100%;
+}
+
+/* Admin Dashboard Styles */
+.admin-kpi-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.admin-kpi-card:hover {
+  box-shadow: 0 4px 12px rgba(1, 135, 144, 0.15);
+  transform: translateY(-2px);
+}
+
+.admin-stat-positive {
+  color: var(--admin-success);
+}
+
+.admin-stat-negative {
+  color: var(--admin-error);
+}
+
+.admin-stat-neutral {
+  color: var(--admin-warning);
+}
+
+.admin-stat-info {
+  color: var(--admin-info);
 }

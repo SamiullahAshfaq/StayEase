@@ -1,30 +1,36 @@
 package com.stayease.domain.serviceoffering.repository;
 
-import com.stayease.domain.serviceoffering.entity.ServiceOffering;
-import com.stayease.domain.serviceoffering.entity.ServiceOffering.*;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.stayease.domain.serviceoffering.entity.ServiceOffering;
+import com.stayease.domain.serviceoffering.entity.ServiceOffering.ServiceCategory;
+import com.stayease.domain.serviceoffering.entity.ServiceOffering.ServiceStatus;
 
 @Repository
-public interface ServiceOfferingRepository extends JpaRepository<ServiceOffering, Long> {
+public interface ServiceOfferingRepository extends JpaRepository<ServiceOffering, Long>, JpaSpecificationExecutor<ServiceOffering> {
 
     // Find by public ID
+    @Query("SELECT s FROM ServiceOffering s LEFT JOIN FETCH s.images WHERE s.publicId = :publicId")
     Optional<ServiceOffering> findByPublicId(String publicId);
 
     // Find by provider
+    @Query("SELECT DISTINCT s FROM ServiceOffering s LEFT JOIN FETCH s.images WHERE s.providerPublicId = :providerPublicId ORDER BY s.createdAt DESC")
     Page<ServiceOffering> findByProviderPublicIdOrderByCreatedAtDesc(String providerPublicId, Pageable pageable);
 
     List<ServiceOffering> findByProviderPublicId(String providerPublicId);
 
     // Find by category
+    @Query("SELECT DISTINCT s FROM ServiceOffering s LEFT JOIN FETCH s.images WHERE s.category = :category AND s.isActive = true AND s.status = :status ORDER BY s.createdAt DESC")
     Page<ServiceOffering> findByCategoryAndIsActiveTrueAndStatusOrderByCreatedAtDesc(
             ServiceCategory category,
             ServiceStatus status,
@@ -36,7 +42,7 @@ public interface ServiceOfferingRepository extends JpaRepository<ServiceOffering
             Pageable pageable);
 
     // Find featured services
-    @Query("SELECT s FROM ServiceOffering s WHERE s.isFeatured = true " +
+    @Query("SELECT DISTINCT s FROM ServiceOffering s LEFT JOIN FETCH s.images WHERE s.isFeatured = true " +
             "AND s.isActive = true AND s.status = 'ACTIVE' " +
             "AND (s.featuredUntil IS NULL OR s.featuredUntil > CURRENT_TIMESTAMP) " +
             "ORDER BY s.averageRating DESC, s.createdAt DESC")
