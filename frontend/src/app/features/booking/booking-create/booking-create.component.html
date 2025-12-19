@@ -180,7 +180,7 @@
               @if (listing) {
                 <div class="flex gap-4 pb-6 border-b">
                   <img
-                    [src]="listing.coverImageUrl || listing.images[0]?.url"
+                    [src]="listing.coverImageUrl ? getImageUrl(listing.coverImageUrl) : (listing.images[0]?.url ? getImageUrl(listing.images[0].url) : '/assets/placeholder-listing.jpg')"
                     [alt]="listing.title"
                     class="w-28 h-28 rounded-xl object-cover shrink-0">
                     <div class="flex-1 min-w-0">

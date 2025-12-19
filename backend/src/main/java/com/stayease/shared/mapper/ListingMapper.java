@@ -19,18 +19,18 @@ public class ListingMapper {
             return null;
         }
 
-        List<ListingImageDTO> imageDTOs = listing.getImages() != null ?
-                listing.getImages().stream()
-                        .map(this::toImageDTO)
-                        .collect(Collectors.toList()) : List.of();
+        List<ListingImageDTO> imageDTOs = listing.getImages() != null ? listing.getImages().stream()
+                .map(this::toImageDTO)
+                .collect(Collectors.toList()) : List.of();
 
-        String coverImageUrl = listing.getImages() != null && !listing.getImages().isEmpty() ?
-                listing.getImages().stream()
+        String coverImageUrl = listing.getImages() != null && !listing.getImages().isEmpty()
+                ? listing.getImages().stream()
                         .filter(img -> Boolean.TRUE.equals(img.getIsCover()))
                         .findFirst()
                         .or(() -> listing.getImages().stream().findFirst())
                         .map(ListingImage::getUrl)
-                        .orElse(null) : null;
+                        .orElse(null)
+                : null;
 
         return ListingDTO.builder()
                 .publicId(listing.getPublicId())
@@ -93,7 +93,8 @@ public class ListingMapper {
                 .minimumStay(dto.getMinimumStay())
                 .maximumStay(dto.getMaximumStay())
                 .instantBook(dto.getInstantBook())
-                .status(Listing.ListingStatus.ACTIVE)
+                .status(dto.getStatus() != null ? Listing.ListingStatus.valueOf(dto.getStatus())
+                        : Listing.ListingStatus.DRAFT)
                 .build();
 
         if (dto.getImages() != null) {
@@ -111,29 +112,52 @@ public class ListingMapper {
             return;
         }
 
-        if (dto.getTitle() != null) listing.setTitle(dto.getTitle());
-        if (dto.getDescription() != null) listing.setDescription(dto.getDescription());
-        if (dto.getLocation() != null) listing.setLocation(dto.getLocation());
-        if (dto.getCity() != null) listing.setCity(dto.getCity());
-        if (dto.getCountry() != null) listing.setCountry(dto.getCountry());
-        if (dto.getLatitude() != null) listing.setLatitude(dto.getLatitude());
-        if (dto.getLongitude() != null) listing.setLongitude(dto.getLongitude());
-        if (dto.getAddress() != null) listing.setAddress(dto.getAddress());
-        if (dto.getPricePerNight() != null) listing.setPricePerNight(dto.getPricePerNight());
-        if (dto.getCurrency() != null) listing.setCurrency(dto.getCurrency());
-        if (dto.getMaxGuests() != null) listing.setMaxGuests(dto.getMaxGuests());
-        if (dto.getBedrooms() != null) listing.setBedrooms(dto.getBedrooms());
-        if (dto.getBeds() != null) listing.setBeds(dto.getBeds());
-        if (dto.getBathrooms() != null) listing.setBathrooms(dto.getBathrooms());
-        if (dto.getPropertyType() != null) listing.setPropertyType(dto.getPropertyType());
-        if (dto.getCategory() != null) listing.setCategory(dto.getCategory());
-        if (dto.getAmenities() != null) listing.setAmenities(dto.getAmenities());
-        if (dto.getHouseRules() != null) listing.setHouseRules(dto.getHouseRules());
-        if (dto.getCancellationPolicy() != null) listing.setCancellationPolicy(dto.getCancellationPolicy());
-        if (dto.getMinimumStay() != null) listing.setMinimumStay(dto.getMinimumStay());
-        if (dto.getMaximumStay() != null) listing.setMaximumStay(dto.getMaximumStay());
-        if (dto.getInstantBook() != null) listing.setInstantBook(dto.getInstantBook());
-        if (dto.getStatus() != null) listing.setStatus(dto.getStatus());
+        if (dto.getTitle() != null)
+            listing.setTitle(dto.getTitle());
+        if (dto.getDescription() != null)
+            listing.setDescription(dto.getDescription());
+        if (dto.getLocation() != null)
+            listing.setLocation(dto.getLocation());
+        if (dto.getCity() != null)
+            listing.setCity(dto.getCity());
+        if (dto.getCountry() != null)
+            listing.setCountry(dto.getCountry());
+        if (dto.getLatitude() != null)
+            listing.setLatitude(dto.getLatitude());
+        if (dto.getLongitude() != null)
+            listing.setLongitude(dto.getLongitude());
+        if (dto.getAddress() != null)
+            listing.setAddress(dto.getAddress());
+        if (dto.getPricePerNight() != null)
+            listing.setPricePerNight(dto.getPricePerNight());
+        if (dto.getCurrency() != null)
+            listing.setCurrency(dto.getCurrency());
+        if (dto.getMaxGuests() != null)
+            listing.setMaxGuests(dto.getMaxGuests());
+        if (dto.getBedrooms() != null)
+            listing.setBedrooms(dto.getBedrooms());
+        if (dto.getBeds() != null)
+            listing.setBeds(dto.getBeds());
+        if (dto.getBathrooms() != null)
+            listing.setBathrooms(dto.getBathrooms());
+        if (dto.getPropertyType() != null)
+            listing.setPropertyType(dto.getPropertyType());
+        if (dto.getCategory() != null)
+            listing.setCategory(dto.getCategory());
+        if (dto.getAmenities() != null)
+            listing.setAmenities(dto.getAmenities());
+        if (dto.getHouseRules() != null)
+            listing.setHouseRules(dto.getHouseRules());
+        if (dto.getCancellationPolicy() != null)
+            listing.setCancellationPolicy(dto.getCancellationPolicy());
+        if (dto.getMinimumStay() != null)
+            listing.setMinimumStay(dto.getMinimumStay());
+        if (dto.getMaximumStay() != null)
+            listing.setMaximumStay(dto.getMaximumStay());
+        if (dto.getInstantBook() != null)
+            listing.setInstantBook(dto.getInstantBook());
+        if (dto.getStatus() != null)
+            listing.setStatus(dto.getStatus());
 
         if (dto.getImages() != null) {
             listing.getImages().clear();

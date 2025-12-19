@@ -85,6 +85,30 @@ export const routes: Routes = [
         title: 'My Listings - StayEase'
       },
       {
+        path: 'listings/create',
+        canActivate: [roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/profile/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
+        title: 'Create Listing - StayEase'
+      },
+      {
+        path: 'listings/create/:id',
+        canActivate: [roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/profile/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
+        title: 'Edit Draft - StayEase'
+      },
+      {
+        path: 'listings/:id/edit',
+        canActivate: [roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/profile/listing-edit/listing-edit.component').then(m => m.ListingEditComponent),
+        title: 'Edit Listing - StayEase'
+      },
+      {
+        path: 'analytics',
+        canActivate: [roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/profile/analytics-dashboard/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent),
+        title: 'Analytics Dashboard - StayEase'
+      },
+      {
         path: '',
         redirectTo: 'view',
         pathMatch: 'full'
@@ -106,6 +130,12 @@ export const routes: Routes = [
         canActivate: [authGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
         loadComponent: () => import('./features/profile/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
         title: 'Create Listing - StayEase'
+      },
+      {
+        path: 'create/:id',
+        canActivate: [authGuard, roleGuard(['ROLE_LANDLORD', 'ROLE_ADMIN'])],
+        loadComponent: () => import('./features/profile/listing-create/listing-create.component').then(m => m.ListingCreateComponent),
+        title: 'Edit Draft - StayEase'
       },
       {
         path: ':id',

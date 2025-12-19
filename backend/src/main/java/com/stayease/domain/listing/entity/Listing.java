@@ -144,10 +144,13 @@ public class Listing {
     }
 
     public enum ListingStatus {
-        ACTIVE,
-        INACTIVE,
-        PENDING_APPROVAL,
-        SUSPENDED,
-        DELETED
+        DRAFT, // Listing is being created, not published yet
+        PENDING_APPROVAL, // Submitted for admin review
+        ACTIVE, // Published and visible to guests
+        PAUSED, // Temporarily unavailable (landlord paused it)
+        INACTIVE, // Not active, not accepting bookings
+        SUSPENDED, // Admin suspended the listing
+        REJECTED, // Admin rejected the listing
+        DELETED // Soft deleted
     }
 }

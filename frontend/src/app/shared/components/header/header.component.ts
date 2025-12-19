@@ -236,6 +236,11 @@ export class HeaderComponent implements OnInit {
     this.isMenuOpen = false;
   }
 
+  navigateToAnalytics() {
+    this.router.navigate(['/profile/analytics']);
+    this.isMenuOpen = false;
+  }
+
   navigateToAddListing() {
     this.router.navigate(['/listing/create']);
     this.isMenuOpen = false;

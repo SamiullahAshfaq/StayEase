@@ -9,13 +9,22 @@
             <h1 class="text-3xl md:text-4xl font-bold mb-2">Welcome back, Landlord! 👋</h1>
             <p class="text-white/90 text-lg">Manage your properties and grow your rental business</p>
           </div>
-          <button [routerLink]="['/listing/create']"
-                  class="px-8 py-4 bg-white text-[#005461] rounded-xl font-semibold hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-3 group">
-            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-            </svg>
-            Add New Property
-          </button>
+          <div class="flex gap-3">
+            <button [routerLink]="['/profile/analytics']"
+                    class="px-6 py-4 bg-white/10 backdrop-blur-sm border-2 border-white text-white rounded-xl font-semibold hover:bg-white/20 transition-all flex items-center justify-center gap-3 group">
+              <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+              Analytics
+            </button>
+            <button [routerLink]="['/listing/create']"
+                    class="px-8 py-4 bg-white text-[#005461] rounded-xl font-semibold hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-3 group">
+              <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+              </svg>
+              Add New Property
+            </button>
+          </div>
         </div>
       </div>
 
@@ -327,11 +336,27 @@
           <!-- Gradient Overlay -->
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-          <!-- Status Badge -->
-          <div class="absolute top-4 right-4 z-10">
+          <!-- Status Badge and Completion Indicator -->
+          <div class="absolute top-4 right-4 z-10 flex flex-col gap-2 items-end">
+            <!-- Status Badge -->
             <span [class]="getStatusClass(listing.status)" class="px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md shadow-lg">
               {{ listingStatusLabels[listing.status] }}
             </span>
+            
+            <!-- Completion Badge (for DRAFT listings) -->
+            @if (listing.status === ListingStatus.DRAFT) {
+            <div class="flex flex-col gap-1">
+              <span [class]="getCompletionStatusClass(getCompletionPercentage(listing))" 
+                    class="px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md shadow-lg border">
+                {{ getCompletionPercentage(listing) }}% Complete
+              </span>
+              @if (isListingIncomplete(listing)) {
+              <span class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-xs font-medium text-gray-700 shadow-lg">
+                {{ getMissingFields(listing).length }} fields missing
+              </span>
+              }
+            </div>
+            }
           </div>
           
           <!-- Quick Stats Overlay -->
@@ -397,29 +422,108 @@
             <div class="flex flex-col">
               <span class="text-sm text-gray-500 font-medium">Starting from</span>
               <div class="flex items-baseline gap-1">
-                <span class="text-3xl font-bold text-[#005461]">${{ listing.basePrice }}</span>
+                <span class="text-3xl font-bold text-[#005461]">{{ listing.pricePerNight ? formatPrice(listing.pricePerNight) : '$0' }}</span>
                 <span class="text-sm text-gray-600 font-medium">/night</span>
               </div>
             </div>
           </div>
 
+          <!-- Completion Progress (for DRAFT listings) -->
+          @if (listing.status === ListingStatus.DRAFT) {
+          <div class="mb-5 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold text-gray-700">Listing Completion</span>
+              <span class="text-sm font-bold" [class]="getCompletionPercentage(listing) >= 100 ? 'text-green-600' : 'text-orange-600'">
+                {{ getCompletionPercentage(listing) }}%
+              </span>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+              <div class="h-2 rounded-full transition-all duration-500"
+                   [class]="getCompletionPercentage(listing) >= 100 ? 'bg-green-500' : 
+                           getCompletionPercentage(listing) >= 75 ? 'bg-blue-500' : 
+                           getCompletionPercentage(listing) >= 50 ? 'bg-yellow-500' : 'bg-red-500'"
+                   [style.width.%]="getCompletionPercentage(listing)"></div>
+            </div>
+            
+            <!-- Missing Fields -->
+            @if (isListingIncomplete(listing)) {
+            <div class="space-y-1">
+              <p class="text-xs font-medium text-gray-600 mb-2">Missing fields:</p>
+              <div class="flex flex-wrap gap-1">
+                @for (field of getMissingFields(listing).slice(0, 4); track field) {
+                <span class="text-xs bg-white px-2 py-1 rounded-md text-gray-700 border border-gray-200">
+                  {{ field }}
+                </span>
+                }
+                @if (getMissingFields(listing).length > 4) {
+                <span class="text-xs bg-white px-2 py-1 rounded-md text-gray-500 border border-gray-200">
+                  +{{ getMissingFields(listing).length - 4 }} more
+                </span>
+                }
+              </div>
+            </div>
+            }
+            
+            @if (getCompletionPercentage(listing) >= 100) {
+            <p class="text-xs text-green-700 font-medium mt-2 flex items-center gap-1">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              Ready to publish!
+            </p>
+            }
+          </div>
+          }
+
           <!-- Enhanced Action Buttons -->
-          <div class="flex gap-2">
-            <button [routerLink]="['/listing', listing.publicId]"
-                    class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
+          <div class="space-y-2">
+            <!-- Primary Actions Row -->
+            <div class="flex gap-2">
+              <button [routerLink]="['/listing', listing.publicId]"
+                      class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
+                <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                View
+              </button>
+              <button [routerLink]="['/listing', listing.publicId, 'edit']"
+                      class="flex-1 px-4 py-3 bg-gradient-to-r from-[#005461] to-[#018790] text-white rounded-xl hover:shadow-lg transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
+                <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Edit
+              </button>
+            </div>
+            <!-- Status Control Button -->
+            @if (listing.status === ListingStatus.ACTIVE) {
+            <button (click)="toggleListingStatus(listing, $event)"
+                    class="w-full px-4 py-2.5 bg-orange-50 text-orange-700 border-2 border-orange-200 rounded-xl hover:bg-orange-100 transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
               <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              View
+              Pause Listing
             </button>
-            <button [routerLink]="['/listing', listing.publicId, 'edit']"
-                    class="flex-1 px-4 py-3 bg-gradient-to-r from-[#005461] to-[#018790] text-white rounded-xl hover:shadow-lg transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
+            } @else if (listing.status === ListingStatus.PAUSED) {
+            <button (click)="toggleListingStatus(listing, $event)"
+                    class="w-full px-4 py-2.5 bg-green-50 text-green-700 border-2 border-green-200 rounded-xl hover:bg-green-100 transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
               <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              Edit
+              Activate Listing
             </button>
+            } @else if (listing.status === ListingStatus.DRAFT) {
+            <button (click)="toggleListingStatus(listing, $event)"
+                    class="w-full px-4 py-2.5 bg-blue-50 text-blue-700 border-2 border-blue-200 rounded-xl hover:bg-blue-100 transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
+              <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Publish Draft
+            </button>
+            }
           </div>
         </div>
       </div>
@@ -497,18 +601,48 @@
 
             <div class="flex items-center justify-between">
               <div>
-                <span class="text-3xl font-bold text-[#005461]">${{ listing.basePrice }}</span>
+                <span class="text-3xl font-bold text-[#005461]">{{ listing.pricePerNight ? formatPrice(listing.pricePerNight) : '$0' }}</span>
                 <span class="text-gray-600">/night</span>
               </div>
-              <div class="flex gap-3">
-                <button [routerLink]="['/listing', listing.publicId]"
-                        class="px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-                  View
+              <div class="flex flex-col gap-2">
+                <!-- Primary Actions -->
+                <div class="flex gap-3">
+                  <button [routerLink]="['/listing', listing.publicId]"
+                          class="px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                    View
+                  </button>
+                  <button [routerLink]="['/listing', listing.publicId, 'edit']"
+                          class="px-6 py-2 bg-[#005461] text-white rounded-lg hover:bg-[#018790] transition-colors font-medium">
+                    Edit
+                  </button>
+                </div>
+                <!-- Status Control Button -->
+                @if (listing.status === ListingStatus.ACTIVE) {
+                <button (click)="toggleListingStatus(listing, $event)"
+                        class="px-6 py-2 bg-orange-50 text-orange-700 border-2 border-orange-200 rounded-lg hover:bg-orange-100 transition-all text-sm font-semibold flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Pause Listing
                 </button>
-                <button [routerLink]="['/listing', listing.publicId, 'edit']"
-                        class="px-6 py-2 bg-[#005461] text-white rounded-lg hover:bg-[#018790] transition-colors font-medium">
-                  Edit
+                } @else if (listing.status === ListingStatus.PAUSED) {
+                <button (click)="toggleListingStatus(listing, $event)"
+                        class="px-6 py-2 bg-green-50 text-green-700 border-2 border-green-200 rounded-lg hover:bg-green-100 transition-all text-sm font-semibold flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Activate Listing
                 </button>
+                } @else if (listing.status === ListingStatus.DRAFT) {
+                <button (click)="toggleListingStatus(listing, $event)"
+                        class="px-6 py-2 bg-blue-50 text-blue-700 border-2 border-blue-200 rounded-lg hover:bg-blue-100 transition-all text-sm font-semibold flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Publish Draft
+                </button>
+                }
               </div>
             </div>
           </div>

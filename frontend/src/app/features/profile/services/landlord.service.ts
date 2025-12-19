@@ -74,16 +74,28 @@ export class LandlordService {
     return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/listings/${publicId}`);
   }
 
+  /**
+   * Update listing status (pause, activate, publish, etc.)
+   * Uses the backend's PATCH endpoint with status query parameter
+   */
+  updateListingStatus(publicId: string, status: string): Observable<ApiResponse<Listing>> {
+    return this.http.patch<ApiResponse<Listing>>(
+      `${this.baseUrl}/listings/${publicId}/status?status=${status}`, 
+      {}
+    );
+  }
+
+  // Convenience methods that use updateListingStatus
   publishListing(publicId: string): Observable<ApiResponse<Listing>> {
-    return this.http.post<ApiResponse<Listing>>(`${this.baseUrl}/listings/${publicId}/publish`, {});
+    return this.updateListingStatus(publicId, 'PENDING_APPROVAL');
   }
 
   pauseListing(publicId: string): Observable<ApiResponse<Listing>> {
-    return this.http.post<ApiResponse<Listing>>(`${this.baseUrl}/listings/${publicId}/pause`, {});
+    return this.updateListingStatus(publicId, 'PAUSED');
   }
 
   activateListing(publicId: string): Observable<ApiResponse<Listing>> {
-    return this.http.post<ApiResponse<Listing>>(`${this.baseUrl}/listings/${publicId}/activate`, {});
+    return this.updateListingStatus(publicId, 'ACTIVE');
   }
 
   uploadListingImages(publicId: string, files: File[]): Observable<ApiResponse<string[]>> {
@@ -125,6 +137,10 @@ export class LandlordService {
       params = params.set('status', status);
     }
     return this.http.get<ApiResponse<Booking[]>>(`${this.baseUrl}/bookings`, { params });
+  }
+
+  getBookingsByListing(listingPublicId: string): Observable<ApiResponse<Booking[]>> {
+    return this.http.get<ApiResponse<Booking[]>>(`${this.baseUrl}/bookings/listing/${listingPublicId}`);
   }
 
   getBooking(publicId: string): Observable<ApiResponse<Booking>> {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,6 @@ import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 import { LandlordService } from '../../profile/services/landlord.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LocationMapComponent } from '../../../shared/components/location-map/location-map.component';
-import { Inject } from '@angular/core';
 
 interface Review {
   id: string;
@@ -113,6 +112,14 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
   // Similar listings (will be populated from service)
   similarListings: Listing[] = [];
 
+  // Inject services
+  private listingService = inject(ListingService);
+  private landlordService = inject(LandlordService);
+  private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private document = inject(DOCUMENT);
+
   // Rating breakdown
   get ratingBreakdown() {
     if (!this.listing) return null;
@@ -127,14 +134,7 @@ export class ListingDetailComponent implements OnInit, OnDestroy {
     };
   }
 
-  constructor(
-    private listingService: ListingService,
-    private landlordService: LandlordService,
-    private authService: AuthService,
-    private route: ActivatedRoute,
-    private router: Router,
-    @Inject(DOCUMENT) private document: Document
-  ) {
+  constructor() {
     this.today = new Date().toISOString().split('T')[0];
     this.currentUrl = this.document.location.href;
   }

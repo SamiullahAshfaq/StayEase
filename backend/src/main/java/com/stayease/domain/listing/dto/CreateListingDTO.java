@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CreateListingDTO {
-    
+
     @NotBlank(message = "Title is required")
     @Size(min = 10, max = 255, message = "Title must be between 10 and 255 characters")
     private String title;
@@ -71,17 +71,23 @@ public class CreateListingDTO {
     private String houseRules;
     @Builder.Default
     private String cancellationPolicy = "FLEXIBLE";
-    
+
     @Builder.Default
     @Min(value = 1, message = "Minimum stay must be at least 1 night")
     private Integer minimumStay = 1;
-    
+
     @Max(value = 365, message = "Maximum stay cannot exceed 365 nights")
     private Integer maximumStay;
-    
+
     @Builder.Default
     private Boolean instantBook = false;
 
     @NotEmpty(message = "At least one image is required")
     private List<ListingImageDTO> images;
+
+    // Status field - determines if listing is saved as draft or published
+    // If not provided, defaults to DRAFT to allow landlords to save incomplete
+    // listings
+    @Builder.Default
+    private String status = "DRAFT";
 }

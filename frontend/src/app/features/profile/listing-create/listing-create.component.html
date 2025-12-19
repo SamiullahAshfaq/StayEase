@@ -749,17 +749,21 @@
       }
 
       <div style="display: flex; gap: 12px;">
+        <!-- Save Draft button appears on ALL steps -->
+        <button
+          class="nav-btn nav-btn-secondary"
+          (click)="saveDraft()"
+          [disabled]="loading()"
+          title="Save your progress and continue later">
+          @if (loading()) {
+            <span class="loading-spinner"></span>
+          } @else {
+            💾 Save Draft
+          }
+        </button>
+        
+        <!-- Next or Publish button -->
         @if (currentStep() === totalSteps) {
-          <button
-            class="nav-btn nav-btn-secondary"
-            (click)="saveDraft()"
-            [disabled]="loading()">
-            @if (loading()) {
-              <span class="loading-spinner"></span>
-            } @else {
-              Save Draft
-            }
-          </button>
           <button
             class="nav-btn nav-btn-primary"
             (click)="publishListing()"
@@ -767,12 +771,12 @@
             @if (loading()) {
               <span class="loading-spinner"></span>
             } @else {
-              Publish Listing
+              🚀 Publish Listing
             }
           </button>
         } @else {
           <button class="nav-btn nav-btn-primary" (click)="nextStep()">
-            Next
+            Next →
           </button>
         }
       </div>

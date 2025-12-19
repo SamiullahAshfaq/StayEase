@@ -118,7 +118,7 @@ export interface Listing {
   maxGuests: number;
   
   // Pricing
-  basePrice: number;
+  pricePerNight: number;  // CHANGED from basePrice to match backend
   cleaningFee?: number;
   securityDeposit?: number;
   weekendPrice?: number;
@@ -239,6 +239,10 @@ export interface CreateListingRequest {
     isCover?: boolean;
     sortOrder?: number;
   }[];
+  
+  // Status - determines if listing is saved as draft or published
+  // "DRAFT" = save as draft, "PENDING_APPROVAL" = publish (send for approval)
+  status?: string;
 }
 
 export interface ListingStats {

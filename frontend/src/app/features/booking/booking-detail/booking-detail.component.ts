@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookingService } from '../services/booking.service';
 import { Booking, BookingStatus, BookingAddon } from '../models/booking.model';
 import { FormsModule } from '@angular/forms';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 @Component({
   selector: 'app-booking-detail',
@@ -43,12 +44,11 @@ export class BookingDetailComponent implements OnInit {
   editAddons: BookingAddon[] = [];
   editing = false;
 
-  constructor(
-    private bookingService: BookingService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {}
+  // Inject services
+  private bookingService = inject(BookingService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     const publicId = this.route.snapshot.paramMap.get('id');
@@ -363,5 +363,9 @@ export class BookingDetailComponent implements OnInit {
     });
     
     console.log('Subscribe called, waiting for response...');
+  }
+
+  getImageUrl(imagePath: string): string {
+    return ImageUrlHelper.getFullImageUrl(imagePath);
   }
 }

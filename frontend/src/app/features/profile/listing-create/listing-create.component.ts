@@ -1,7 +1,7 @@
-import { Component, signal, inject, ViewEncapsulation } from '@angular/core';
+import { Component, signal, inject, ViewEncapsulation, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { LandlordService } from '../services/landlord.service';
 import {
   PropertyType,
@@ -60,15 +60,20 @@ interface ListingFormData {
   styleUrl: './listing-create.component.css',
   encapsulation: ViewEncapsulation.None
 })
-export class ListingCreateComponent {
+export class ListingCreateComponent implements OnInit {
   private landlordService = inject(LandlordService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   // State
   currentStep = signal(1);
   totalSteps = 7;
   loading = signal(false);
   error = signal<string | null>(null);
+  
+  // Track if we're editing an existing draft
+  isEditingDraft = signal(false);
+  draftPublicId: string | null = null;
 
   // Form Data
   formData = signal<ListingFormData>({
@@ -132,6 +137,73 @@ export class ListingCreateComponent {
 
   constructor() {
     // Services are injected above
+  }
+
+  ngOnInit(): void {
+    // Check if we're editing an existing draft
+    this.route.paramMap.subscribe(params => {
+      const publicId = params.get('id');
+      if (publicId) {
+        this.draftPublicId = publicId;
+        this.isEditingDraft.set(true);
+        this.loadDraft(publicId);
+      }
+    });
+  }
+
+  /**
+   * Load existing draft listing to resume editing
+   */
+  private loadDraft(publicId: string): void {
+    this.loading.set(true);
+    this.landlordService.getListing(publicId).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const listing = response.data;
+          
+          // Populate form data from draft listing
+          this.formData.update(data => ({
+            ...data,
+            propertyType: listing.propertyType as PropertyType,
+            roomType: listing.roomType as RoomType,
+            address: listing.address || '',
+            city: listing.city || '',
+            country: listing.country || '',
+            zipCode: listing.zipCode || '',
+            latitude: listing.latitude,
+            longitude: listing.longitude,
+            bedrooms: listing.bedrooms || 1,
+            bathrooms: listing.bathrooms || 1,
+            maxGuests: listing.maxGuests || 2,
+            propertySize: 0, // Not in backend model
+            amenities: listing.amenities || [],
+            // Images will need special handling
+            images: [],
+            imagePreviewUrls: listing.images?.map(img => img.url) || [],
+            title: listing.title || '',
+            description: listing.description || '',
+            houseRules: listing.houseRules || '',
+            basePrice: listing.pricePerNight || 0,  // Backend uses pricePerNight
+            cleaningFee: 0, // Not in backend model
+            weeklyDiscount: listing.weeklyDiscount || 0,
+            monthlyDiscount: listing.monthlyDiscount || 0,
+            checkInTime: listing.checkInTime || '15:00',
+            checkOutTime: listing.checkOutTime || '11:00',
+            minNights: listing.minNights || 1,
+            maxNights: listing.maxNights || 30,
+            cancellationPolicy: 'Flexible'
+          }));
+          
+          console.log('[ListingCreate] Draft loaded:', publicId);
+        }
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set('Failed to load draft listing');
+        console.error('[ListingCreate] Error loading draft:', err);
+        this.loading.set(false);
+      }
+    });
   }
 
   // Navigation
@@ -347,27 +419,55 @@ export class ListingCreateComponent {
         caption: index === 0 ? 'Cover image' : `Image ${index + 1}`,
         isCover: index === 0,
         sortOrder: index
-      }))
+      })),
+      
+      // Status - DRAFT for save draft, PENDING_APPROVAL for publish
+      status: isDraft ? 'DRAFT' : 'PENDING_APPROVAL'
     };
 
     console.log('[ListingCreate] Submitting request:', listingRequest);
 
-    this.landlordService.createListing(listingRequest).subscribe({
-      next: (response) => {
-        this.loading.set(false);
-        console.log('[ListingCreate] Success:', response);
-        if (!isDraft) {
-          this.router.navigate(['/profile/my-listings']);
-        } else {
-          this.router.navigate(['/listing', response.data.publicId]);
+    // If editing existing draft, use update endpoint
+    if (this.isEditingDraft() && this.draftPublicId) {
+      this.landlordService.updateListing(this.draftPublicId, listingRequest).subscribe({
+        next: (response) => {
+          this.loading.set(false);
+          console.log('[ListingCreate] Draft updated:', response);
+          // Always navigate to My Listings after updating
+          this.router.navigate(['/profile/my-listings'], {
+            queryParams: { 
+              message: isDraft ? 'Draft updated successfully!' : 'Listing submitted for approval!',
+              filter: isDraft ? 'DRAFT' : 'PENDING_APPROVAL'
+            }
+          });
+        },
+        error: (err) => {
+          this.loading.set(false);
+          this.error.set('Failed to update listing');
+          console.error('[ListingCreate] Error updating listing:', err);
         }
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.error.set('Failed to create listing');
-        console.error('[ListingCreate] Error creating listing:', err);
-      }
-    });
+      });
+    } else {
+      // Create new listing
+      this.landlordService.createListing(listingRequest).subscribe({
+        next: (response) => {
+          this.loading.set(false);
+          console.log('[ListingCreate] Success:', response);
+          // Always navigate to My Listings after creating (whether draft or published)
+          this.router.navigate(['/profile/my-listings'], {
+            queryParams: { 
+              message: isDraft ? 'Draft saved successfully!' : 'Listing submitted for approval!',
+              filter: isDraft ? 'DRAFT' : 'PENDING_APPROVAL'
+            }
+          });
+        },
+        error: (err) => {
+          this.loading.set(false);
+          this.error.set('Failed to create listing');
+          console.error('[ListingCreate] Error creating listing:', err);
+        }
+      });
+    }
   }
 
   cancel(): void {

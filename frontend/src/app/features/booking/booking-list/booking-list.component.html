@@ -87,7 +87,7 @@
               <!-- Image -->
               <div class="sm:w-64 h-48 sm:h-auto flex-shrink-0 overflow-hidden">
                 <img
-                  [src]="booking.listingCoverImage || '/assets/placeholder-listing.jpg'"
+                  [src]="booking.listingCoverImage ? getImageUrl(booking.listingCoverImage) : '/assets/placeholder-listing.jpg'"
                   [alt]="booking.listingTitle"
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                 </div>

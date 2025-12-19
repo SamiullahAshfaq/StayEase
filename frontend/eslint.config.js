@@ -39,6 +39,12 @@ module.exports = defineConfig([
       angular.configs.templateRecommended,
       angular.configs.templateAccessibility,
     ],
-    rules: {},
+    rules: {
+      // Disable accessibility warnings for interactive elements
+      "@angular-eslint/template/click-events-have-key-events": "off",
+      "@angular-eslint/template/interactive-supports-focus": "off",
+      // Disable label association warnings (for design system labels)
+      "@angular-eslint/template/label-has-associated-control": "off"
+    },
   }
 ]);

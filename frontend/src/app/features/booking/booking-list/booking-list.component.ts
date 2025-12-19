@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { BookingService } from '../services/booking.service';
 import { Booking, BookingStatus } from '../models/booking.model';
 import { FormsModule } from '@angular/forms';
 import { filter } from 'rxjs/operators';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 @Component({
   selector: 'app-booking-list',
@@ -33,10 +34,11 @@ export class BookingListComponent implements OnInit {
   cancelReason = '';
   cancelling = false;
 
-  constructor(
-    private bookingService: BookingService,
-    private router: Router
-  ) {
+  // Inject services
+  private bookingService = inject(BookingService);
+  private router = inject(Router);
+
+  constructor() {
     // Subscribe to route changes to reload bookings
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
@@ -217,5 +219,9 @@ export class BookingListComponent implements OnInit {
     this.currentPage = page;
     this.loadBookings();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  getImageUrl(imagePath: string): string {
+    return ImageUrlHelper.getFullImageUrl(imagePath);
   }
 }

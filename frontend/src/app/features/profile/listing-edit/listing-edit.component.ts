@@ -158,7 +158,7 @@ export class ListingEditComponent implements OnInit {
           title: listing.title,
           description: listing.description,
           houseRules: listing.houseRules || '',
-          basePrice: listing.basePrice,
+          basePrice: listing.pricePerNight,  // Backend uses pricePerNight
           cleaningFee: listing.cleaningFee || 0,
           securityDeposit: listing.securityDeposit || 0,
           weekendPrice: listing.weekendPrice || 0,
@@ -376,7 +376,7 @@ export class ListingEditComponent implements OnInit {
       title: data.title,
       description: data.description,
       houseRules: data.houseRules,
-      basePrice: data.basePrice,
+      pricePerNight: data.basePrice,  // Form uses basePrice, backend expects pricePerNight
       cleaningFee: data.cleaningFee,
       securityDeposit: data.securityDeposit,
       weekendPrice: data.weekendPrice,

@@ -31,7 +31,7 @@ export class ListingListComponent implements OnInit {
   // Filters
   selectedStatus = signal<ListingStatus | 'ALL'>('ALL');
   searchKeyword = signal('');
-  sortBy = signal<'title' | 'createdAt' | 'basePrice' | 'bookingCount'>('createdAt');
+  sortBy = signal<'title' | 'createdAt' | 'pricePerNight' | 'bookingCount'>('createdAt');
   sortDirection = signal<'asc' | 'desc'>('desc');
   viewMode = signal<'grid' | 'list'>('grid');
 
@@ -74,6 +74,8 @@ export class ListingListComponent implements OnInit {
         if (response.data && response.data.length > 0) {
           console.log('[ListingList] First listing images:', response.data[0].images);
           console.log('[ListingList] First listing coverImageUrl:', response.data[0].coverImageUrl);
+          console.log('[ListingList] First listing pricePerNight:', response.data[0].pricePerNight);
+          console.log('[ListingList] First listing full object:', JSON.stringify(response.data[0], null, 2));
         }
         this.listings.set(response.data);
         this.applyFilters();
@@ -150,7 +152,7 @@ export class ListingListComponent implements OnInit {
     this.applyFilters();
   }
 
-  changeSortBy(sortBy: 'title' | 'createdAt' | 'basePrice' | 'bookingCount') {
+  changeSortBy(sortBy: 'title' | 'createdAt' | 'pricePerNight' | 'bookingCount') {
     if (this.sortBy() === sortBy) {
       // Toggle direction
       this.sortDirection.set(this.sortDirection() === 'asc' ? 'desc' : 'asc');
@@ -171,7 +173,17 @@ export class ListingListComponent implements OnInit {
 
   editListing(publicId: string, event: Event) {
     event.stopPropagation();
-    this.router.navigate(['/profile/listings', publicId, 'edit']);
+    
+    // Find the listing to check its status
+    const listing = this.filteredListings().find(l => l.publicId === publicId);
+    
+    // If it's a DRAFT, resume in the create form
+    // Otherwise, use the regular edit form
+    if (listing && listing.status === ListingStatus.DRAFT) {
+      this.router.navigate(['/profile/listings/create', publicId]);
+    } else {
+      this.router.navigate(['/profile/listings', publicId, 'edit']);
+    }
   }
 
   duplicateListing(publicId: string, event: Event) {
@@ -315,5 +327,121 @@ export class ListingListComponent implements OnInit {
     }
     // Otherwise, assume it's a relative path and prepend backend URL
     return environment.apiUrl.replace('/api', '') + '/' + url;
+  }
+
+  /**
+   * Calculate completion percentage for a listing
+   * Returns a number between 0-100 indicating how complete the listing is
+   */
+  getCompletionPercentage(listing: Listing): number {
+    let completed = 0;
+    const totalFields = 12; // Total number of important fields
+
+    // Essential information (4 fields)
+    if (listing.title && listing.title.trim().length > 0) completed++;
+    if (listing.description && listing.description.trim().length >= 50) completed++; // At least 50 chars
+    if (listing.address && listing.address.trim().length > 0) completed++;
+    if (listing.city && listing.city.trim().length > 0) completed++;
+
+    // Pricing (1 field)
+    if (listing.pricePerNight > 0) completed++;
+
+    // Property details (4 fields)
+    if (listing.bedrooms > 0) completed++;
+    if (listing.bathrooms > 0) completed++;
+    if (listing.maxGuests > 0) completed++;
+    if (listing.propertyType) completed++;
+
+    // Media (1 field - at least 3 photos recommended)
+    if (listing.images && listing.images.length >= 3) {
+      completed++;
+    } else if (listing.coverImageUrl || (listing.images && listing.images.length > 0)) {
+      completed += 0.5; // Half credit for having some images
+    }
+
+    // Amenities (1 field - at least 3 amenities)
+    if (listing.amenities && listing.amenities.length >= 3) {
+      completed++;
+    } else if (listing.amenities && listing.amenities.length > 0) {
+      completed += 0.5; // Half credit for having some amenities
+    }
+
+    // Location coordinates (1 field)
+    if (listing.latitude && listing.longitude) completed++;
+
+    return Math.round((completed / totalFields) * 100);
+  }
+
+  /**
+   * Check if a listing is incomplete (less than 100% complete)
+   */
+  isListingIncomplete(listing: Listing): boolean {
+    return this.getCompletionPercentage(listing) < 100;
+  }
+
+  /**
+   * Get missing fields for a listing to help landlord complete it
+   */
+  getMissingFields(listing: Listing): string[] {
+    const missing: string[] = [];
+
+    if (!listing.title || listing.title.trim().length === 0) {
+      missing.push('Title');
+    }
+    if (!listing.description || listing.description.trim().length < 50) {
+      missing.push('Description (at least 50 characters)');
+    }
+    if (!listing.address || listing.address.trim().length === 0) {
+      missing.push('Address');
+    }
+    if (!listing.city || listing.city.trim().length === 0) {
+      missing.push('City');
+    }
+    if (listing.pricePerNight <= 0) {
+      missing.push('Price per night');
+    }
+    if (listing.bedrooms <= 0) {
+      missing.push('Number of bedrooms');
+    }
+    if (listing.bathrooms <= 0) {
+      missing.push('Number of bathrooms');
+    }
+    if (listing.maxGuests <= 0) {
+      missing.push('Maximum guests');
+    }
+    if (!listing.propertyType) {
+      missing.push('Property type');
+    }
+    if (!listing.images || listing.images.length < 3) {
+      missing.push('Photos (at least 3 high-quality images)');
+    }
+    if (!listing.amenities || listing.amenities.length < 3) {
+      missing.push('Amenities (at least 3)');
+    }
+    if (!listing.latitude || !listing.longitude) {
+      missing.push('Map location');
+    }
+
+    return missing;
+  }
+
+  /**
+   * Get completion status badge color
+   */
+  getCompletionStatusClass(percentage: number): string {
+    if (percentage >= 100) return 'bg-green-100 text-green-800 border-green-300';
+    if (percentage >= 75) return 'bg-blue-100 text-blue-800 border-blue-300';
+    if (percentage >= 50) return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+    return 'bg-red-100 text-red-800 border-red-300';
+  }
+
+  /**
+   * Get completion status text
+   */
+  getCompletionStatusText(percentage: number): string {
+    if (percentage >= 100) return 'Complete';
+    if (percentage >= 75) return 'Almost Done';
+    if (percentage >= 50) return 'In Progress';
+    return 'Needs Work';
   }
 }

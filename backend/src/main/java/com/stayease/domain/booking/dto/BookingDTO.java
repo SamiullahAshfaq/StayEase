@@ -30,10 +30,13 @@ public class BookingDTO {
     private List<BookingAddonDTO> addons;
     private Instant createdAt;
     private Instant updatedAt;
-    
+
     // Additional fields for display
     private String listingTitle;
     private String listingCoverImage;
     private String guestName;
+    private String guestEmail;
+    private String guestPhone;
+    private String guestAvatar;
     private String landlordPublicId;
 }

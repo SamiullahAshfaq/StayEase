@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { BookingService } from '../services/booking.service';
 import { ListingService } from '../../listing/services/listing.service';
 import { Listing } from '../../listing/models/listing.model';
 import { BookingAddon } from '../models/booking.model';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 @Component({
   selector: 'app-booking-create',
@@ -47,21 +48,12 @@ export class BookingCreateComponent implements OnInit {
     return this.bookingForm?.get('checkIn')?.value || this.todayISO;
   }
 
-  /**
-   * Using constructor injection instead of inject() for stability.
-   * Constructor injection is more reliable for components with:
-   * - FormBuilder and reactive forms
-   * - Route parameter handling
-   * - Multiple service dependencies
-   * This prevents "Cannot read properties of undefined" errors during initialization.
-   */
-  constructor(
-    private fb: FormBuilder,
-    private bookingService: BookingService,
-    private listingService: ListingService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  // Inject services using Angular 18+ inject() function
+  private fb = inject(FormBuilder);
+  private bookingService = inject(BookingService);
+  private listingService = inject(ListingService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.initForm();
@@ -225,5 +217,9 @@ export class BookingCreateComponent implements OnInit {
     } else {
       this.router.navigate(['/']);
     }
+  }
+
+  getImageUrl(imagePath: string): string {
+    return ImageUrlHelper.getFullImageUrl(imagePath);
   }
 }
