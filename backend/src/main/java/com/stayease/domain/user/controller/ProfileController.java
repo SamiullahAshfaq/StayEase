@@ -38,7 +38,7 @@ public class ProfileController {
      * Get current user's profile
      */
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<UserDTO>> getProfile() {
         log.info("GET request to fetch current user's profile");
         UUID currentUserId = SecurityUtils.getCurrentUserId();
@@ -65,7 +65,7 @@ public class ProfileController {
      * Update current user's profile
      */
     @PutMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<UserDTO>> updateProfile(
             @Valid @RequestBody UpdateUserDTO updateUserDTO) {
         log.info("PUT request to update current user's profile");
@@ -79,7 +79,7 @@ public class ProfileController {
      * Accepts base64 encoded images, stores them locally, and returns the file URL
      */
     @PostMapping("/image")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadProfileImage(
             @RequestBody Map<String, String> request) {
         log.info("POST request to upload profile image");
@@ -134,7 +134,7 @@ public class ProfileController {
      * Delete profile image
      */
     @DeleteMapping("/image")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_SERVICE_PROVIDER', 'ROLE_ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteProfileImage() {
         log.info("DELETE request to delete profile image");
         UUID currentUserId = SecurityUtils.getCurrentUserId();

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AdminService } from '../services/admin.service';
 import { ListingManagement } from '../services/admin.models';
+import { CsvExportService } from '../services/csv-export.service';
 
 @Component({
   selector: 'app-listing-management',
@@ -14,6 +15,7 @@ import { ListingManagement } from '../services/admin.models';
 })
 export class ListingManagementComponent implements OnInit {
   private adminService = inject(AdminService);
+  private csvExportService = inject(CsvExportService);
 
   listings = signal<ListingManagement[]>([]);
   loading = signal(false);
@@ -112,6 +114,21 @@ export class ListingManagementComponent implements OnInit {
   onSearch() {
     this.currentPage.set(0);
     this.loadListings();
+  }
+
+  resetFilters() {
+    this.status.set('');
+    this.searchTerm.set('');
+    this.currentPage.set(0);
+    this.loadListings();
+  }
+
+  exportToCSV() {
+    if (this.listings().length === 0) {
+      alert('No listings to export');
+      return;
+    }
+    this.csvExportService.exportListings(this.listings());
   }
 
   nextPage() {

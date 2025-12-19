@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.stayease.domain.admin.dto.AdminActionDTO;
 import com.stayease.domain.admin.dto.BookingManagementDTO;
 import com.stayease.domain.admin.dto.ListingManagementDTO;
+import com.stayease.domain.admin.dto.UserManagementDTO;
 import com.stayease.domain.admin.entity.AdminAction;
 import com.stayease.domain.admin.repository.AdminActionRepository;
 import com.stayease.domain.booking.entity.Booking;
@@ -221,14 +222,29 @@ public class AdminService {
     }
 
     /**
+     * Get all users for admin management with pagination and filters
+     */
+    @Transactional(readOnly = true)
+    public Page<UserManagementDTO> getAllUsers(Pageable pageable, String role, String status, String search) {
+        log.info("Fetching all users - page: {}, size: {}, role: {}, status: {}, search: {}", 
+                 pageable.getPageNumber(), pageable.getPageSize(), role, status, search);
+
+        Page<User> users = userRepository.findAll(pageable);
+        log.info("Found {} users out of {} total", users.getNumberOfElements(), users.getTotalElements());
+        return users.map(this::convertUserToDTO);
+    }
+
+    /**
      * Get all bookings for admin management with pagination and filters
      */
     @Transactional(readOnly = true)
     public Page<BookingManagementDTO> getAllBookings(Pageable pageable, String status, String search) {
-        log.info("Fetching all bookings for admin management with filters - status: {}, search: {}", status, search);
+        log.info("Fetching all bookings for admin management - page: {}, size: {}, status: {}, search: {}", 
+                 pageable.getPageNumber(), pageable.getPageSize(), status, search);
 
         // For now, use basic findAll - can be enhanced with custom repository methods later
         Page<Booking> bookings = bookingRepository.findAll(pageable);
+        log.info("Found {} bookings out of {} total", bookings.getNumberOfElements(), bookings.getTotalElements());
         return bookings.map(this::convertBookingToDTO);
     }
 
@@ -336,6 +352,33 @@ public class AdminService {
                 .instantBook(listing.getInstantBook())
                 .createdAt(listing.getCreatedAt())
                 .updatedAt(listing.getUpdatedAt())
+                .build();
+    }
+
+    /**
+     * Convert User entity to UserManagementDTO
+     */
+    private UserManagementDTO convertUserToDTO(User user) {
+        // Determine role from user authorities
+        String role = "USER";
+        if (user.getUserAuthorities() != null && !user.getUserAuthorities().isEmpty()) {
+            role = user.getUserAuthorities().stream()
+                    .findFirst()
+                    .map(ua -> ua.getAuthority().getName())
+                    .orElse("USER");
+        }
+
+        return UserManagementDTO.builder()
+                .publicId(user.getPublicId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .phoneNumber(user.getPhoneNumber())
+                .isActive(user.getIsActive())
+                .isVerified(user.getIsEmailVerified())
+                .role(role)
+                .createdAt(user.getCreatedAt() != null ? user.getCreatedAt().toInstant(java.time.ZoneOffset.UTC) : null)
+                .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt().toInstant(java.time.ZoneOffset.UTC) : null)
                 .build();
     }
 }

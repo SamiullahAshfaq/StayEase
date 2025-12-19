@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AdminService } from '../services/admin.service';
 import { BookingManagement } from '../services/admin.models';
+import { CsvExportService } from '../services/csv-export.service';
 
 @Component({
   selector: 'app-booking-management',
@@ -51,6 +52,12 @@ import { BookingManagement } from '../services/admin.models';
               Search
             </button>
             <button (click)="resetFilters()" class="btn-reset">Reset</button>
+            <button (click)="exportToCSV()" class="btn-export">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Export CSV
+            </button>
           </div>
         </div>
       </div>
@@ -99,7 +106,7 @@ import { BookingManagement } from '../services/admin.models';
             <tbody>
               <tr *ngFor="let booking of bookings()">
                 <td>
-                  <span class="booking-id">{{ booking.publicId.substring(0, 8) }}...</span>
+                  <span class="booking-id">{{ booking.publicId ? booking.publicId.substring(0, 8) + '...' : 'N/A' }}</span>
                 </td>
                 <td>
                   <div class="listing-info">
@@ -293,6 +300,23 @@ import { BookingManagement } from '../services/admin.models';
 
     .btn-reset:hover {
       background: #ebebeb;
+    }
+
+    .btn-export {
+      background: #10B981;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-export:hover {
+      background: #059669;
+    }
+
+    .btn-export svg {
+      width: 1rem;
+      height: 1rem;
     }
 
     /* Loading & Error States */
@@ -589,6 +613,7 @@ import { BookingManagement } from '../services/admin.models';
 })
 export class BookingManagementComponent implements OnInit {
   private adminService = inject(AdminService);
+  private csvExportService = inject(CsvExportService);
 
   bookings = signal<BookingManagement[]>([]);
   loading = signal(false);
@@ -666,6 +691,14 @@ export class BookingManagementComponent implements OnInit {
     this.searchTerm = '';
     this.currentPage.set(0);
     this.loadBookings();
+  }
+
+  exportToCSV() {
+    if (this.bookings().length === 0) {
+      alert('No bookings to export');
+      return;
+    }
+    this.csvExportService.exportBookings(this.bookings());
   }
 
   nextPage() {

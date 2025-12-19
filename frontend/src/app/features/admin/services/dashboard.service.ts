@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   DashboardStats,
@@ -9,6 +10,7 @@ import {
   UserChartData,
   ListingChartData
 } from './dashboard.models';
+import { ApiResponse } from './admin.models';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +22,23 @@ export class DashboardService {
   // Toggle this to enable/disable mock data for testing
   private useMockData = false;
 
-  getDashboardStats(): Observable<DashboardStats> {
+  getDashboardStats(params?: any): Observable<DashboardStats> {
     if (this.useMockData) {
       return of(this.getMockDashboardStats());
     }
-    return this.http.get<DashboardStats>(`${this.apiUrl}/stats`);
+    
+    let httpParams = new HttpParams();
+    if (params) {
+      Object.keys(params).forEach(key => {
+        if (params[key]) {
+          httpParams = httpParams.set(key, params[key]);
+        }
+      });
+    }
+    
+    return this.http.get<ApiResponse<DashboardStats>>(`${this.apiUrl}/stats`, { params: httpParams }).pipe(
+      map(response => response.data)
+    );
   }
 
   private getMockDashboardStats(): DashboardStats {
@@ -95,9 +109,11 @@ export class DashboardService {
     if (this.useMockData) {
       return of(this.getMockRevenueChart(days));
     }
-    return this.http.get<RevenueChartData>(`${this.apiUrl}/revenue-chart`, {
+    return this.http.get<ApiResponse<RevenueChartData>>(`${this.apiUrl}/revenue-chart`, {
       params: { days: days.toString() }
-    });
+    }).pipe(
+      map(response => response.data)
+    );
   }
 
   private getMockRevenueChart(days: number): RevenueChartData {
@@ -126,9 +142,11 @@ export class DashboardService {
     if (this.useMockData) {
       return of(this.getMockBookingChart(days));
     }
-    return this.http.get<BookingChartData>(`${this.apiUrl}/booking-chart`, {
+    return this.http.get<ApiResponse<BookingChartData>>(`${this.apiUrl}/booking-chart`, {
       params: { days: days.toString() }
-    });
+    }).pipe(
+      map(response => response.data)
+    );
   }
 
   private getMockBookingChart(days: number): BookingChartData {
@@ -158,9 +176,11 @@ export class DashboardService {
     if (this.useMockData) {
       return of(this.getMockUserChart(days));
     }
-    return this.http.get<UserChartData>(`${this.apiUrl}/user-chart`, {
+    return this.http.get<ApiResponse<UserChartData>>(`${this.apiUrl}/user-chart`, {
       params: { days: days.toString() }
-    });
+    }).pipe(
+      map(response => response.data)
+    );
   }
 
   private getMockUserChart(days: number): UserChartData {
@@ -193,7 +213,9 @@ export class DashboardService {
     if (this.useMockData) {
       return of(this.getMockListingChart());
     }
-    return this.http.get<ListingChartData>(`${this.apiUrl}/listing-chart`);
+    return this.http.get<ApiResponse<ListingChartData>>(`${this.apiUrl}/listing-chart`).pipe(
+      map(response => response.data)
+    );
   }
 
   private getMockListingChart(): ListingChartData {

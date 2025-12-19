@@ -8,7 +8,7 @@
 
     <!-- Filters Card -->
     <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <!-- Status Filter -->
         <div>
           <label for="status-filter" class="block text-sm font-semibold text-[#005461] mb-2">Status</label>
@@ -38,6 +38,21 @@
             </button>
           </div>
         </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-3">
+        <button (click)="resetFilters()"
+                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+          Reset Filters
+        </button>
+        <button (click)="exportToCSV()"
+                class="px-4 py-2 bg-[#10B981] text-white rounded-lg hover:bg-[#059669] transition-colors font-medium flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          Export CSV
+        </button>
       </div>
     </div>
 

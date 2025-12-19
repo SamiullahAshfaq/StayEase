@@ -1,28 +1,32 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { debounceTime, Subject } from 'rxjs';
 import { AdminService } from '../services/admin.service';
 import { UserManagement } from '../services/admin.models';
+import { CsvExportService } from '../services/csv-export.service';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.css'
 })
 export class UserManagementComponent implements OnInit {
   private adminService = inject(AdminService);
+  private csvExportService = inject(CsvExportService);
+  private searchSubject = new Subject<string>();
 
   users = signal<UserManagement[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
 
   // Filters
-  roleFilter = signal<string>('');
-  statusFilter = signal<string>('');
-  searchTerm = signal<string>('');
+  roleFilter = '';
+  statusFilter = '';
+  searchTerm = '';
 
   // Pagination
   currentPage = signal(0);
@@ -35,8 +39,33 @@ export class UserManagementComponent implements OnInit {
   showUserModal = signal(false);
   showDeleteConfirm = signal(false);
 
+  // Available filter options
+  roleOptions = ['ROLE_USER', 'ROLE_TENANT', 'ROLE_LANDLORD', 'ROLE_ADMIN'];
+  statusOptions = ['active', 'inactive'];
+
   ngOnInit() {
     this.loadUsers();
+    
+    // Setup search debouncing for better performance
+    this.searchSubject.pipe(
+      debounceTime(500)
+    ).subscribe(() => {
+      this.onSearch();
+    });
+  }
+
+  onSearchInput(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm = value;
+    this.searchSubject.next(value);
+  }
+
+  exportToCSV() {
+    if (this.users().length === 0) {
+      alert('No data to export');
+      return;
+    }
+    this.csvExportService.exportUsers(this.users());
   }
 
   loadUsers() {
@@ -46,9 +75,9 @@ export class UserManagementComponent implements OnInit {
     this.adminService.getUsers(
       this.currentPage(),
       this.pageSize(),
-      this.roleFilter() || undefined,
-      this.statusFilter() || undefined,
-      this.searchTerm() || undefined
+      this.roleFilter || undefined,
+      this.statusFilter || undefined,
+      this.searchTerm || undefined
     ).subscribe({
       next: (response) => {
         if (response.success && response.data) {
@@ -71,6 +100,14 @@ export class UserManagementComponent implements OnInit {
   }
 
   onSearch() {
+    this.currentPage.set(0);
+    this.loadUsers();
+  }
+
+  resetFilters() {
+    this.roleFilter = '';
+    this.statusFilter = '';
+    this.searchTerm = '';
     this.currentPage.set(0);
     this.loadUsers();
   }

@@ -7,6 +7,27 @@
         <p class="dashboard-subtitle">Welcome back! Here's what's happening with your platform.</p>
       </div>
       <div class="header-actions">
+        <!-- Date Range Picker -->
+        <div class="flex gap-3 items-center mr-4">
+          <input 
+            type="date" 
+            [(ngModel)]="startDate"
+            (change)="onDateRangeChange()"
+            placeholder="Start Date"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+          <input 
+            type="date" 
+            [(ngModel)]="endDate"
+            (change)="onDateRangeChange()"
+            placeholder="End Date"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+          <button 
+            (click)="resetDateRange()"
+            class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+            Reset
+          </button>
+        </div>
+        
         <div class="period-selector">
           <button
             [class.active]="selectedPeriod() === 7"
@@ -27,7 +48,7 @@
             90 Days
           </button>
         </div>
-        <button (click)="refresh()" class="refresh-btn">
+        <button (click)="loadDashboardData()" class="refresh-btn">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
           </svg>

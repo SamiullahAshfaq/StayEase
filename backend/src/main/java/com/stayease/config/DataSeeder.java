@@ -120,11 +120,13 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private Map<String, User> seedUsers() {
-        log.info("👥 Seeding users (40 landlords + admins + guests)...");
+        log.info("👥 Seeding users (40 landlords + admins + guests) with varied registration dates...");
         
         Map<String, User> users = new HashMap<>();
+        Random random = new Random(42);
+        LocalDateTime now = LocalDateTime.now();
         
-        // Admin user
+        // Admin user (registered 2 years ago)
         User admin = createUser(
                 "admin@stayease.com",
                 "Admin",
@@ -132,18 +134,21 @@ public class DataSeeder implements CommandLineRunner {
                 "+1234567890",
                 "/images/profiles/admin.jpg",
                 "System administrator with full access.",
-                true
+                true,
+                now.minusDays(730) // 2 years ago
         );
         admin = userRepository.save(admin);
         assignAuthorities(admin, "ROLE_ADMIN", "ROLE_USER");
         users.put("admin", admin);
 
-        // Regular users (guests) - 5 users
+        // Regular users (guests) - 5 users with varied registration dates
         String[] guestEmails = {"john.doe@example.com", "jane.smith@example.com", "bob.wilson@example.com", "alice.brown@example.com", "charlie.davis@example.com"};
         String[] guestFirstNames = {"John", "Jane", "Bob", "Alice", "Charlie"};
         String[] guestLastNames = {"Doe", "Smith", "Wilson", "Brown", "Davis"};
         
         for (int i = 0; i < 5; i++) {
+            // Guests registered between 6 months to 2 years ago
+            int daysAgo = 180 + random.nextInt(550); // 180-730 days ago
             User guest = createUser(
                     guestEmails[i],
                     guestFirstNames[i],
@@ -151,20 +156,23 @@ public class DataSeeder implements CommandLineRunner {
                     "+155500000" + (i + 1),
                     "/images/profiles/user-" + (10 + i) + ".jpg",
                     "Travel enthusiast and adventure seeker.",
-                    true
+                    true,
+                    now.minusDays(daysAgo)
             );
             guest = userRepository.save(guest);
             assignAuthorities(guest, "ROLE_USER");
             users.put("guest" + (i + 1), guest);
         }
 
-        // Landlords - 40 landlords for 40 listings
+        // Landlords - 40 landlords for 40 listings with varied registration dates
         String[] landlordFirstNames = {"Michael", "Sarah", "David", "Emma", "James", "Olivia", "Robert", "Sophia", "William", "Ava",
             "Richard", "Isabella", "Charles", "Mia", "Thomas", "Charlotte", "Daniel", "Amelia", "Matthew", "Harper",
             "Christopher", "Evelyn", "Andrew", "Abigail", "Joshua", "Emily", "Kevin", "Elizabeth", "Brian", "Sofia",
             "George", "Avery", "Kenneth", "Ella", "Steven", "Scarlett", "Edward", "Grace", "Ronald", "Chloe"};
 
         for (int i = 0; i < 40; i++) {
+            // Landlords registered between 3 months to 18 months ago
+            int daysAgo = 90 + random.nextInt(450); // 90-540 days ago
             User landlord = createUser(
                     "landlord" + (i + 1) + "@stayease.com",
                     landlordFirstNames[i],
@@ -172,18 +180,21 @@ public class DataSeeder implements CommandLineRunner {
                     "+1555010" + String.format("%03d", i + 1),
                     "/images/profiles/landlord-" + (i + 1) + ".jpg",
                     "Experienced property owner with unique listings.",
-                    true
+                    true,
+                    now.minusDays(daysAgo)
             );
             landlord = userRepository.save(landlord);
             assignAuthorities(landlord, "ROLE_LANDLORD", "ROLE_USER");
             users.put("landlord" + (i + 1), landlord);
         }
 
-        // Service Providers - 10 service providers for service offerings
+        // Service Providers - 10 service providers with varied registration dates
         String[] serviceProviderFirstNames = {"Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Avery", "Quinn", "Skyler", "Cameron"};
         String[] serviceProviderLastNames = {"Service", "Provider", "Expert", "Pro", "Specialist", "Professional", "Consultant", "Advisor", "Guide", "Helper"};
 
         for (int i = 0; i < 10; i++) {
+            // Service providers registered between 1 month to 12 months ago
+            int daysAgo = 30 + random.nextInt(335); // 30-365 days ago
             User serviceProvider = createUser(
                     "serviceprovider" + (i + 1) + "@stayease.com",
                     serviceProviderFirstNames[i],
@@ -191,7 +202,8 @@ public class DataSeeder implements CommandLineRunner {
                     "+1555020" + String.format("%02d", i + 1),
                     "/images/profiles/serviceprovider-" + (i + 1) + ".jpg",
                     "Professional service provider offering quality services.",
-                    true
+                    true,
+                    now.minusDays(daysAgo)
             );
             serviceProvider = userRepository.save(serviceProvider);
             assignAuthorities(serviceProvider, "ROLE_SERVICE_PROVIDER", "ROLE_USER");
@@ -203,8 +215,8 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private User createUser(String email, String firstName, String lastName, 
-                           String phone, String imageUrl, String bio, boolean verified) {
-        return User.builder()
+                           String phone, String imageUrl, String bio, boolean verified, LocalDateTime createdAt) {
+        User user = User.builder()
                 .publicId(UUID.randomUUID())
                 .email(email)
                 .password(passwordEncoder.encode("Password123!"))
@@ -217,6 +229,9 @@ public class DataSeeder implements CommandLineRunner {
                 .isPhoneVerified(verified)
                 .isActive(true)
                 .build();
+        // Set creation timestamp manually
+        user.setCreatedAt(createdAt);
+        return user;
     }
 
     private void assignAuthorities(User user, String... roleNames) {

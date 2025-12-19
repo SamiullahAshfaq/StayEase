@@ -10,7 +10,7 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { environment } from '../environments/environment';
 import { provideEchartsCore } from 'ngx-echarts';
-import * as echarts from 'echarts/core';
+import * as echarts from 'echarts';
 
 export const appConfig: ApplicationConfig = {
   providers: [

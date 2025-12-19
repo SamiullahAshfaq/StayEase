@@ -22,6 +22,7 @@ import com.stayease.domain.admin.dto.AdminActionDTO;
 import com.stayease.domain.admin.dto.AuditLogDTO;
 import com.stayease.domain.admin.dto.BookingManagementDTO;
 import com.stayease.domain.admin.dto.ListingManagementDTO;
+import com.stayease.domain.admin.dto.UserManagementDTO;
 import com.stayease.domain.admin.service.AdminService;
 import com.stayease.domain.admin.service.AuditService;
 import com.stayease.security.SecurityUtils;
@@ -92,6 +93,20 @@ public class AdminController {
     }
 
     // ======================== USER MANAGEMENT ========================
+
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Page<UserManagementDTO>>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String search) {
+        log.info("GET request to fetch all users with filters - page: {}, size: {}, role: {}, status: {}, search: {}", page, size, role, status, search);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserManagementDTO> users = adminService.getAllUsers(pageable, role, status, search);
+        return ResponseEntity.ok(ApiResponse.success(users, "Users retrieved successfully"));
+    }
 
     @PostMapping("/users/{userId}/suspend")
     @PreAuthorize("hasRole('ADMIN')")
