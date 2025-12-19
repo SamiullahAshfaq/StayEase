@@ -1,13 +1,15 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ListingService } from '../services/listing.service';
 import { Listing } from '../models/listing.model';
 import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 import { LandlordService } from '../../profile/services/landlord.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LocationMapComponent } from '../../../shared/components/location-map/location-map.component';
+import { Inject } from '@angular/core';
 
 interface Review {
   id: string;
@@ -33,10 +35,12 @@ interface Host {
   imports: [CommonModule, FormsModule, LocationMapComponent],
   templateUrl: './listing-detail.component.html'
 })
-export class ListingDetailComponent implements OnInit {
+export class ListingDetailComponent implements OnInit, OnDestroy {
   listing: Listing | null = null;
   loading = false;
   error: string | null = null;
+
+  private routeSubscription?: Subscription;
 
   // Image gallery
   showAllPhotos = false;
@@ -123,22 +127,34 @@ export class ListingDetailComponent implements OnInit {
     };
   }
 
-  private listingService = inject(ListingService);
-  private landlordService = inject(LandlordService);
-  private authService = inject(AuthService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private document = inject(DOCUMENT);
-
-  constructor() {
+  constructor(
+    private listingService: ListingService,
+    private landlordService: LandlordService,
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+    @Inject(DOCUMENT) private document: Document
+  ) {
     this.today = new Date().toISOString().split('T')[0];
     this.currentUrl = this.document.location.href;
   }
 
   ngOnInit(): void {
-    const publicId = this.route.snapshot.paramMap.get('id');
-    if (publicId) {
-      this.loadListing(publicId);
+    // Subscribe to route params to handle navigation between different listings
+    this.routeSubscription = this.route.paramMap.subscribe(params => {
+      const publicId = params.get('id');
+      if (publicId) {
+        this.loadListing(publicId);
+        // Scroll to top when navigating to a new listing
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscription to prevent memory leaks
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
     }
   }
 
