@@ -16,15 +16,22 @@ app-listing-create .create-listing-container {
   background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 50%, #fef5f7 100%);
   background-size: 200% 200%;
   animation: gradientShift 15s ease infinite;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
   position: relative;
   overflow-x: hidden;
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Decorative Background Elements */
@@ -57,16 +64,23 @@ app-listing-create .create-listing-container::after {
 }
 
 @keyframes float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(30px, -30px) rotate(5deg); }
-  66% { transform: translate(-20px, 20px) rotate(-5deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, -30px) rotate(5deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) rotate(-5deg);
+  }
 }
 
 /* === PREMIUM PROGRESS HEADER === */
 app-listing-create .progress-header {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 50;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid rgba(229, 231, 235, 0.8);
@@ -111,8 +125,13 @@ app-listing-create .header-content h1 {
 }
 
 @keyframes titlePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.95; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
 }
 
 app-listing-create .cancel-btn {
@@ -176,8 +195,13 @@ app-listing-create .progress-fill {
 }
 
 @keyframes progressGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255, 56, 92, 0.5), 0 0 40px rgba(255, 56, 92, 0.3); }
-  50% { box-shadow: 0 0 30px rgba(255, 56, 92, 0.7), 0 0 60px rgba(255, 56, 92, 0.5); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 56, 92, 0.5), 0 0 40px rgba(255, 56, 92, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 56, 92, 0.7), 0 0 60px rgba(255, 56, 92, 0.5);
+  }
 }
 
 app-listing-create .progress-fill::after {
@@ -197,8 +221,12 @@ app-listing-create .progress-fill::after {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 /* Progress pulse effect */
@@ -219,8 +247,12 @@ app-listing-create .progress-fill::after {
 }
 
 @keyframes shimmerOverlay {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 /* === PREMIUM STEP INDICATORS === */
@@ -284,8 +316,13 @@ app-listing-create .step-indicator.active {
 }
 
 @keyframes activeStepPulse {
-  0%, 100% { box-shadow: 0 12px 40px rgba(255, 56, 92, 0.4), 0 0 0 4px rgba(255, 56, 92, 0.1); }
-  50% { box-shadow: 0 16px 48px rgba(255, 56, 92, 0.5), 0 0 0 6px rgba(255, 56, 92, 0.15); }
+  0%,
+  100% {
+    box-shadow: 0 12px 40px rgba(255, 56, 92, 0.4), 0 0 0 4px rgba(255, 56, 92, 0.1);
+  }
+  50% {
+    box-shadow: 0 16px 48px rgba(255, 56, 92, 0.5), 0 0 0 6px rgba(255, 56, 92, 0.15);
+  }
 }
 
 app-listing-create .step-indicator.completed {
@@ -296,9 +333,17 @@ app-listing-create .step-indicator.completed {
 }
 
 @keyframes completedBounce {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 app-listing-create .step-number {
@@ -337,8 +382,12 @@ app-listing-create .step-indicator.completed .step-number::after {
 }
 
 @keyframes checkmarkPop {
-  0% { transform: scale(0) rotate(-45deg); }
-  100% { transform: scale(1) rotate(0deg); }
+  0% {
+    transform: scale(0) rotate(-45deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 app-listing-create .step-label {
@@ -521,8 +570,13 @@ app-listing-create .selection-card.selected {
 }
 
 @keyframes selectedPulse {
-  0%, 100% { box-shadow: 0 20px 60px rgba(255, 56, 92, 0.25), 0 0 0 4px rgba(255, 56, 92, 0.1); }
-  50% { box-shadow: 0 24px 72px rgba(255, 56, 92, 0.3), 0 0 0 6px rgba(255, 56, 92, 0.15); }
+  0%,
+  100% {
+    box-shadow: 0 20px 60px rgba(255, 56, 92, 0.25), 0 0 0 4px rgba(255, 56, 92, 0.1);
+  }
+  50% {
+    box-shadow: 0 24px 72px rgba(255, 56, 92, 0.3), 0 0 0 6px rgba(255, 56, 92, 0.15);
+  }
 }
 
 app-listing-create .selection-card svg {
@@ -634,8 +688,13 @@ app-listing-create .form-textarea:focus {
 }
 
 @keyframes inputGlow {
-  0%, 100% { box-shadow: 0 0 0 6px rgba(255, 56, 92, 0.12), 0 8px 24px rgba(255, 56, 92, 0.15); }
-  50% { box-shadow: 0 0 0 8px rgba(255, 56, 92, 0.15), 0 12px 32px rgba(255, 56, 92, 0.2); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 6px rgba(255, 56, 92, 0.12), 0 8px 24px rgba(255, 56, 92, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 56, 92, 0.15), 0 12px 32px rgba(255, 56, 92, 0.2);
+  }
 }
 
 /* === NUMBER COUNTER === */
@@ -723,9 +782,15 @@ app-listing-create .counter-btn:active:not(:disabled) {
 }
 
 @keyframes counterPop {
-  0% { transform: scale(1.1); }
-  50% { transform: scale(0.95); }
-  100% { transform: scale(1.05); }
+  0% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1.05);
+  }
 }
 
 app-listing-create .counter-btn:disabled {
@@ -814,9 +879,15 @@ app-listing-create .amenity-checkbox.checked .amenity-icon {
 }
 
 @keyframes iconBounce {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3) rotate(-10deg); }
-  100% { transform: scale(1.1) rotate(0deg); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3) rotate(-10deg);
+  }
+  100% {
+    transform: scale(1.1) rotate(0deg);
+  }
 }
 
 app-listing-create .amenity-checkbox:hover {
@@ -834,9 +905,15 @@ app-listing-create .amenity-checkbox.checked {
 }
 
 @keyframes checkboxPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 app-listing-create .amenity-checkbox input[type='checkbox'] {
@@ -855,9 +932,15 @@ app-listing-create .amenity-checkbox input[type='checkbox']:checked {
 }
 
 @keyframes checkPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 app-listing-create .amenity-checkbox label {
@@ -922,8 +1005,13 @@ app-listing-create .image-upload-zone:hover {
 }
 
 @keyframes uploadZonePulse {
-  0%, 100% { border-color: #ff385c; }
-  50% { border-color: #e61e4d; }
+  0%,
+  100% {
+    border-color: #ff385c;
+  }
+  50% {
+    border-color: #e61e4d;
+  }
 }
 
 app-listing-create .upload-icon {
@@ -936,8 +1024,13 @@ app-listing-create .upload-icon {
 }
 
 @keyframes iconGlow {
-  0%, 100% { filter: drop-shadow(0 4px 12px rgba(107, 114, 128, 0.3)); }
-  50% { filter: drop-shadow(0 6px 20px rgba(255, 56, 92, 0.5)); }
+  0%,
+  100% {
+    filter: drop-shadow(0 4px 12px rgba(107, 114, 128, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 6px 20px rgba(255, 56, 92, 0.5));
+  }
 }
 
 app-listing-create .image-upload-zone:hover .upload-icon {
@@ -946,9 +1039,16 @@ app-listing-create .image-upload-zone:hover .upload-icon {
 }
 
 @keyframes iconRotate {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  25% { transform: rotate(-5deg) translateY(-10px); }
-  75% { transform: rotate(5deg) translateY(-10px); }
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  25% {
+    transform: rotate(-5deg) translateY(-10px);
+  }
+  75% {
+    transform: rotate(5deg) translateY(-10px);
+  }
 }
 
 app-listing-create .upload-text {
@@ -967,8 +1067,13 @@ app-listing-create .image-upload-zone:hover .upload-text {
 }
 
 @keyframes textPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 app-listing-create .upload-hint {
@@ -998,8 +1103,14 @@ app-listing-create .image-preview-item {
 }
 
 @keyframes imageAppear {
-  0% { opacity: 0; transform: scale(0.8) rotate(-5deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotate(-5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 app-listing-create .image-preview-item:hover {
@@ -1128,7 +1239,6 @@ app-listing-create .image-add-more:hover .add-text {
   transform: scale(1.1);
 }
 
-
 /* === ULTRA-PREMIUM PRICING INPUT === */
 app-listing-create .price-input-wrapper {
   position: relative;
@@ -1237,8 +1347,13 @@ app-listing-create .preview-title::after {
 }
 
 @keyframes titleUnderline {
-  0%, 100% { width: 80px; }
-  50% { width: 120px; }
+  0%,
+  100% {
+    width: 80px;
+  }
+  50% {
+    width: 120px;
+  }
 }
 
 app-listing-create .preview-grid {
@@ -1349,8 +1464,13 @@ app-listing-create .nav-btn-primary {
 }
 
 @keyframes gradientFlow {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 app-listing-create .nav-btn-primary:hover:not(:disabled) {
@@ -1383,12 +1503,19 @@ app-listing-create .loading-spinner {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes spinnerGlow {
-  0%, 100% { filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8)); }
-  50% { filter: drop-shadow(0 0 6px rgba(255, 255, 255, 1)); }
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 1));
+  }
 }
 
 /* === ULTRA-PREMIUM ERROR & VALIDATION STYLES === */
@@ -1409,14 +1536,27 @@ app-listing-create .error-message {
 }
 
 @keyframes errorShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  75% {
+    transform: translateX(10px);
+  }
 }
 
 @keyframes errorFadeIn {
-  0% { opacity: 0; transform: translateY(-10px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 app-listing-create .error-message::before {
@@ -1426,8 +1566,13 @@ app-listing-create .error-message::before {
 }
 
 @keyframes errorIconPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
 }
 
 app-listing-create .success-message {
@@ -1447,8 +1592,14 @@ app-listing-create .success-message {
 }
 
 @keyframes successSlideIn {
-  0% { opacity: 0; transform: translateX(-20px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 app-listing-create .success-message::before {
@@ -1467,9 +1618,15 @@ app-listing-create .success-message::before {
 }
 
 @keyframes successCheckPop {
-  0% { transform: scale(0) rotate(-180deg); }
-  50% { transform: scale(1.2) rotate(10deg); }
-  100% { transform: scale(1) rotate(0deg); }
+  0% {
+    transform: scale(0) rotate(-180deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 app-listing-create .form-group.error input,
@@ -1481,9 +1638,16 @@ app-listing-create .form-group.error select {
 }
 
 @keyframes inputErrorShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-8px); }
-  75% { transform: translateX(8px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
 }
 
 app-listing-create .form-group.error input:focus,
@@ -1522,9 +1686,16 @@ app-listing-create .validation-icon.error {
 }
 
 @keyframes errorIconShake {
-  0%, 100% { transform: translateY(-50%) rotate(0deg); }
-  25% { transform: translateY(-50%) rotate(-15deg); }
-  75% { transform: translateY(-50%) rotate(15deg); }
+  0%,
+  100% {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-50%) rotate(-15deg);
+  }
+  75% {
+    transform: translateY(-50%) rotate(15deg);
+  }
 }
 
 app-listing-create .validation-icon.success {
@@ -1533,9 +1704,15 @@ app-listing-create .validation-icon.success {
 }
 
 @keyframes successIconPop {
-  0% { transform: translateY(-50%) scale(0); }
-  50% { transform: translateY(-50%) scale(1.3); }
-  100% { transform: translateY(-50%) scale(1); }
+  0% {
+    transform: translateY(-50%) scale(0);
+  }
+  50% {
+    transform: translateY(-50%) scale(1.3);
+  }
+  100% {
+    transform: translateY(-50%) scale(1);
+  }
 }
 
 /* === RESPONSIVE === */
