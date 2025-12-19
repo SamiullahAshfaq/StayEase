@@ -8,6 +8,7 @@ import { Listing } from '../../listing/models/listing.model';
 import { BookingAddon } from '../models/booking.model';
 import { ServiceOfferingService } from '../../service-offering/services/service-offering.service';
 import { ServiceCategory } from '../../service-offering/models/service-offering.model';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 @Component({
   selector: 'app-booking-create',

@@ -69,7 +69,7 @@ public class AuthController {
     }
 
     @PostMapping("/change-password")
-    @PreAuthorize("hasAnyAuthority('USER', 'LANDLORD', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'LANDLORD', 'ADMIN')")
     public ResponseEntity<ApiResponse<Void>> changePassword(
             @Valid @RequestBody ChangePasswordRequest request) {
         log.info("POST request to change password for current user");
@@ -87,7 +87,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasAnyAuthority('USER', 'LANDLORD', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'LANDLORD', 'ADMIN')")
     public ResponseEntity<ApiResponse<UserDTO>> getCurrentUser() {
         log.info("GET request to fetch current authenticated user");
         UUID currentUserId = SecurityUtils.getCurrentUserId();

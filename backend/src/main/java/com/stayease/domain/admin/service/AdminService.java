@@ -1,6 +1,18 @@
 package com.stayease.domain.admin.service;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.stayease.domain.admin.dto.AdminActionDTO;
+import com.stayease.domain.admin.dto.BookingManagementDTO;
+import com.stayease.domain.admin.dto.ListingManagementDTO;
 import com.stayease.domain.admin.entity.AdminAction;
 import com.stayease.domain.admin.repository.AdminActionRepository;
 import com.stayease.domain.booking.entity.Booking;
@@ -10,17 +22,9 @@ import com.stayease.domain.listing.repository.ListingRepository;
 import com.stayease.domain.user.entity.User;
 import com.stayease.domain.user.repository.UserRepository;
 import com.stayease.exception.NotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -217,6 +221,30 @@ public class AdminService {
     }
 
     /**
+     * Get all bookings for admin management with pagination and filters
+     */
+    @Transactional(readOnly = true)
+    public Page<BookingManagementDTO> getAllBookings(Pageable pageable, String status, String search) {
+        log.info("Fetching all bookings for admin management with filters - status: {}, search: {}", status, search);
+
+        // For now, use basic findAll - can be enhanced with custom repository methods later
+        Page<Booking> bookings = bookingRepository.findAll(pageable);
+        return bookings.map(this::convertBookingToDTO);
+    }
+
+    /**
+     * Get all listings for admin management with pagination and filters
+     */
+    @Transactional(readOnly = true)
+    public Page<ListingManagementDTO> getAllListings(Pageable pageable, String status, String search) {
+        log.info("Fetching all listings for admin management with filters - status: {}, search: {}", status, search);
+
+        // For now, use basic findAll - can be enhanced with custom repository methods later
+        Page<Listing> listings = listingRepository.findAll(pageable);
+        return listings.map(this::convertListingToDTO);
+    }
+
+    /**
      * Record an admin action
      */
     private void recordAdminAction(UUID adminPublicId, String actionType,
@@ -253,5 +281,61 @@ public class AdminService {
         });
 
         return dto;
+    }
+
+    /**
+     * Convert Booking entity to BookingManagementDTO
+     */
+    private BookingManagementDTO convertBookingToDTO(Booking booking) {
+        // Fetch related entities
+        Listing listing = listingRepository.findByPublicId(booking.getListingPublicId()).orElse(null);
+        User guest = userRepository.findByPublicId(booking.getGuestPublicId()).orElse(null);
+        User landlord = listing != null ? userRepository.findByPublicId(listing.getLandlordPublicId()).orElse(null) : null;
+
+        return BookingManagementDTO.builder()
+                .publicId(booking.getPublicId())
+                .listingTitle(listing != null ? listing.getTitle() : "Unknown Listing")
+                .listingLocation(listing != null ? listing.getLocation() : "Unknown Location")
+                .guestName(guest != null ? guest.getFirstName() + " " + guest.getLastName() : "Unknown Guest")
+                .guestEmail(guest != null ? guest.getEmail() : "Unknown Email")
+                .landlordName(landlord != null ? landlord.getFirstName() + " " + landlord.getLastName() : "Unknown Landlord")
+                .landlordEmail(landlord != null ? landlord.getEmail() : "Unknown Email")
+                .checkInDate(booking.getCheckInDate())
+                .checkOutDate(booking.getCheckOutDate())
+                .numberOfGuests(booking.getNumberOfGuests())
+                .totalPrice(booking.getTotalPrice())
+                .currency(booking.getCurrency())
+                .bookingStatus(booking.getBookingStatus().name())
+                .paymentStatus(booking.getPaymentStatus().name())
+                .createdAt(booking.getCreatedAt())
+                .updatedAt(booking.getUpdatedAt())
+                .build();
+    }
+
+    /**
+     * Convert Listing entity to ListingManagementDTO
+     */
+    private ListingManagementDTO convertListingToDTO(Listing listing) {
+        // Fetch landlord details
+        User landlord = userRepository.findByPublicId(listing.getLandlordPublicId()).orElse(null);
+
+        return ListingManagementDTO.builder()
+                .publicId(listing.getPublicId())
+                .title(listing.getTitle())
+                .location(listing.getLocation())
+                .city(listing.getCity())
+                .country(listing.getCountry())
+                .landlordName(landlord != null ? landlord.getFirstName() + " " + landlord.getLastName() : "Unknown Landlord")
+                .landlordEmail(landlord != null ? landlord.getEmail() : "Unknown Email")
+                .pricePerNight(listing.getPricePerNight())
+                .currency(listing.getCurrency())
+                .maxGuests(listing.getMaxGuests())
+                .propertyType(listing.getPropertyType())
+                .category(listing.getCategory())
+                .status(listing.getStatus().name())
+                .instantBook(listing.getInstantBook())
+                .createdAt(listing.getCreatedAt())
+                .updatedAt(listing.getUpdatedAt())
+                .build();
     }
 }

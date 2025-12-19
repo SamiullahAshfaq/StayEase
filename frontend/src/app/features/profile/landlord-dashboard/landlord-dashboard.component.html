@@ -507,7 +507,7 @@
                       </span>
                     </div>
                     <div class="listing-price">
-                      {{ formatPrice(listing.basePrice) }}<span>/night</span>
+                      {{ formatPrice(listing.pricePerNight) }}<span>/night</span>
                     </div>
                   </div>
                   <button class="edit-btn" (click)="editListing(listing.publicId, $event)">

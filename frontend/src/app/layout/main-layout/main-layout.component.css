@@ -65,6 +65,33 @@
   color: var(--primary);
 }
 
+/* Admin Button - Prominent styling */
+.admin-button {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(1, 135, 144, 0.2);
+}
+
+.admin-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(1, 135, 144, 0.3);
+  filter: brightness(1.05);
+}
+
+.admin-button svg {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
 .globe-button {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }

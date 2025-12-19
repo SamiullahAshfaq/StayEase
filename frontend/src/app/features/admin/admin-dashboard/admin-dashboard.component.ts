@@ -28,11 +28,14 @@ import { ListingChartComponent } from '../components/listing-chart/listing-chart
 })
 export class AdminDashboardComponent implements OnInit {
   private dashboardService = inject(DashboardService);
-  
+
   stats = signal<DashboardStats | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
   selectedPeriod = signal<number>(30);
+
+  // Active tab
+  activeTab = signal<'overview' | 'users' | 'listings' | 'bookings' | 'revenue' | 'reports' | 'settings'>('overview');
 
   ngOnInit() {
     this.loadDashboardData();

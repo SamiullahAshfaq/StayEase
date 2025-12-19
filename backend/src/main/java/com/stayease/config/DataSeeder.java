@@ -2,10 +2,12 @@ package com.stayease.config;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.boot.CommandLineRunner;
@@ -21,6 +23,10 @@ import com.stayease.domain.booking.repository.BookingRepository;
 import com.stayease.domain.listing.entity.Listing;
 import com.stayease.domain.listing.entity.ListingImage;
 import com.stayease.domain.listing.repository.ListingRepository;
+import com.stayease.domain.payment.entity.Payment;
+import com.stayease.domain.payment.repository.PaymentRepository;
+import com.stayease.domain.review.entity.Review;
+import com.stayease.domain.review.repository.ReviewRepository;
 import com.stayease.domain.serviceoffering.entity.ServiceImage;
 import com.stayease.domain.serviceoffering.entity.ServiceOffering;
 import com.stayease.domain.serviceoffering.entity.ServiceOffering.PricingType;
@@ -53,6 +59,8 @@ public class DataSeeder implements CommandLineRunner {
     private final UserAuthorityRepository userAuthorityRepository;
     private final ListingRepository listingRepository;
     private final BookingRepository bookingRepository;
+    private final PaymentRepository paymentRepository;
+    private final ReviewRepository reviewRepository;
     private final ServiceOfferingRepository serviceOfferingRepository;
     private final ServiceImageRepository serviceImageRepository;
     private final PasswordEncoder passwordEncoder;
@@ -72,13 +80,23 @@ public class DataSeeder implements CommandLineRunner {
             seedAuthorities();
             Map<String, User> users = seedUsers();
             Map<String, Listing> listings = seedAllListings(users);
-            seedBookings(users, listings);
+            Map<String, Booking> bookings = seedBookings(users, listings);
             Map<String, ServiceOffering> services = seedServiceOfferings(users);
+            seedPayments(bookings);
+            seedReviews(bookings, users);
 
-            log.info("✅ Comprehensive data seeding completed successfully!");
-            log.info("📈 Created {} users, {} listings, {} bookings, {} service offerings", 
-                users.size(), listings.size(), bookingRepository.count(), services.size());
-            log.info("🎯 Database is ready with complete data: Users, Listings, Services & Bookings");
+            log.info("=".repeat(80));
+            log.info("✅ COMPREHENSIVE DATA SEEDING COMPLETED SUCCESSFULLY!");
+            log.info("📊 Complete Platform Summary:");
+            log.info("   - {} Authorities (Roles)", authorityRepository.count());
+            log.info("   - {} Users (Admin, Landlords, Guests, Service Providers)", userRepository.count());
+            log.info("   - {} Listings (Properties)", listingRepository.count());
+            log.info("   - {} Bookings (Reservations)", bookingRepository.count());
+            log.info("   - {} Payments (Transactions)", paymentRepository.count());
+            log.info("   - {} Reviews (Guest Feedback)", reviewRepository.count());
+            log.info("   - {} Service Offerings", serviceOfferingRepository.count());
+            log.info("🎉 Database is now populated with comprehensive analytics-ready data!");
+            log.info("💰 Total Platform Revenue: ${}", calculateTotalRevenue());
             log.info("=".repeat(80));
         } catch (Exception e) {
             log.error("❌ Error during data seeding: ", e);
@@ -318,53 +336,201 @@ public class DataSeeder implements CommandLineRunner {
                 .build();
     }
 
-    private void seedBookings(Map<String, User> users, Map<String, Listing> listings) {
-        log.info("📅 Seeding bookings...");
+    private Map<String, Booking> seedBookings(Map<String, User> users, Map<String, Listing> listings) {
+        log.info("=".repeat(80));
+        log.info("📅 Starting Comprehensive Booking Seeding Process...");
+        log.info("📦 Creating 120 bookings with diverse statuses, dates, and price ranges");
+        log.info("=".repeat(80));
         
-        User guest1 = users.get("guest1");
-        User guest2 = users.get("guest2");
-
-        // Sample bookings
-        Booking booking1 = createBooking(
-                listings.get("lst-001"),
-                guest1,
-                LocalDate.of(2025, 12, 15),
-                LocalDate.of(2025, 12, 20),
-                4,
-                new BigDecimal("4250.00"),
-                BookingStatus.CONFIRMED,
-                PaymentStatus.PAID,
-                "Late check-in around 10 PM. Need parking for 2 cars."
+        Map<String, Booking> bookings = new HashMap<>();
+        LocalDate today = LocalDate.now();
+        Random random = new Random(42); // Fixed seed for reproducibility
+        
+        List<User> guests = Arrays.asList(
+            users.get("guest1"), users.get("guest2"), users.get("guest3"), 
+            users.get("guest4"), users.get("guest5")
         );
-        bookingRepository.save(booking1);
-
-        Booking booking2 = createBooking(
-                listings.get("lst-005"),
-                guest1,
-                LocalDate.of(2026, 2, 10),
-                LocalDate.of(2026, 2, 17),
-                2,
-                new BigDecimal("2695.00"),
-                BookingStatus.CONFIRMED,
-                PaymentStatus.PAID,
-                "Anniversary trip!"
+        
+        List<String> specialRequests = Arrays.asList(
+            "Late check-in around 10 PM. Need parking for 2 cars.",
+            "Anniversary trip! Would love restaurant recommendations.",
+            "Traveling with small dog (under 20 lbs). Already confirmed pet-friendly.",
+            "Early check-in requested if possible.",
+            "Need cribs for 2 toddlers.",
+            "Celebrating birthday - any special touches appreciated!",
+            "Business trip - need strong WiFi and workspace.",
+            null, null, null // Some bookings have no special requests
         );
-        bookingRepository.save(booking2);
-
-        Booking booking3 = createBooking(
-                listings.get("lst-011"),
-                guest2,
-                LocalDate.of(2024, 11, 20),
-                LocalDate.of(2024, 11, 25),
-                2,
-                new BigDecimal("2475.00"),
+        
+        int bookingCounter = 1;
+        
+        // Past completed bookings (60 bookings) - for analytics history
+        log.info("📝 Creating 60 past COMPLETED bookings (last 6 months)...");
+        for (int i = 0; i < 60; i++) {
+            String listingKey = "lst-" + String.format("%03d", (i % 40) + 1);
+            User guest = guests.get(random.nextInt(guests.size()));
+            
+            // Random dates in the past 6 months
+            int daysAgo = random.nextInt(180) + 10; // 10-190 days ago
+            int duration = random.nextInt(10) + 2; // 2-11 nights
+            LocalDate checkIn = today.minusDays(daysAgo + duration);
+            LocalDate checkOut = checkIn.plusDays(duration);
+            
+            int numberOfGuests = random.nextInt(4) + 1; // 1-4 guests
+            BigDecimal basePrice = new BigDecimal(random.nextInt(300) + 100); // $100-$399/night
+            BigDecimal totalPrice = basePrice.multiply(new BigDecimal(duration));
+            
+            Booking booking = createBooking(
+                listings.get(listingKey),
+                guest,
+                checkIn,
+                checkOut,
+                numberOfGuests,
+                totalPrice,
                 BookingStatus.CHECKED_OUT,
                 PaymentStatus.PAID,
-                null
-        );
-        bookingRepository.save(booking3);
-
-        log.info("Created {} bookings", bookingRepository.count());
+                i < 15 ? specialRequests.get(random.nextInt(specialRequests.size())) : null
+            );
+            booking = bookingRepository.save(booking);
+            bookings.put("booking-" + String.format("%03d", bookingCounter++), booking);
+        }
+        
+        // Current active bookings (25 bookings) - guests currently checked in
+        log.info("📝 Creating 25 current ACTIVE bookings (checked in now)...");
+        for (int i = 0; i < 25; i++) {
+            String listingKey = "lst-" + String.format("%03d", (i % 40) + 1);
+            User guest = guests.get(random.nextInt(guests.size()));
+            
+            // Checked in within last 5 days, checking out in next 3-10 days
+            int checkedInDaysAgo = random.nextInt(5);
+            int remainingDays = random.nextInt(8) + 3; // 3-10 days remaining
+            LocalDate checkIn = today.minusDays(checkedInDaysAgo);
+            LocalDate checkOut = today.plusDays(remainingDays);
+            int duration = (int) java.time.temporal.ChronoUnit.DAYS.between(checkIn, checkOut);
+            
+            int numberOfGuests = random.nextInt(4) + 1;
+            BigDecimal basePrice = new BigDecimal(random.nextInt(400) + 150); // $150-$549/night
+            BigDecimal totalPrice = basePrice.multiply(new BigDecimal(duration));
+            
+            Booking booking = createBooking(
+                listings.get(listingKey),
+                guest,
+                checkIn,
+                checkOut,
+                numberOfGuests,
+                totalPrice,
+                BookingStatus.CHECKED_IN,
+                PaymentStatus.PAID,
+                specialRequests.get(random.nextInt(specialRequests.size()))
+            );
+            booking = bookingRepository.save(booking);
+            bookings.put("booking-" + String.format("%03d", bookingCounter++), booking);
+        }
+        
+        // Upcoming confirmed bookings (20 bookings) - future reservations
+        log.info("📝 Creating 20 upcoming CONFIRMED bookings (next 3 months)...");
+        for (int i = 0; i < 20; i++) {
+            String listingKey = "lst-" + String.format("%03d", (i % 40) + 1);
+            User guest = guests.get(random.nextInt(guests.size()));
+            
+            // Check-in 1-90 days in future
+            int daysUntilCheckIn = random.nextInt(90) + 1;
+            int duration = random.nextInt(10) + 2;
+            LocalDate checkIn = today.plusDays(daysUntilCheckIn);
+            LocalDate checkOut = checkIn.plusDays(duration);
+            
+            int numberOfGuests = random.nextInt(4) + 1;
+            BigDecimal basePrice = new BigDecimal(random.nextInt(350) + 120);
+            BigDecimal totalPrice = basePrice.multiply(new BigDecimal(duration));
+            
+            Booking booking = createBooking(
+                listings.get(listingKey),
+                guest,
+                checkIn,
+                checkOut,
+                numberOfGuests,
+                totalPrice,
+                BookingStatus.CONFIRMED,
+                PaymentStatus.PAID,
+                specialRequests.get(random.nextInt(specialRequests.size()))
+            );
+            booking = bookingRepository.save(booking);
+            bookings.put("booking-" + String.format("%03d", bookingCounter++), booking);
+        }
+        
+        // Pending bookings (8 bookings) - awaiting confirmation
+        log.info("📝 Creating 8 PENDING bookings (awaiting confirmation)...");
+        for (int i = 0; i < 8; i++) {
+            String listingKey = "lst-" + String.format("%03d", (i % 40) + 1);
+            User guest = guests.get(random.nextInt(guests.size()));
+            
+            int daysUntilCheckIn = random.nextInt(60) + 5;
+            int duration = random.nextInt(8) + 3;
+            LocalDate checkIn = today.plusDays(daysUntilCheckIn);
+            LocalDate checkOut = checkIn.plusDays(duration);
+            
+            int numberOfGuests = random.nextInt(4) + 1;
+            BigDecimal basePrice = new BigDecimal(random.nextInt(300) + 100);
+            BigDecimal totalPrice = basePrice.multiply(new BigDecimal(duration));
+            
+            Booking booking = createBooking(
+                listings.get(listingKey),
+                guest,
+                checkIn,
+                checkOut,
+                numberOfGuests,
+                totalPrice,
+                BookingStatus.PENDING,
+                PaymentStatus.PENDING,
+                specialRequests.get(random.nextInt(specialRequests.size()))
+            );
+            booking = bookingRepository.save(booking);
+            bookings.put("booking-" + String.format("%03d", bookingCounter++), booking);
+        }
+        
+        // Cancelled bookings (7 bookings) - for cancellation rate analytics
+        log.info("📝 Creating 7 CANCELLED bookings (various reasons)...");
+        for (int i = 0; i < 7; i++) {
+            String listingKey = "lst-" + String.format("%03d", (i % 40) + 1);
+            User guest = guests.get(random.nextInt(guests.size()));
+            
+            // Mix of past and future cancelled bookings
+            int daysOffset = random.nextInt(120) - 60; // -60 to +60 days
+            int duration = random.nextInt(7) + 2;
+            LocalDate checkIn = today.plusDays(daysOffset);
+            LocalDate checkOut = checkIn.plusDays(duration);
+            
+            int numberOfGuests = random.nextInt(4) + 1;
+            BigDecimal basePrice = new BigDecimal(random.nextInt(300) + 100);
+            BigDecimal totalPrice = basePrice.multiply(new BigDecimal(duration));
+            
+            Booking booking = createBooking(
+                listings.get(listingKey),
+                guest,
+                checkIn,
+                checkOut,
+                numberOfGuests,
+                totalPrice,
+                BookingStatus.CANCELLED,
+                i < 3 ? PaymentStatus.REFUNDED : PaymentStatus.PENDING,
+                specialRequests.get(random.nextInt(specialRequests.size()))
+            );
+            booking = bookingRepository.save(booking);
+            bookings.put("booking-" + String.format("%03d", bookingCounter++), booking);
+        }
+        
+        log.info("=".repeat(80));
+        log.info("✅ BOOKING SEEDING COMPLETED!");
+        log.info("📊 Summary: {} bookings created", bookings.size());
+        log.info("   - 60 COMPLETED (past 6 months) for analytics history");
+        log.info("   - 25 CHECKED_IN (current active guests)");
+        log.info("   - 20 CONFIRMED (upcoming reservations)");
+        log.info("   - 8 PENDING (awaiting confirmation)");
+        log.info("   - 7 CANCELLED (for cancellation rate metrics)");
+        log.info("🎉 Bookings span past 6 months to 3 months future!");
+        log.info("=".repeat(80));
+        
+        return bookings;
     }
 
     private Booking createBooking(Listing listing, User guest, LocalDate checkIn, 
@@ -387,6 +553,138 @@ public class DataSeeder implements CommandLineRunner {
                 .paymentStatus(paymentStatus)
                 .specialRequests(specialRequests)
                 .build();
+    }
+
+    private void seedPayments(Map<String, Booking> bookings) {
+        log.info("=".repeat(80));
+        log.info("💳 Starting Payment Seeding Process...");
+        log.info("📦 Creating payments for all paid and pending bookings");
+        log.info("=".repeat(80));
+        
+        Random random = new Random(42);
+        int paymentCounter = 0;
+        
+        List<String> paymentMethods = Arrays.asList("CREDIT_CARD", "DEBIT_CARD", "PAYPAL", "BANK_TRANSFER", "STRIPE");
+        
+        for (Map.Entry<String, Booking> entry : bookings.entrySet()) {
+            Booking booking = entry.getValue();
+            
+            // Only create payments for bookings that require payment
+            if (booking.getPaymentStatus() == PaymentStatus.PAID || 
+                booking.getPaymentStatus() == PaymentStatus.PENDING ||
+                booking.getPaymentStatus() == PaymentStatus.REFUNDED) {
+                
+                String paymentMethod = paymentMethods.get(random.nextInt(paymentMethods.size()));
+                // Get the listing to find the landlord (payee)
+                Listing listing = listingRepository.findByPublicId(booking.getListingPublicId()).orElseThrow();
+
+                // Calculate payment date
+                LocalDateTime paymentDate = null;
+                if (booking.getPaymentStatus() == PaymentStatus.PAID) {
+                    paymentDate = LocalDateTime.now().minusDays(random.nextInt(180));
+                }
+
+                Payment payment = Payment.builder()
+                        .publicId(UUID.randomUUID())
+                        .bookingPublicId(booking.getPublicId())
+                        .payerPublicId(booking.getGuestPublicId())
+                        .payeePublicId(listing.getLandlordPublicId())
+                        .amount(booking.getTotalPrice())
+                        .currency(booking.getCurrency())
+                        .paymentMethod(paymentMethod)
+                        .paymentStatus(booking.getPaymentStatus())
+                        .transactionId("TXN" + UUID.randomUUID().toString().substring(0, 16).toUpperCase())
+                        .paymentDate(paymentDate)
+                        .build();
+                
+                paymentRepository.save(payment);
+                paymentCounter++;
+            }
+        }
+        
+        log.info("=".repeat(80));
+        log.info("✅ PAYMENT SEEDING COMPLETED!");
+        log.info("📊 Summary: {} payments created", paymentCounter);
+        log.info("💳 Payment Methods: Credit Card, Debit Card, PayPal, Bank Transfer, Stripe");
+        log.info("=".repeat(80));
+    }
+    
+    private void seedReviews(Map<String, Booking> bookings, Map<String, User> users) {
+        log.info("=".repeat(80));
+        log.info("⭐ Starting Review Seeding Process...");
+        log.info("📦 Creating reviews for completed bookings (75% review rate)");
+        log.info("=".repeat(80));
+        
+        Random random = new Random(42);
+        int reviewCounter = 0;
+        
+        // Review templates for variety
+        String[][] reviewTemplates = {
+            {"5", "Amazing Experience!", "Absolutely loved our stay! The property was even better than the photos. Host was incredibly responsive and helpful. The location was perfect for exploring the area. Would definitely book again!"},
+            {"5", "Perfect Stay!", "This place exceeded all our expectations. Spotlessly clean, beautifully decorated, and all amenities worked perfectly. The host provided excellent recommendations for local restaurants. Highly recommended!"},
+            {"5", "Outstanding Property!", "What a gem! The property was immaculate and the host was wonderful. Everything was as described and more. Great communication throughout. Will be back for sure!"},
+            {"4", "Great Stay with Minor Issues", "Overall had a wonderful time. The property is beautiful and well-maintained. Only small issue was the WiFi was a bit slow, but everything else was perfect. Would still recommend!"},
+            {"4", "Very Good Experience", "Really enjoyed our stay. The location is fantastic and the property is lovely. A few minor things could be improved but nothing major. Host was very accommodating."},
+            {"4", "Good Property, Would Return", "Had a great experience overall. The place was clean and comfortable. Check-in process was smooth. Just wish there were more kitchen supplies, but that's a minor point."},
+            {"5", "Exceeded Expectations!", "Couldn't have asked for a better place! The attention to detail was impressive. Host went above and beyond to ensure we had everything we needed. Beautiful property in a great location."},
+            {"5", "Wonderful Getaway!", "This was the perfect escape! The property is stunning and the host is excellent. Everything was spotless and well-organized. The amenities were top-notch. Highly recommend!"},
+            {"4", "Lovely Property", "Really nice place with great amenities. The host was responsive and helpful. Only minor issue was parking was a bit tight, but overall fantastic stay."},
+            {"5", "Perfect in Every Way!", "From start to finish, this was a flawless experience. The property is beautiful, clean, and has everything you need. Host communication was excellent. Five stars all around!"}
+        };
+        
+        // Get list of completed bookings only
+        List<Booking> completedBookings = bookings.values().stream()
+                .filter(b -> b.getBookingStatus() == BookingStatus.CHECKED_OUT)
+                .collect(java.util.stream.Collectors.toList());
+        
+        // Create reviews for 75% of completed bookings (simulates realistic review rate)
+        int numReviews = (int) (completedBookings.size() * 0.75);
+        
+        java.util.Collections.shuffle(completedBookings, random);
+        
+        for (int i = 0; i < numReviews && i < completedBookings.size(); i++) {
+            Booking booking = completedBookings.get(i);
+            String[] template = reviewTemplates[random.nextInt(reviewTemplates.length)];
+            
+            Double rating = Double.parseDouble(template[0]);
+            Double variation = random.nextInt(2) - 0.5; // Slight variation
+            
+            Review review = Review.builder()
+                    .publicId(UUID.randomUUID().toString())
+                    .reviewType(Review.ReviewType.PROPERTY_REVIEW)
+                    .status(Review.ReviewStatus.PUBLISHED)
+                    .bookingPublicId(booking.getPublicId().toString())
+                    .listingPublicId(booking.getListingPublicId().toString())
+                    .reviewerPublicId(booking.getGuestPublicId().toString())
+                    .overallRating(rating)
+                    .cleanlinessRating(rating)
+                    .accuracyRating(Math.max(1.0, rating + variation))
+                    .checkInRating(rating)
+                    .communicationRating(rating)
+                    .locationRating(Math.max(1.0, rating + variation))
+                    .valueRating(rating)
+                    .reviewText(template[2])
+                    .build();
+            
+            reviewRepository.save(review);
+            reviewCounter++;
+        }
+        
+        log.info("=".repeat(80));
+        log.info("✅ REVIEW SEEDING COMPLETED!");
+        log.info("📊 Summary: {} reviews created from {} completed bookings", reviewCounter, completedBookings.size());
+        log.info("⭐ Average rating: 4.6 stars (realistic distribution)");
+        log.info("📝 Review rate: 75% of completed bookings have reviews");
+        log.info("=".repeat(80));
+    }
+    
+    private String calculateTotalRevenue() {
+        List<Payment> payments = paymentRepository.findAll();
+        BigDecimal total = payments.stream()
+                .filter(p -> p.getPaymentStatus() == PaymentStatus.PAID)
+                .map(Payment::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return String.format("%,.2f", total);
     }
 
     private Map<String, ServiceOffering> seedServiceOfferings(Map<String, User> users) {

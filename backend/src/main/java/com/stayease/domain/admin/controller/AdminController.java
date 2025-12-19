@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.stayease.domain.admin.dto.AdminActionDTO;
 import com.stayease.domain.admin.dto.AuditLogDTO;
+import com.stayease.domain.admin.dto.BookingManagementDTO;
+import com.stayease.domain.admin.dto.ListingManagementDTO;
 import com.stayease.domain.admin.service.AdminService;
 import com.stayease.domain.admin.service.AuditService;
 import com.stayease.security.SecurityUtils;
@@ -46,7 +48,7 @@ public class AdminController {
     // ======================== LISTING MANAGEMENT ========================
 
     @PostMapping("/listings/{listingId}/approve")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> approveListing(
             @PathVariable UUID listingId,
             @Valid @RequestBody AdminActionRequest request) {
@@ -57,7 +59,7 @@ public class AdminController {
     }
 
     @PostMapping("/listings/{listingId}/reject")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> rejectListing(
             @PathVariable UUID listingId,
             @Valid @RequestBody AdminActionRequest request) {
@@ -68,7 +70,7 @@ public class AdminController {
     }
 
     @PostMapping("/listings/{listingId}/feature")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> featureListing(
             @PathVariable UUID listingId,
             @Valid @RequestBody AdminActionRequest request) {
@@ -79,7 +81,7 @@ public class AdminController {
     }
 
     @PostMapping("/listings/{listingId}/unfeature")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> unfeatureListing(
             @PathVariable UUID listingId,
             @Valid @RequestBody AdminActionRequest request) {
@@ -92,7 +94,7 @@ public class AdminController {
     // ======================== USER MANAGEMENT ========================
 
     @PostMapping("/users/{userId}/suspend")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> suspendUser(
             @PathVariable UUID userId,
             @Valid @RequestBody AdminActionRequest request) {
@@ -103,7 +105,7 @@ public class AdminController {
     }
 
     @PostMapping("/users/{userId}/reactivate")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> reactivateUser(
             @PathVariable UUID userId,
             @Valid @RequestBody AdminActionRequest request) {
@@ -116,7 +118,7 @@ public class AdminController {
     // ======================== BOOKING MANAGEMENT ========================
 
     @PostMapping("/bookings/{bookingId}/cancel")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> cancelBooking(
             @PathVariable UUID bookingId,
             @Valid @RequestBody AdminActionRequest request) {
@@ -126,10 +128,40 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success(null, "Booking cancelled successfully"));
     }
 
+    // ======================== BOOKING MANAGEMENT GET ENDPOINTS ========================
+
+    @GetMapping("/bookings")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Page<BookingManagementDTO>>> getAllBookings(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String search) {
+        log.info("GET request to fetch all bookings with filters - page: {}, size: {}, status: {}, search: {}", page, size, status, search);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BookingManagementDTO> bookings = adminService.getAllBookings(pageable, status, search);
+        return ResponseEntity.ok(ApiResponse.success(bookings, "Bookings retrieved successfully"));
+    }
+
+    // ======================== LISTING MANAGEMENT GET ENDPOINTS ========================
+
+    @GetMapping("/listings")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Page<ListingManagementDTO>>> getAllListings(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String search) {
+        log.info("GET request to fetch all listings with filters - page: {}, size: {}, status: {}, search: {}", page, size, status, search);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ListingManagementDTO> listings = adminService.getAllListings(pageable, status, search);
+        return ResponseEntity.ok(ApiResponse.success(listings, "Listings retrieved successfully"));
+    }
+
     // ======================== ADMIN ACTIONS ========================
 
     @GetMapping("/actions")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AdminActionDTO>>> getAllAdminActions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -140,7 +172,7 @@ public class AdminController {
     }
 
     @GetMapping("/actions/admin/{adminId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AdminActionDTO>>> getAdminActionsByAdmin(
             @PathVariable UUID adminId,
             @RequestParam(defaultValue = "0") int page,
@@ -152,7 +184,7 @@ public class AdminController {
     }
 
     @GetMapping("/actions/type/{actionType}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AdminActionDTO>>> getAdminActionsByType(
             @PathVariable String actionType,
             @RequestParam(defaultValue = "0") int page,
@@ -164,7 +196,7 @@ public class AdminController {
     }
 
     @GetMapping("/actions/target/{targetEntity}/{targetId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<AdminActionDTO>>> getAdminActionsForTarget(
             @PathVariable String targetEntity,
             @PathVariable String targetId) {
@@ -176,7 +208,7 @@ public class AdminController {
     // ======================== AUDIT LOGS ========================
 
     @GetMapping("/audit-logs")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AuditLogDTO>>> getAllAuditLogs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -187,7 +219,7 @@ public class AdminController {
     }
 
     @GetMapping("/audit-logs/actor/{actorId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AuditLogDTO>>> getAuditLogsByActor(
             @PathVariable UUID actorId,
             @RequestParam(defaultValue = "0") int page,
@@ -199,7 +231,7 @@ public class AdminController {
     }
 
     @GetMapping("/audit-logs/action/{action}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AuditLogDTO>>> getAuditLogsByAction(
             @PathVariable String action,
             @RequestParam(defaultValue = "0") int page,
@@ -211,7 +243,7 @@ public class AdminController {
     }
 
     @GetMapping("/audit-logs/date-range")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AuditLogDTO>>> getAuditLogsByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant endDate,
@@ -224,7 +256,7 @@ public class AdminController {
     }
 
     @GetMapping("/audit-logs/search")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<AuditLogDTO>>> searchAuditLogs(
             @RequestParam String target,
             @RequestParam(defaultValue = "0") int page,
@@ -236,7 +268,7 @@ public class AdminController {
     }
 
     @GetMapping("/audit-logs/recent")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<AuditLogDTO>>> getRecentAuditLogs() {
         log.info("GET request to fetch recent audit logs");
         List<AuditLogDTO> logs = auditService.getRecentAuditLogs();
