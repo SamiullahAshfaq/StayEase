@@ -233,12 +233,12 @@ export interface CreateListingRequest {
   houseRules?: string;
   
   // Images - CHANGED to match backend ListingImageDTO structure
-  images: Array<{
+  images: {
     url: string;
     caption?: string;
     isCover?: boolean;
     sortOrder?: number;
-  }>;
+  }[];
 }
 
 export interface ListingStats {

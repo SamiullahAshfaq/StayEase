@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, ViewEncapsulation } from '@angular/core';
+import { Component, signal, inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -60,7 +60,7 @@ interface ListingFormData {
   styleUrl: './listing-create.component.css',
   encapsulation: ViewEncapsulation.None
 })
-export class ListingCreateComponent implements OnInit {
+export class ListingCreateComponent {
   private landlordService = inject(LandlordService);
   private router = inject(Router);
 
@@ -132,11 +132,6 @@ export class ListingCreateComponent implements OnInit {
 
   constructor() {
     // Services are injected above
-  }
-
-  ngOnInit(): void {
-    // Initialization logic can be added here
-
   }
 
   // Navigation

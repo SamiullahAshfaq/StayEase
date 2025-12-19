@@ -171,7 +171,7 @@ export class LandlordService {
   /**
    * Banking - These endpoints may not exist yet
    */
-  addBankAccount(accountDetails: any): Observable<ApiResponse<void>> {
+  addBankAccount(accountDetails: object): Observable<ApiResponse<void>> {
     return this.http.post<ApiResponse<void>>(`${this.baseUrl}/landlord/banking/account`, accountDetails);
   }
 
@@ -182,11 +182,11 @@ export class LandlordService {
   /**
    * Notifications - These endpoints may not exist yet
    */
-  getNotificationSettings(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.baseUrl}/landlord/settings/notifications`);
+  getNotificationSettings(): Observable<ApiResponse<object>> {
+    return this.http.get<ApiResponse<object>>(`${this.baseUrl}/landlord/settings/notifications`);
   }
 
-  updateNotificationSettings(settings: any): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/landlord/settings/notifications`, settings);
+  updateNotificationSettings(settings: object): Observable<ApiResponse<object>> {
+    return this.http.put<ApiResponse<object>>(`${this.baseUrl}/landlord/settings/notifications`, settings);
   }
 }

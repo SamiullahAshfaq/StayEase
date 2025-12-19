@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -6,8 +6,8 @@ import { ListingService } from '../services/listing.service';
 import { Listing } from '../models/listing.model';
 import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 import { LandlordService } from '../../profile/services/landlord.service';
-import { LandlordProfile } from '../../profile/models/landlord.model';
 import { AuthService } from '../../../core/auth/auth.service';
+import { LocationMapComponent } from '../../../shared/components/location-map/location-map.component';
 
 interface Review {
   id: string;
@@ -30,7 +30,7 @@ interface Host {
 @Component({
   selector: 'app-listing-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LocationMapComponent],
   templateUrl: './listing-detail.component.html'
 })
 export class ListingDetailComponent implements OnInit {
@@ -43,8 +43,8 @@ export class ListingDetailComponent implements OnInit {
   selectedImageIndex = 0;
 
   // Booking
-  checkIn: string = '';
-  checkOut: string = '';
+  checkIn = '';
+  checkOut = '';
   guests = 1;
   
   // Owner check - hide booking section if user owns the listing
@@ -123,15 +123,14 @@ export class ListingDetailComponent implements OnInit {
     };
   }
 
-  constructor(
-    private listingService: ListingService,
-    private landlordService: LandlordService,
-    private authService: AuthService,
-    private route: ActivatedRoute,
-    private router: Router,
-    @Inject(DOCUMENT) private document: Document,
-    private cdr: ChangeDetectorRef
-  ) {
+  private listingService = inject(ListingService);
+  private landlordService = inject(LandlordService);
+  private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private document = inject(DOCUMENT);
+
+  constructor() {
     this.today = new Date().toISOString().split('T')[0];
     this.currentUrl = this.document.location.href;
   }
@@ -167,14 +166,11 @@ export class ListingDetailComponent implements OnInit {
           console.log('Listing loaded:', this.listing.publicId);
         }
         this.loading = false;
-        // Trigger change detection to ensure UI updates
-        this.cdr.detectChanges();
       },
       error: (error) => {
         this.error = 'Failed to load listing. Please try again.';
         this.loading = false;
         console.error('Error loading listing:', error);
-        this.cdr.detectChanges();
       }
     });
   }
@@ -186,18 +182,20 @@ export class ListingDetailComponent implements OnInit {
           const profile = response.data;
           // Note: Backend returns UserDTO, not LandlordProfile
           // Map UserDTO fields to what we need
-          const profileImageUrl = (profile as any).profileImageUrl;
-          const createdAt = (profile as any).createdAt;
+          const profileData = profile as unknown as {
+            profileImageUrl?: string;
+            createdAt?: string;
+            isEmailVerified?: boolean;
+          };
           
           this.host = {
             name: `${profile.firstName} ${profile.lastName}`,
-            avatar: profileImageUrl ? this.getImageUrl(profileImageUrl) : 'https://i.pravatar.cc/150?img=12',
-            joinedDate: createdAt ? new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently joined',
-            verified: (profile as any).isEmailVerified || false,
+            avatar: profileData.profileImageUrl ? this.getImageUrl(profileData.profileImageUrl) : 'https://i.pravatar.cc/150?img=12',
+            joinedDate: profileData.createdAt ? new Date(profileData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'Recently joined',
+            verified: profileData.isEmailVerified || false,
             responseRate: 95, // Default value since not in UserDTO
             responseTime: 'within a few hours' // Default value since not in UserDTO
           };
-          this.cdr.detectChanges();
         }
       },
       error: (error) => {
@@ -223,8 +221,6 @@ export class ListingDetailComponent implements OnInit {
             .filter(l => l.publicId !== this.listing?.publicId)
             .slice(0, 3);
           console.log('Similar listings loaded:', this.similarListings.length);
-          // Trigger change detection for similar listings
-          this.cdr.detectChanges();
         }
       },
       error: (error) => {
@@ -233,7 +229,7 @@ export class ListingDetailComponent implements OnInit {
     });
   }
 
-  openPhotoGallery(index: number = 0): void {
+  openPhotoGallery(index = 0): void {
     this.selectedImageIndex = index;
     this.showAllPhotos = true;
     document.body.style.overflow = 'hidden';

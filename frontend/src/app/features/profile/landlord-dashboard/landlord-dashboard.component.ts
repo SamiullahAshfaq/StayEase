@@ -11,6 +11,7 @@ import {
   LISTING_STATUS_LABELS,
   BOOKING_STATUS_LABELS
 } from '../models/landlord.model';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 @Component({
   selector: 'app-landlord-dashboard',
@@ -224,5 +225,30 @@ export class LandlordDashboardComponent implements OnInit {
     if (profile.responseRate >= 90) return 'rate-high';
     if (profile.responseRate >= 70) return 'rate-medium';
     return 'rate-low';
+  }
+
+  getListingImage(listing: Listing): string {
+    // Try coverImageUrl first, then first image, then placeholder
+    if (listing.coverImageUrl) {
+      return ImageUrlHelper.getFullImageUrl(listing.coverImageUrl);
+    }
+    if (listing.images && listing.images.length > 0) {
+      return ImageUrlHelper.getFullImageUrl(listing.images[0].url);
+    }
+    return ImageUrlHelper.getPlaceholderImage();
+  }
+
+  getBookingListingImage(booking: Booking): string {
+    if (booking.listingImage) {
+      return ImageUrlHelper.getFullImageUrl(booking.listingImage);
+    }
+    return ImageUrlHelper.getPlaceholderImage();
+  }
+
+  getGuestAvatar(booking: Booking): string {
+    if (booking.guestAvatar) {
+      return ImageUrlHelper.getFullImageUrl(booking.guestAvatar);
+    }
+    return ImageUrlHelper.getPlaceholderImage();
   }
 }

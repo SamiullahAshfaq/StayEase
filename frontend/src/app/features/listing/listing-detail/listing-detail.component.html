@@ -11,7 +11,7 @@
 } @else if (listing) {
   <div class="pb-20">
     <!-- Header -->
-    <div class="max-w-[1120px] mx-auto px-8 py-6">
+    <div class="max-w-280 mx-auto px-8 py-6">
       <h1 class="text-3xl font-semibold mb-2">{{ listing.title }}</h1>
       <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="flex items-center gap-4 flex-wrap text-sm">
@@ -48,13 +48,17 @@
     </div>
 
     <!-- Images Grid -->
-    <div class="max-w-[1120px] mx-auto px-8 mb-12">
-      <div class="grid grid-cols-4 grid-rows-2 gap-2 rounded-xl overflow-hidden h-[500px]">
+    <div class="max-w-280 mx-auto px-8 mb-12">
+      <div class="grid grid-cols-4 grid-rows-2 gap-2 rounded-xl overflow-hidden h-125">
         <!-- Main large image -->
         @if (listing.images[0]) {
           <div
             class="col-span-2 row-span-2 cursor-pointer group relative overflow-hidden"
-            (click)="openPhotoGallery(0)">
+            role="button"
+            tabindex="0"
+            (click)="openPhotoGallery(0)"
+            (keyup.enter)="openPhotoGallery(0)"
+            (keyup.space)="openPhotoGallery(0)">
             <img
               [src]="getImageUrl(listing.images[0].url)"
               [alt]="listing.title"
@@ -66,7 +70,11 @@
         @for (image of listing.images.slice(1, 5); track image.url; let i = $index) {
           <div
             class="cursor-pointer group relative overflow-hidden"
-            (click)="openPhotoGallery(i + 1)">
+            role="button"
+            tabindex="0"
+            (click)="openPhotoGallery(i + 1)"
+            (keyup.enter)="openPhotoGallery(i + 1)"
+            (keyup.space)="openPhotoGallery(i + 1)">
             <img
               [src]="getImageUrl(image.url)"
               [alt]="listing.title"
@@ -86,7 +94,7 @@
     </div>
 
     <!-- Content -->
-    <div class="max-w-[1120px] mx-auto px-8">
+    <div class="max-w-280 mx-auto px-8">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
         <!-- Left column - Details -->
@@ -111,7 +119,7 @@
           <!-- Features -->
           <div class="pb-8 border-b space-y-6">
             <div class="flex gap-4">
-              <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
               </svg>
               <div>
@@ -121,7 +129,7 @@
             </div>
 
             <div class="flex gap-4">
-              <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
               </svg>
               <div>
@@ -132,7 +140,7 @@
 
             @if (listing.instantBook) {
               <div class="flex gap-4">
-                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                 </svg>
                 <div>
@@ -155,7 +163,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               @for (amenity of (showAllAmenities ? listing.amenities : listing.amenities.slice(0, 10)); track amenity) {
                 <div class="flex items-center gap-4">
-                  <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="getAmenityIcon(amenity)"/>
                   </svg>
                   <span>{{ amenity }}</span>
@@ -352,17 +360,32 @@
             <h3 class="text-xl font-semibold mb-4">Where you'll be</h3>
             <p class="text-gray-700 mb-6">{{ listing.city }}, {{ listing.country }}</p>
 
-            <!-- Map placeholder -->
-            <div class="w-full h-96 bg-gray-200 rounded-xl flex items-center justify-center">
-              <div class="text-center">
-                <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                <p class="text-gray-600 font-semibold">{{ listing.city }}, {{ listing.country }}</p>
-                <p class="text-sm text-gray-500 mt-2">Exact location provided after booking</p>
+            <!-- Interactive Map -->
+            @if (listing.latitude && listing.longitude) {
+              <div class="w-full h-96 rounded-xl overflow-hidden shadow-lg">
+                <app-location-map
+                  [latitude]="listing.latitude"
+                  [longitude]="listing.longitude"
+                  [city]="listing.city"
+                  [country]="listing.country"
+                  [zoom]="13"
+                  [showMarker]="true">
+                </app-location-map>
               </div>
-            </div>
+              <p class="text-sm text-gray-500 mt-3">📍 Approximate area shown for privacy. Exact location shared after booking.</p>
+            } @else {
+              <!-- Fallback when no coordinates -->
+              <div class="w-full h-96 bg-gray-200 rounded-xl flex items-center justify-center">
+                <div class="text-center">
+                  <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <p class="text-gray-600 font-semibold">{{ listing.city }}, {{ listing.country }}</p>
+                  <p class="text-sm text-gray-500 mt-2">Exact location provided after booking</p>
+                </div>
+              </div>
+            }
           </div>
         </div>
 
@@ -381,16 +404,18 @@
             <div class="border border-gray-300 rounded-lg mb-4">
               <div class="grid grid-cols-2 divide-x divide-gray-300">
                 <div class="p-3">
-                  <label class="text-xs font-semibold uppercase">Check-in</label>
+                  <label for="checkIn" class="text-xs font-semibold uppercase">Check-in</label>
                   <input
+                    id="checkIn"
                     type="date"
                     [(ngModel)]="checkIn"
                     [min]="today"
                     class="w-full mt-1 text-sm focus:outline-none">
                 </div>
                 <div class="p-3">
-                  <label class="text-xs font-semibold uppercase">Checkout</label>
+                  <label for="checkOut" class="text-xs font-semibold uppercase">Checkout</label>
                   <input
+                    id="checkOut"
                     type="date"
                     [(ngModel)]="checkOut"
                     [min]="checkIn || today"
@@ -398,8 +423,9 @@
                 </div>
               </div>
               <div class="p-3 border-t border-gray-300">
-                <label class="text-xs font-semibold uppercase">Guests</label>
+                <label for="guests" class="text-xs font-semibold uppercase">Guests</label>
                 <select
+                  id="guests"
                   [(ngModel)]="guests"
                   class="w-full mt-1 text-sm focus:outline-none">
                   @for (n of [].constructor(listing.maxGuests); track i; let i = $index) {
@@ -415,7 +441,7 @@
             <button
               (click)="proceedToBooking()"
               [disabled]="!checkIn || !checkOut"
-              class="w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-lg hover:from-rose-600 hover:to-pink-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              class="w-full py-3 bg-linear-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-lg hover:from-rose-600 hover:to-pink-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
               Reserve
             </button>
             <p class="text-center text-sm text-gray-600 mt-3">You won't be charged yet</p>
@@ -453,13 +479,17 @@
 
     <!-- Similar Listings -->
     @if (similarListings.length > 0) {
-      <div class="max-w-[1120px] mx-auto px-8 mt-16 pt-12 border-t">
+      <div class="max-w-280 mx-auto px-8 mt-16 pt-12 border-t">
         <h2 class="text-2xl font-semibold mb-8">Similar listings you might like</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           @for (similar of similarListings; track similar.publicId) {
             <div
+              role="button"
+              tabindex="0"
               (click)="navigateToListing(similar.publicId)"
+              (keyup.enter)="navigateToListing(similar.publicId)"
+              (keyup.space)="navigateToListing(similar.publicId)"
               class="cursor-pointer group">
               <div class="relative aspect-square rounded-xl overflow-hidden mb-3">
                 <img
@@ -508,7 +538,7 @@
         class="fixed inset-0 z-50 bg-black">
 
         <!-- Header -->
-        <div class="absolute top-0 left-0 right-0 p-6 z-10 bg-gradient-to-b from-black/50 to-transparent">
+        <div class="absolute top-0 left-0 right-0 p-6 z-10 bg-linear-to-b from-black/50 to-transparent">
           <button
             (click)="closePhotoGallery()"
             class="flex items-center gap-2 text-white hover:text-gray-300 transition-colors duration-200">
@@ -561,11 +591,17 @@
     @if (showShareModal) {
       <div
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
-        (click)="toggleShare()">
+        role="button"
+        tabindex="0"
+        (click)="toggleShare()"
+        (keyup.escape)="toggleShare()">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
 
         <div
+          role="dialog"
+          tabindex="0"
           (click)="$event.stopPropagation()"
+          (keyup.escape)="toggleShare()"
           class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
 
           <button

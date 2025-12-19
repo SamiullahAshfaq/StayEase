@@ -45,7 +45,9 @@
         <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
       </svg>
       Bookings
-      <span class="badge warning" *ngIf="pendingBookings().length > 0">{{ pendingBookings().length }}</span>
+      @if (pendingBookings().length > 0) {
+        <span class="badge warning">{{ pendingBookings().length }}</span>
+      }
     </button>
     <button 
       class="tab"
@@ -69,25 +71,31 @@
   </nav>
 
   <!-- Loading State -->
-  <div class="loading-state" *ngIf="loading()">
-    <div class="spinner"></div>
-    <p>Loading dashboard...</p>
-  </div>
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading dashboard...</p>
+    </div>
+  }
 
   <!-- Error State -->
-  <div class="error-state" *ngIf="error() && !loading()">
-    <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>
-    <p>{{ error() }}</p>
-    <button class="retry-button" (click)="loadDashboardData()">Retry</button>
-  </div>
+  @if (error() && !loading()) {
+    <div class="error-state">
+      <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <p>{{ error() }}</p>
+      <button class="retry-button" (click)="loadDashboardData()">Retry</button>
+    </div>
+  }
 
   <!-- Dashboard Content -->
-  <div class="dashboard-content" *ngIf="!loading() && !error()">
+  @if (!loading() && !error()) {
+    <div class="dashboard-content">
     
     <!-- Overview Tab -->
-    <div *ngIf="activeTab() === 'overview'" class="overview-section">
+    @if (activeTab() === 'overview') {
+      <div class="overview-section">
       <!-- Stats Cards -->
       <div class="stats-grid">
         <div class="stat-card">
@@ -180,32 +188,42 @@
             <p>Average time to respond to guests</p>
           </div>
 
-          <div class="performance-card" *ngIf="profile()?.isSuperhost">
-            <div class="superhost-badge">
-              <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-              </svg>
-              <h4>Superhost</h4>
-              <p>You're a top-rated host!</p>
+          @if (profile()?.isSuperhost) {
+            <div class="performance-card">
+              <div class="superhost-badge">
+                <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <h4>Superhost</h4>
+                <p>You're a top-rated host!</p>
+              </div>
             </div>
-          </div>
+          }
         </div>
       </div>
 
       <!-- Pending Bookings -->
-      <div class="section" *ngIf="pendingBookings().length > 0">
+      @if (pendingBookings().length > 0) {
+        <div class="section">
         <div class="section-header">
           <h2>Pending Bookings</h2>
           <button class="view-all-btn" (click)="navigateToBookings()">View All</button>
         </div>
         <div class="bookings-list">
-          <div *ngFor="let booking of pendingBookings()" class="booking-card pending" (click)="viewBooking(booking.publicId)">
-            <img [src]="booking.listingImage || '/images/default-listing.jpg'" [alt]="booking.listingTitle" class="booking-image">
+          @for (booking of pendingBookings(); track booking.publicId) {
+            <div 
+              class="booking-card pending" 
+              role="button"
+              tabindex="0"
+              (click)="viewBooking(booking.publicId)"
+              (keyup.enter)="viewBooking(booking.publicId)"
+              (keyup.space)="viewBooking(booking.publicId)">
+              <img [src]="getBookingListingImage(booking)" [alt]="booking.listingTitle" class="booking-image">
             <div class="booking-content">
               <h4>{{ booking.listingTitle }}</h4>
               <div class="booking-details">
                 <div class="guest-info">
-                  <img [src]="booking.guestAvatar || '/images/default-avatar.png'" [alt]="booking.guestName" class="guest-avatar">
+                  <img [src]="getGuestAvatar(booking)" [alt]="booking.guestName" class="guest-avatar">
                   <span>{{ booking.guestName }}</span>
                 </div>
                 <div class="booking-dates">
@@ -238,8 +256,10 @@
               </button>
             </div>
           </div>
+          }
         </div>
       </div>
+      }
 
       <!-- Recent Listings -->
       <div class="section">
@@ -248,9 +268,16 @@
           <button class="view-all-btn" (click)="navigateToListings()">View All</button>
         </div>
         <div class="listings-grid">
-          <div *ngFor="let listing of recentListings()" class="listing-card" (click)="viewListing(listing.publicId)">
-            <div class="listing-image">
-              <img [src]="listing.coverImage || listing.images[0]?.imageUrl || '/images/default-listing.jpg'" [alt]="listing.title">
+          @for (listing of recentListings(); track listing.publicId) {
+            <div 
+              class="listing-card"
+              role="button"
+              tabindex="0"
+              (click)="viewListing(listing.publicId)"
+              (keyup.enter)="viewListing(listing.publicId)"
+              (keyup.space)="viewListing(listing.publicId)">
+              <div class="listing-image">
+              <img [src]="getListingImage(listing)" [alt]="listing.title">
               <span class="status-badge" [class]="getStatusClass(listing.status)">
                 {{ listingStatusLabels[listing.status] }}
               </span>
@@ -290,25 +317,36 @@
               Edit
             </button>
           </div>
+          }
         </div>
       </div>
     </div>
+    }
 
     <!-- Other tabs content would go here -->
-    <div *ngIf="activeTab() === 'listings'" class="tab-content">
-      <p>Listings management coming soon...</p>
-    </div>
+    @if (activeTab() === 'listings') {
+      <div class="tab-content">
+        <p>Listings management coming soon...</p>
+      </div>
+    }
 
-    <div *ngIf="activeTab() === 'bookings'" class="tab-content">
-      <p>Bookings management coming soon...</p>
-    </div>
+    @if (activeTab() === 'bookings') {
+      <div class="tab-content">
+        <p>Bookings management coming soon...</p>
+      </div>
+    }
 
-    <div *ngIf="activeTab() === 'earnings'" class="tab-content">
-      <p>Earnings analytics coming soon...</p>
-    </div>
+    @if (activeTab() === 'earnings') {
+      <div class="tab-content">
+        <p>Earnings analytics coming soon...</p>
+      </div>
+    }
 
-    <div *ngIf="activeTab() === 'profile'" class="tab-content">
-      <p>Profile settings coming soon...</p>
-    </div>
+    @if (activeTab() === 'profile') {
+      <div class="tab-content">
+        <p>Profile settings coming soon...</p>
+      </div>
+    }
   </div>
+  }
 </div>
