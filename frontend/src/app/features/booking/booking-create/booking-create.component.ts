@@ -47,6 +47,14 @@ export class BookingCreateComponent implements OnInit {
     return this.bookingForm?.get('checkIn')?.value || this.todayISO;
   }
 
+  /**
+   * Using constructor injection instead of inject() for stability.
+   * Constructor injection is more reliable for components with:
+   * - FormBuilder and reactive forms
+   * - Route parameter handling
+   * - Multiple service dependencies
+   * This prevents "Cannot read properties of undefined" errors during initialization.
+   */
   constructor(
     private fb: FormBuilder,
     private bookingService: BookingService,
@@ -179,7 +187,7 @@ export class BookingCreateComponent implements OnInit {
           
           // Immediately confirm the payment
           this.bookingService.confirmPayment(bookingId).subscribe({
-            next: (confirmResponse) => {
+            next: () => {
               this.successMessage = '🎉 Booking confirmed successfully! Redirecting to your bookings...';
               this.error = null;
               this.loading = false;

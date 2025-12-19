@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-white">
   <!-- Category Filter Bar -->
   <div class="border-b sticky top-0 bg-white z-40">
-    <div class="max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-630 mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center gap-8 py-4 overflow-x-auto scrollbar-hide">
         @for (category of categories; track category) {
           <button
@@ -20,7 +20,7 @@
   </div>
 
   <!-- Filters Button -->
-  <div class="max-w-[2520px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <div class="max-w-630 mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="flex items-center justify-between mb-6">
       <div>
         <h1 class="text-2xl font-semibold text-gray-900">
@@ -66,10 +66,14 @@
           <!-- Backdrop for click-outside to close -->
           <div 
             class="fixed inset-0 z-40"
-            (click)="closeFiltersModal()"></div>
+            role="button"
+            tabindex="0"
+            (click)="closeFiltersModal()"
+            (keyup.enter)="closeFiltersModal()"
+            (keyup.space)="closeFiltersModal()"></div>
           
           <!-- Filter Panel - Centered Modal -->
-          <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white border rounded-2xl shadow-2xl w-[90vw] max-w-[800px]">
+          <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white border rounded-2xl shadow-2xl w-[90vw] max-w-200">
             <div class="max-h-[80vh] overflow-y-auto">
               <!-- Header -->
               <div class="flex items-center justify-between p-6 border-b sticky top-0 bg-white z-10">
@@ -109,10 +113,11 @@
                   <!-- Custom Price Inputs -->
                   <div class="grid grid-cols-2 gap-3">
                     <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-2">Minimum</label>
+                      <label for="minPrice" class="block text-xs font-medium text-gray-700 mb-2">Minimum</label>
                       <div class="relative">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
                         <input
+                          id="minPrice"
                           type="number"
                           [(ngModel)]="tempFilters.minPrice"
                           (ngModelChange)="onPriceInputChange()"
@@ -122,10 +127,11 @@
                       </div>
                     </div>
                     <div>
-                      <label class="block text-xs font-medium text-gray-700 mb-2">Maximum</label>
+                      <label for="maxPrice" class="block text-xs font-medium text-gray-700 mb-2">Maximum</label>
                       <div class="relative">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">$</span>
                         <input
+                          id="maxPrice"
                           type="number"
                           [(ngModel)]="tempFilters.maxPrice"
                           (ngModelChange)="onPriceInputChange()"
@@ -182,7 +188,7 @@
                   <div class="space-y-4">
                     <!-- Bedrooms -->
                     <div>
-                      <label class="block text-sm font-medium mb-2">Bedrooms</label>
+                      <h4 class="block text-sm font-medium mb-2">Bedrooms</h4>
                       <div class="flex flex-wrap gap-2">
                         <button
                           (click)="resetCounter('minBedrooms')"
@@ -207,7 +213,7 @@
 
                     <!-- Beds -->
                     <div>
-                      <label class="block text-sm font-medium mb-2">Beds</label>
+                      <h4 class="block text-sm font-medium mb-2">Beds</h4>
                       <div class="flex flex-wrap gap-2">
                         <button
                           (click)="resetCounter('minBeds')"
@@ -232,7 +238,7 @@
 
                     <!-- Bathrooms -->
                     <div>
-                      <label class="block text-sm font-medium mb-2">Bathrooms</label>
+                      <h4 class="block text-sm font-medium mb-2">Bathrooms</h4>
                       <div class="flex flex-wrap gap-2">
                         <button
                           (click)="resetCounter('minBathrooms')"

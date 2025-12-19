@@ -19,7 +19,7 @@
     <!-- Error Alert -->
     @if (error) {
       <div class="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 animate-shake">
-        <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
         </svg>
         <div class="flex-1">
@@ -36,7 +36,7 @@
     <!-- Success Alert -->
     @if (successMessage) {
       <div class="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3 animate-fadeInDown">
-        <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
         </svg>
         <div class="flex-1">
@@ -59,16 +59,18 @@
             <!-- Dates -->
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-2">
-                <label class="block text-sm font-semibold text-gray-700">Check-in</label>
+                <label for="checkIn" class="block text-sm font-semibold text-gray-700">Check-in</label>
                 <input
+                  id="checkIn"
                   type="date"
                   formControlName="checkIn"
                   [min]="minCheckInDate"
                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200">
                 </div>
                 <div class="space-y-2">
-                  <label class="block text-sm font-semibold text-gray-700">Check-out</label>
+                  <label for="checkOut" class="block text-sm font-semibold text-gray-700">Check-out</label>
                   <input
+                    id="checkOut"
                     type="date"
                     formControlName="checkOut"
                     [min]="minCheckOutDate"
@@ -88,8 +90,9 @@
 
                 <!-- Guests -->
                 <div class="space-y-2">
-                  <label class="block text-sm font-semibold text-gray-700">Guests</label>
+                  <label for="guests" class="block text-sm font-semibold text-gray-700">Guests</label>
                   <select
+                    id="guests"
                     formControlName="guests"
                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200">
                     @for (n of [].constructor(listing?.maxGuests || 10); track n; let i = $index) {
@@ -102,8 +105,9 @@
 
                 <!-- Special Requests -->
                 <div class="space-y-2">
-                  <label class="block text-sm font-semibold text-gray-700">Special requests (optional)</label>
+                  <label for="specialRequests" class="block text-sm font-semibold text-gray-700">Special requests (optional)</label>
                   <textarea
+                    id="specialRequests"
                     formControlName="specialRequests"
                     rows="4"
                     placeholder="Let the host know if you have any special requirements..."
@@ -120,7 +124,11 @@
               <div class="space-y-3">
                 @for (addon of availableAddons; track addon) {
                   <div
+                    role="button"
+                    tabindex="0"
                     (click)="toggleAddon(addon)"
+                    (keyup.enter)="toggleAddon(addon)"
+                    (keyup.space)="toggleAddon(addon)"
                     [class.border-rose-500]="isAddonSelected(addon)"
                     [class.bg-rose-50]="isAddonSelected(addon)"
                     class="border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-rose-300 transition-all duration-200 group">
@@ -147,9 +155,9 @@
             </div>
 
             <!-- Cancellation Policy -->
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 p-6">
+            <div class="bg-linear-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 p-6">
               <div class="flex items-start gap-3">
-                <div class="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                <div class="shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                   <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
@@ -174,7 +182,7 @@
                   <img
                     [src]="listing.coverImageUrl || listing.images[0]?.url"
                     [alt]="listing.title"
-                    class="w-28 h-28 rounded-xl object-cover flex-shrink-0">
+                    class="w-28 h-28 rounded-xl object-cover shrink-0">
                     <div class="flex-1 min-w-0">
                       <h3 class="font-semibold text-gray-900 mb-1 truncate">{{ listing.title }}</h3>
                       <p class="text-sm text-gray-600 mb-2">{{ listing.propertyType }} in {{ listing.city }}</p>
@@ -228,7 +236,7 @@
                 <button
                   (click)="onSubmit()"
                   [disabled]="bookingForm.invalid || loading || !listing"
-                  class="w-full py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl">
+                  class="w-full py-4 bg-linear-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl">
                   @if (!loading) {
                     <span>Confirm and pay</span>
                   }
