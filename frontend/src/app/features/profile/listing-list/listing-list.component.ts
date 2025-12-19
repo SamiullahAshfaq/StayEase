@@ -144,6 +144,12 @@ export class ListingListComponent implements OnInit {
     this.applyFilters();
   }
 
+  showAll() {
+    this.selectedStatus.set('ALL');
+    this.searchKeyword.set('');
+    this.applyFilters();
+  }
+
   changeSortBy(sortBy: 'title' | 'createdAt' | 'basePrice' | 'bookingCount') {
     if (this.sortBy() === sortBy) {
       // Toggle direction

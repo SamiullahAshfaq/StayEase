@@ -1,102 +1,192 @@
-<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
   <div class="max-w-7xl mx-auto">
-    <!-- Header Section -->
+    <!-- Enhanced Header Section with Welcome Message -->
     <div class="mb-8">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">My Listings</h1>
-          <p class="text-gray-600 mt-2">Manage your properties and reservations</p>
+      <!-- Welcome Banner -->
+      <div class="bg-gradient-to-r from-[#005461] to-[#018790] rounded-2xl shadow-xl p-8 mb-6 text-white">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">Welcome back, Landlord! 👋</h1>
+            <p class="text-white/90 text-lg">Manage your properties and grow your rental business</p>
+          </div>
+          <button [routerLink]="['/listing/create']"
+                  class="px-8 py-4 bg-white text-[#005461] rounded-xl font-semibold hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-3 group">
+            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add New Property
+          </button>
         </div>
-
-        <button [routerLink]="['/listing/create']"
-                class="px-6 py-3 bg-[#005461] text-white rounded-lg font-medium hover:bg-[#018790] transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-          </svg>
-          Create New Listing
-        </button>
       </div>
 
-      <!-- Stats Cards -->
+      <!-- Enhanced Stats Dashboard -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-600">Total</p>
-              <p class="text-3xl font-bold text-gray-900">{{ totalListings() }}</p>
-            </div>
-            <div class="w-12 h-12 bg-[#005461]/10 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-[#005461]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Total Listings -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 border-l-4 border-[#005461]">
+          <div class="flex items-center justify-between mb-3">
+            <div class="w-14 h-14 bg-gradient-to-br from-[#005461] to-[#018790] rounded-xl flex items-center justify-center shadow-md">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
               </svg>
             </div>
+            <div class="text-right">
+              <p class="text-sm font-medium text-gray-600">Total Properties</p>
+              <p class="text-3xl font-bold text-gray-900">{{ totalListings() }}</p>
+            </div>
+          </div>
+          <div class="flex items-center text-sm text-green-600">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+            </svg>
+            <span class="font-medium">All listings</span>
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+        <!-- Active Listings -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer border-l-4 border-green-500"
              (click)="filterByStatus(ListingStatus.ACTIVE)"
              (keyup.enter)="filterByStatus(ListingStatus.ACTIVE)"
              (keyup.space)="filterByStatus(ListingStatus.ACTIVE)"
              tabindex="0"
              role="button"
              aria-label="Filter by active listings">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-600">Active</p>
-              <p class="text-3xl font-bold text-green-600">{{ activeListings() }}</p>
-            </div>
-            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+          <div class="flex items-center justify-between mb-3">
+            <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
               </svg>
             </div>
+            <div class="text-right">
+              <p class="text-sm font-medium text-gray-600">Active</p>
+              <p class="text-3xl font-bold text-green-600">{{ activeListings() }}</p>
+            </div>
+          </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+            <span class="font-medium">Accepting bookings</span>
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+        <!-- Draft Listings -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer border-l-4 border-yellow-500"
              (click)="filterByStatus(ListingStatus.DRAFT)"
              (keyup.enter)="filterByStatus(ListingStatus.DRAFT)"
              (keyup.space)="filterByStatus(ListingStatus.DRAFT)"
              tabindex="0"
              role="button"
              aria-label="Filter by draft listings">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-600">Drafts</p>
-              <p class="text-3xl font-bold text-yellow-600">{{ draftListings() }}</p>
-            </div>
-            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex items-center justify-between mb-3">
+            <div class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
               </svg>
             </div>
+            <div class="text-right">
+              <p class="text-sm font-medium text-gray-600">Drafts</p>
+              <p class="text-3xl font-bold text-yellow-600">{{ draftListings() }}</p>
+            </div>
+          </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="font-medium">Need completion</span>
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
+        <!-- Paused Listings -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all transform hover:-translate-y-1 cursor-pointer border-l-4 border-gray-400"
              (click)="filterByStatus(ListingStatus.PAUSED)"
              (keyup.enter)="filterByStatus(ListingStatus.PAUSED)"
              (keyup.space)="filterByStatus(ListingStatus.PAUSED)"
              tabindex="0"
              role="button"
              aria-label="Filter by paused listings">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-600">Paused</p>
-              <p class="text-3xl font-bold text-gray-600">{{ pausedListings() }}</p>
-            </div>
-            <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex items-center justify-between mb-3">
+            <div class="w-14 h-14 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
             </div>
+            <div class="text-right">
+              <p class="text-sm font-medium text-gray-600">Paused</p>
+              <p class="text-3xl font-bold text-gray-600">{{ pausedListings() }}</p>
+            </div>
           </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+            <span class="font-medium">Temporarily unavailable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Bar -->
+      <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <svg class="w-5 h-5 mr-2 text-[#005461]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          Quick Actions
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button [routerLink]="['/listing/create']"
+                  class="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#005461] hover:bg-[#005461]/5 transition-all group">
+            <svg class="w-8 h-8 text-gray-400 group-hover:text-[#005461] mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span class="text-sm font-medium text-gray-700 group-hover:text-[#005461] transition-colors">New Listing</span>
+          </button>
+          
+          <button (click)="filterByStatus(ListingStatus.DRAFT)"
+                  class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-xl hover:border-yellow-500 hover:bg-yellow-50 transition-all group">
+            <svg class="w-8 h-8 text-gray-400 group-hover:text-yellow-600 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            <span class="text-sm font-medium text-gray-700 group-hover:text-yellow-600 transition-colors">Complete Drafts</span>
+          </button>
+          
+          <button (click)="showAll()"
+                  class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all group">
+            <svg class="w-8 h-8 text-gray-400 group-hover:text-blue-600 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">View Analytics</span>
+          </button>
+          
+          <button (click)="loadListings()"
+                  class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-xl hover:border-green-500 hover:bg-green-50 transition-all group">
+            <svg class="w-8 h-8 text-gray-400 group-hover:text-green-600 mb-2 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <span class="text-sm font-medium text-gray-700 group-hover:text-green-600 transition-colors">Refresh Data</span>
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Filters and Search -->
-    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+    <!-- Enhanced Filters and Search -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+          <svg class="w-5 h-5 mr-2 text-[#005461]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+          </svg>
+          Filter & Sort
+        </h2>
+        @if (searchKeyword() || selectedStatus() !== 'ALL') {
+        <button (click)="showAll()"
+                class="text-sm text-[#005461] hover:text-[#018790] font-medium flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          Clear Filters
+        </button>
+        }
+      </div>
       <div class="grid md:grid-cols-4 gap-4">
         <!-- Search -->
         <div class="md:col-span-2">
@@ -215,80 +305,119 @@
     </div>
     }
 
-    <!-- Listings Grid View -->
+    <!-- Enhanced Listings Grid View -->
     @if (!loading() && !error() && filteredListings().length > 0 && viewMode() === 'grid') {
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       @for (listing of filteredListings(); track listing.publicId) {
-      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-        <!-- Image -->
-        <div class="relative h-48 bg-gray-200">
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 group">
+        <!-- Enhanced Image with Overlay -->
+        <div class="relative h-56 bg-gray-200 overflow-hidden">
           @if (listing.coverImageUrl || (listing.images && listing.images.length > 0)) {
           <img [src]="getImageUrl(listing.coverImageUrl || listing.images[0].url)"
                [alt]="listing.title"
-               class="w-full h-full object-cover">
+               class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
           } @else {
           <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#005461] to-[#018790]">
-            <svg class="w-16 h-16 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-20 h-20 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
           </div>
           }
+          
+          <!-- Gradient Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
           <!-- Status Badge -->
-          <div class="absolute top-3 right-3">
-            <span [class]="getStatusClass(listing.status)" class="px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm">
+          <div class="absolute top-4 right-4 z-10">
+            <span [class]="getStatusClass(listing.status)" class="px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md shadow-lg">
               {{ listingStatusLabels[listing.status] }}
             </span>
           </div>
+          
+          <!-- Quick Stats Overlay -->
+          <div class="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="flex items-center gap-3 text-sm font-medium">
+              <span class="flex items-center gap-1 bg-white/20 backdrop-blur-md px-2 py-1 rounded-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                {{ listing.viewCount || 0 }}
+              </span>
+              @if (listing.bookingCount) {
+              <span class="flex items-center gap-1 bg-white/20 backdrop-blur-md px-2 py-1 rounded-lg">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                {{ listing.bookingCount }}
+              </span>
+              }
+            </div>
+          </div>
         </div>
 
-        <!-- Content -->
+        <!-- Enhanced Content -->
         <div class="p-6">
-          <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-1">{{ listing.title }}</h3>
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-xl font-bold text-gray-900 line-clamp-2 flex-1 leading-tight group-hover:text-[#005461] transition-colors">
+              {{ listing.title }}
+            </h3>
+          </div>
 
-          <div class="flex items-center text-sm text-gray-600 mb-3">
-            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex items-center text-sm text-gray-600 mb-4">
+            <svg class="w-4 h-4 mr-1.5 text-[#005461]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            {{ listing.city }}, {{ listing.country }}
+            <span class="font-medium">{{ listing.city }}, {{ listing.country }}</span>
           </div>
 
-          <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-            <span class="flex items-center gap-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex items-center gap-4 text-sm text-gray-600 mb-5 pb-5 border-b border-gray-100">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
               </svg>
-              {{ listing.bedrooms }} beds
+              <span class="font-medium">{{ listing.bedrooms }}</span>
             </span>
-            <span class="flex items-center gap-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
-              {{ listing.maxGuests }} guests
+              <span class="font-medium">{{ listing.maxGuests }}</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <span class="font-medium">{{ listing.bathrooms }}</span>
             </span>
           </div>
 
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <span class="text-2xl font-bold text-[#005461]">${{ listing.basePrice }}</span>
-              <span class="text-sm text-gray-600">/night</span>
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex flex-col">
+              <span class="text-sm text-gray-500 font-medium">Starting from</span>
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-bold text-[#005461]">${{ listing.basePrice }}</span>
+                <span class="text-sm text-gray-600 font-medium">/night</span>
+              </div>
             </div>
-            @if (listing.bookingCount) {
-            <div class="text-sm text-gray-600">
-              {{ listing.bookingCount }} bookings
-            </div>
-            }
           </div>
 
-          <!-- Actions -->
+          <!-- Enhanced Action Buttons -->
           <div class="flex gap-2">
             <button [routerLink]="['/listing', listing.publicId]"
-                    class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium">
+                    class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
+              <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
               View
             </button>
             <button [routerLink]="['/listing', listing.publicId, 'edit']"
-                    class="flex-1 px-4 py-2 bg-[#005461] text-white rounded-lg hover:bg-[#018790] transition-colors text-sm font-medium">
+                    class="flex-1 px-4 py-3 bg-gradient-to-r from-[#005461] to-[#018790] text-white rounded-xl hover:shadow-lg transition-all text-sm font-semibold flex items-center justify-center gap-2 group/btn">
+              <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
               Edit
             </button>
           </div>

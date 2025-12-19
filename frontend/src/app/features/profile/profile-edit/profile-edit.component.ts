@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ProfileService, UpdateProfileRequest } from '../../../core/services/profile.service';
 import { User } from '../../../core/auth/auth.service';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 @Component({
   selector: 'app-profile-edit',
@@ -48,7 +49,12 @@ export class ProfileEditComponent implements OnInit {
       next: (response) => {
         const user = response.data;
         this.user.set(user);
-        this.imagePreview.set(user.profileImageUrl || null);
+        // Convert backend URL to full URL
+        if (user.profileImageUrl) {
+          this.imagePreview.set(ImageUrlHelper.getFullImageUrl(user.profileImageUrl));
+        } else {
+          this.imagePreview.set(null);
+        }
 
         // Populate form
         this.profileForm.patchValue({

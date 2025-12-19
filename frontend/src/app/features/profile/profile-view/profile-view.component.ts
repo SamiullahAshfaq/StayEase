@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ProfileService } from '../../../core/services/profile.service';
 import { User } from '../../../core/auth/auth.service';
+import { ImageUrlHelper } from '../../../shared/utils/image-url.helper';
 
 @Component({
   selector: 'app-profile-view',
@@ -17,6 +18,7 @@ export class ProfileViewComponent implements OnInit {
   user = signal<User | null>(null);
   loading = signal(true);
   error = signal<string | null>(null);
+  profileImageUrl = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadProfile();
@@ -28,7 +30,12 @@ export class ProfileViewComponent implements OnInit {
 
     this.profileService.getProfile().subscribe({
       next: (response) => {
-        this.user.set(response.data);
+        const user = response.data;
+        this.user.set(user);
+        // Convert backend URL to full URL
+        if (user.profileImageUrl) {
+          this.profileImageUrl.set(ImageUrlHelper.getFullImageUrl(user.profileImageUrl));
+        }
         this.loading.set(false);
       },
       error: (err) => {
