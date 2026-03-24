@@ -1,8 +1,8 @@
-#STAYEASE
+# STAYEASE
 
 STAYEASE is a full-stack property rental and management platform designed to simplify booking, communication, and service management between users, landlords, and administrators. It provides a seamless experience for property listings, booking management, chat, payments, notifications, reviews, and service offerings.
 
-Features
+## Features
 User Features
 User registration, login, and profile management
 Browse and search property listings
@@ -26,7 +26,7 @@ Booking and listing management
 Review moderation
 Tech Stack
 
-Backend:
+## Backend:
 
 Java 11+ with Spring Boot
 Spring Security with JWT authentication
@@ -35,7 +35,7 @@ PostgreSQL (or any relational database)
 Docker for containerization
 Flyway for database migrations
 
-Frontend:
+## Frontend:
 
 Angular 15+
 Tailwind CSS for styling
@@ -55,7 +55,7 @@ Shared components: Header, Footer, Date-picker, Image upload
 Layouts: Admin layout, Main layout
 Public assets: Images and static files
 Getting Started
-Prerequisites
+## Prerequisites
 Java 11+
 Node.js 18+ and npm
 Angular CLI 15+
@@ -77,6 +77,6 @@ npm install
 Run the Angular application:
 ng serve
 Visit http://localhost:4200 to see the application
-License
+## License
 
 This project is licensed under the MIT License.
